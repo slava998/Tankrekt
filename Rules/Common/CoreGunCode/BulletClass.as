@@ -17,7 +17,6 @@
 #include "AccurateSoundPlay.as";
 #include "PlankCommon.as";
 #include "Hitters.as";
-
 const SColor trueWhite = SColor(255,255,255,255);
 Driver@ PDriver = getDriver();
 const int ScreenX = getDriver().getScreenWidth();
@@ -117,9 +116,18 @@ class BulletObj
 					}
 				}
 
+				CBlob@ owner = gunBlob;
+				if (gunBlob.hasTag("seat"))
+				{
+					AttachmentPoint@ seat = b.getAttachmentPoint(0);
+					if (seat is null) continue;
+
+					CBlob@ owner = seat.getOccupied();
+					
+				}
 				if (breakLoop && isServer())
 				{
-					gunBlob.server_Hit(b, hitpos, dir, gunBlob.hasTag("heavy machinegun") ? getDamageHeavy(b) : getDamage(b), Hitters::arrow, true); 
+					gunBlob.server_Hit(b, hitpos, dir, getDamage(b, gunBlob), Hitters::arrow, true);
 				}
 			}
 			else
@@ -222,13 +230,57 @@ bool canHit(CBlob@ gunBlob, CBlob@ b)
 	   (b.hasTag("core") || b.hasTag("weapon") || b.hasTag("rocket") || b.hasTag("bomb") || b.hasTag("player")))
 		return true;
 
-	return b.hasTag("solid") || (b.hasTag("door") && b.getShape().getConsts().collidable);
+	return b.hasTag("solid") || (b.hasTag("door") && b.getShape().getConsts().collidable) || b.hasTag("bullet_collidable");
 }
 
-const f32 getDamage(CBlob@ hitBlob)
+const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 {
-	f32 damage = 0.01f;
+	f32 damage = 0.0f;
 
+	if(gunBlob.getName() == "human")
+	{
+		if (hitBlob.getName() == "shark" || hitBlob.getName() == "human" || hitBlob.hasTag("weapon"))
+			return 0.4f;
+		if (hitBlob.hasTag("bomb"))
+			return 1.35f;
+		if (hitBlob.hasTag("propeller"))
+			return 0.75f;
+		if (hitBlob.hasTag("ramengine"))
+			return 1.5f;
+		if (hitBlob.hasTag("door"))
+			return 0.7f;
+		if (hitBlob.hasTag("seat") || hitBlob.hasTag("decoyCore") || hitBlob.hasTag("plank"))
+			return 0.4f;
+		
+		return 0.25f; //cores | solids
+	}
+	else if (gunBlob.hasTag("heavy machinegun"))
+	{
+		damage = 0.05f;
+
+		if (hitBlob.hasTag("ramengine"))
+			return 0.4f;
+		if (hitBlob.hasTag("propeller"))
+			return 0.135f;
+		if (hitBlob.hasTag("plank"))
+			return 0.1f;
+		if (hitBlob.hasTag("decoyCore"))
+			return 0.1f;
+		if (hitBlob.hasTag("bomb"))
+			return 0.5f;
+		if (hitBlob.hasTag("rocket"))
+			return 0.5f;
+		if (hitBlob.hasTag("weapon"))
+			return 0.125f;
+		if (hitBlob.getName() == "human")
+			return 0.25f;
+
+		return damage;//cores, solids
+	}
+	else //machinegun
+	
+	damage = 0.01f;
+	
 	if (hitBlob.hasTag("ramengine"))
 		return 0.25f;
 	if (hitBlob.hasTag("propeller"))
@@ -247,28 +299,5 @@ const f32 getDamage(CBlob@ hitBlob)
 		return 0.2f;
 
 	return damage;//cores, solids
-}
 
-const f32 getDamageHeavy(CBlob@ hitBlob)
-{
-	f32 damage = 0.05f;
-
-	if (hitBlob.hasTag("ramengine"))
-		return 0.4f;
-	if (hitBlob.hasTag("propeller"))
-		return 0.135f;
-	if (hitBlob.hasTag("plank"))
-		return 0.1f;
-	if (hitBlob.hasTag("decoyCore"))
-		return 0.1f;
-	if (hitBlob.hasTag("bomb"))
-		return 0.5f;
-	if (hitBlob.hasTag("rocket"))
-		return 0.5f;
-	if (hitBlob.hasTag("weapon"))
-		return 0.125f;
-	if (hitBlob.getName() == "human")
-		return 0.25f;
-
-	return damage;//cores, solids
 }

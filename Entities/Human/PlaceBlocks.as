@@ -283,7 +283,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			const s32 overlappingShipID = this.get_s32("shipID");
 			Ship@ pShip = overlappingShipID > 0 ? ShipSet.getShip(overlappingShipID) : null;
 			if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-				|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
+				|| pShip.centerBlock.getTeamNum() == this.getTeamNum()))
 			{
 				this.set_bool("getting block", true);
 				this.Sync("getting block", false);

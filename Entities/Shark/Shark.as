@@ -12,6 +12,7 @@ void onInit(CBlob@ this)
 	this.set_Vec2f("target", getTargetVel(this) * 0.5f);
 	
 	this.set_bool("retreating", false);
+	this.Tag("bullet_collidable");
 
 	CSprite@ sprite = this.getSprite();
 	sprite.SetZ(-10.0f);

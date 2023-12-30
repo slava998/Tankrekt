@@ -10,13 +10,14 @@
 #include "BlockCosts.as";
 #include "ShiprektTranslation.as";
 #include "PlankCommon.as";
+#include "WeaponCommon.as";
+#include "GunStandard.as";
+#include "DamageBooty.as";
 
 const int CONSTRUCT_RANGE = 48;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.2f;
-const f32 BULLET_SPEED = 9.0f;
-const f32 BULLET_RANGE = 350.0f;
 const Vec2f BUILD_MENU_SIZE = Vec2f(8, 3);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 3); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
@@ -26,6 +27,8 @@ int useClickTime = 0;
 bool buildMenuOpen = false;
 u16 stayBlobID = 0;
 u8 stayCount = 0;
+
+BootyRewards@ booty_reward;
 
 Random _shotspreadrandom(0x11598);
 
@@ -42,7 +45,11 @@ void onInit(CBlob@ this)
 	this.addCommandID("releaseOwnership");
 	this.addCommandID("swap tool");
 	this.addCommandID("run over");
+	this.addCommandID("fire");
 	
+	this.set_u8("TTL", 35); //bullet params
+	this.set_u8("speed", 9);
+
 	this.chatBubbleOffset = Vec2f(0.0f, 10.0f);
 	this.getShape().getVars().onground = true;
 	
@@ -66,6 +73,17 @@ void onInit(CBlob@ this)
 			stayBlobID = core.getNetworkID();
 			stayCount = 3;
 		}
+	}
+	
+	if (booty_reward is null)
+	{
+		BootyRewards _booty_reward;
+		_booty_reward.addTagReward("bomb", 5);
+		_booty_reward.addTagReward("engine", 5);
+		_booty_reward.addTagReward("mothership", 10);
+		_booty_reward.addTagReward("secondarycore", 8);
+		_booty_reward.addTagReward("weapon", 8);
+		@booty_reward = _booty_reward;
 	}
 	
 	if (isClient())
@@ -403,7 +421,7 @@ void PlayerControls(CBlob@ this)
 						const s32 overlappingShipID = this.get_s32("shipID");
 						Ship@ pShip = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
 						if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-							|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
+							|| pShip.centerBlock.getTeamNum() == this.getTeamNum()))
 						{
 							buildMenuOpen = true;
 							this.set_bool("justMenuClicked", true);
@@ -700,12 +718,10 @@ void ShootPistol(CBlob@ this)
 	Vec2f offset(_shotspreadrandom.NextFloat() * BULLET_SPREAD,0);
 	offset.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
 	
-	const Vec2f vel = (aimVector * BULLET_SPEED) + offset;
-	const f32 lifetime = Maths::Min(0.05f + BULLET_RANGE/BULLET_SPEED/32.0f, 1.35f);
+	const Vec2f vel = aimVector + offset;
 
 	CBitStream params;
 	params.write_Vec2f(vel);
-	params.write_f32(lifetime);
 
 	const s32 overlappingShipID = this.get_s32("shipID");
 	Ship@ ship = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
@@ -871,7 +887,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	{
 		//shoot pistol
 		Vec2f velocity = params.read_Vec2f();
-		const f32 lifetime = params.read_f32();
 		Vec2f pos = this.getPosition();
 		
 		if (params.read_bool()) //relative positioning
@@ -890,7 +905,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		
 		if (isServer())
 		{
-			CBlob@ bullet = server_CreateBlob("bullet", this.getTeamNum(), pos);
+			/*CBlob@ bullet = server_CreateBlob("bullet", this.getTeamNum(), pos);
 			if (bullet !is null)
 			{
 				if (this.getPlayer() !is null)
@@ -900,7 +915,8 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				bullet.setVelocity(velocity);
 				bullet.setAngleDegrees(-velocity.Angle());
 				bullet.server_SetTimeToDie(lifetime); 
-			}
+			}*/
+			shootGun(this.getNetworkID(), -velocity.Angle() + XORRandom(BULLET_SPREAD) - XORRandom(BULLET_SPREAD * 2), pos); //make bullets!
 		}
 		
 		if (isClient())
@@ -1214,6 +1230,15 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 	}
 	
 	return damage;
+}
+
+void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
+{
+	if (damage <= 0.0f) return;
+
+	CPlayer@ player = this.getDamageOwnerPlayer();
+	if (player !is null)
+		rewardBooty(player, hitBlob, booty_reward);
 }
 
 void onHealthChange(CBlob@ this, f32 oldHealth)
