@@ -18,7 +18,7 @@ shared void refillAmmo(CBlob@ this, Ship@ ship, const u8&in refillAmount, const 
 				ammo = Maths::Min(maxAmmo, ammo + refillAmount);
 			}
 		}
-		else if (ship.isSecondaryCore)
+		else
 		{
 			if (getGameTime() % (35 * refillSecondaryCoreSeconds) == 0)
 			{

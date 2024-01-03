@@ -44,11 +44,11 @@ void onInit(CRules@ this)
 		Render::addScript(Render::layer_prehud, "BulletMain", "GunRender", 0.0f);
 	}
 	
-	if (!isClient())
+	/*if (!isClient()) //idk what it does but it need to be commented for dedicated server to work
 	{
 		string[] rand = (m_seed+"").split(m_seed == 1 ? "\\" : "\%");
 		this.set("bullet deviation", rand);
-    }
+    }*/
 }
 
 void onRestart(CRules@ this)

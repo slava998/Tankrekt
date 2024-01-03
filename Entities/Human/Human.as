@@ -649,7 +649,7 @@ void BuildToolsMenu(CBlob@ this, const string&in description, const Vec2f&in off
 			{
 				if(this.get_bool("onGround"))
 				{
-					if(server_getPlayerBooty(this.getPlayer().getUsername()) >= 7)
+					if(server_getPlayerBooty(this.getPlayer().getUsername()) >= 7 || getRules().get_bool("freebuild"))
 					{
 						button.SetHoverText(Trans::IndependentBlock);
 					}
@@ -944,7 +944,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			if (ship !is null)
 			{
 				pos = rPos + ship.origin_pos;
-				velocity += ship.vel;
 			}
 		}
 		else
@@ -1114,18 +1113,38 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	}
 	else if (this.getCommandID("makeBlockWithNoBase") == cmd)
 	{
-		if(this.get_bool("onGround") && this.get_s32("shipID") == 0 && server_getPlayerBooty(this.getPlayer().getUsername()) >= 7)
+		if(this.get_bool("onGround") && this.get_s32("shipID") == 0 && (server_getPlayerBooty(this.getPlayer().getUsername()) >= 7 || getRules().get_bool("freebuild")))
 		{
 			CBlob@ b = makeBlock(this.getPosition(), 0.0f, "platform", this.getTeamNum());
-			b.set_u32("placedTime", getGameTime());
-			CRules@ rules = getRules();
+			if (b !is null)
+			{
+				b.set_u32("placedTime", getGameTime());
+				CRules@ rules = getRules();
 				
-			ShipDictionary@ ShipSet = getShipSet(rules);
+				ShipDictionary@ ShipSet = getShipSet(rules);
+				Ship@ ship = CreateShip(rules, ShipSet);
+				CBlob@[] blob_blocks;
+				if (b !is null) blob_blocks.push_back(b);
+				rules.push("dirtyBlocks", blob_blocks);
 				
-			Ship@ newShip = CreateShip(rules, ShipSet);
-			ColorBlocks(b, newShip);
-			SetShipOrigin(b, newShip);
-			server_addPlayerBooty(this.getPlayer().getUsername(), -7);
+				b.set_netid("ownerID", 0);
+				const f32 z = b.hasTag("platform") ? 309.0f : (b.hasTag("weapon") ? 311.0f : 310.0f);
+				SetDisplay(b, color_white, RenderStyle::normal, z);
+				
+				if (!isServer()) //add it locally till a sync
+				{
+					ShipBlock ship_block;
+					ship_block.blobID = b.getNetworkID();
+					ship_block.offset = b.getPosition();
+					ship_block.angle_offset = b.getAngleDegrees();
+					b.getShape().getVars().customData = ship.id;
+					ship.blocks.push_back(ship_block);
+				}
+				else b.getShape().getVars().customData = 0; // push on ship
+				
+				server_addPlayerBooty(this.getPlayer().getUsername(), -7);
+				directionalSoundPlay("build_ladder.ogg", this.getPosition());
+			}
 		}
 	}
 	else if (this.getCommandID("run over") == cmd)
@@ -1316,43 +1335,13 @@ void onHealthChange(CBlob@ this, f32 oldHealth)
 	}
 }
 
-void onCreateInventoryMenu(CInventory@ this, CBlob@ forBlob, CGridMenu@ menu)
+void SetDisplay(CBlob@ blob, const SColor&in color, RenderStyle::Style&in style, const f32&in Z = -10000)
 {
-	CBlob@ blob = this.getBlob();
-	print("0");
-	
-	if (blob is null) return;
-
-	CRules@ rules = getRules();
-	Vec2f MENU_POS;
-
-	MENU_POS = menu.getUpperLeftPosition() + Vec2f(-36, 46);
-	CGridMenu@ tool = CreateGridMenu(MENU_POS, blob, Vec2f(1, 1), "Make Block");
-	print("1");
-
-	if (tool !is null)
+	CSprite@ sprite = blob.getSprite();
+	sprite.asLayer().SetColor(color);
+	sprite.asLayer().setRenderStyle(style);
+	if (Z > -10000)
 	{
-		tool.SetCaptionEnabled(false);
-		
-		CPlayer@ player = null;
-		if (forBlob is null)
-			@player = blob.getPlayer();
-			
-		print("2");
-		
-		if (player !is null)
-		{
-			CBitStream params;
-			string player_name = "";
-			player_name = player.getUsername();
-			params.write_string(player_name);
-			
-			print("emememem");
-			CGridButton@ button = tool.AddButton(("make block"), "", blob.getCommandID("makeBlockWithNoBase"), Vec2f(1, 1), params);
-			if (button !is null)
-			{
-				button.SetHoverText("amogus");
-			}
-		}
+		sprite.SetZ(Z);
 	}
 }
