@@ -240,7 +240,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 	if(gunBlob.getName() == "human")
 	{
 		if (hitBlob.getName() == "shark" || hitBlob.getName() == "human" || hitBlob.hasTag("weapon"))
-			return 0.4f;
+			return 0.8f;
 		if (hitBlob.hasTag("bomb"))
 			return 1.35f;
 		if (hitBlob.hasTag("propeller"))

@@ -92,7 +92,7 @@ void RenderingBullets() // Bullets
 	BulletGrouped.FillArray(); // Fill up v_r_bullets
 	if (v_r_bullet.length() > 0) // If there are no bullets on our screen, dont render
 	{
-		Render::RawQuads("MGbullet.png", v_r_bullet);
+		Render::RawQuads("bullet_long.png", v_r_bullet);
 
 		//if (g_debug == 0) // useful for lerp testing
 		{

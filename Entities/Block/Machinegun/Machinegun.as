@@ -11,7 +11,7 @@ const f32 FIRE_PAUSE_RATE = 0.08f; //higher values = higher recover
 
 const u8 MAX_AMMO = 250;
 const u8 REFILL_AMOUNT = 30;
-const u8 REFILL_SECONDS = 6;
+const u8 REFILL_SECONDS = 4;
 const u8 REFILL_SECONDARY_CORE_SECONDS = 1;
 const u8 REFILL_SECONDARY_CORE_AMOUNT = 2;
 

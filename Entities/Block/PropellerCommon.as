@@ -64,77 +64,83 @@ void onTick(CBlob@ this)
 	}
 	
 	if (on)
-	{
-		//auto turn off after a while
-		if (isServer() && gameTime - this.get_u32("onTime") > 750)
+	{			
+		if (!isTouchingLand(this.getPosition()) && !this.hasTag("landMotor") || isTouchingLand(this.getPosition()) && this.hasTag("landMotor")) //turn off if we are on ground if it is propeller or if we are in water and it is tank tracks
 		{
-			this.SendCommand(this.getCommandID("off"));
-			return;
-		}
-		
-		Ship@ ship = getShipSet().getShip(col);
-		if (ship !is null)
-		{
-			// move
-			Vec2f moveVel;
-			Vec2f moveNorm;
-			float angleVel;
-			
-			PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
-			
-			const f32 mass = ship.mass + ship.carryMass + 0.01f;
-			moveVel /= mass;
-			angleVel /= mass;
-			
-			ship.vel += moveVel;
-			ship.angle_vel += angleVel;
-			
-			if (isServer() && (gameTime + this.getNetworkID()) % 15 == 0)
+			//auto turn off after a while
+			if (isServer() && gameTime - this.get_u32("onTime") > 750)
 			{
-				//low health stall failure
-				const f32 healthPct = this.getHealth()/this.getInitialHealth();
-				if (healthPct < 0.25f && !stalled && XORRandom(25) == 0)
-				{
-					const u8 stallTime = 30 + XORRandom(50);
-					this.set_u8("stallTime", stallTime);
-					CBitStream params;
-					params.write_u8(stallTime);
-					this.SendCommand(this.getCommandID("stall"), params);
-				}
-				
-				//eat stuff
-				Vec2f faceNorm(0,-1);
-				faceNorm.RotateBy(this.getAngleDegrees());
-				CBlob@ victim = getMap().getBlobAtPosition(pos - faceNorm * 8);
-				if (victim !is null && victim.getShape().getVars().customData > 0)
-				{
-					const f32 hitPower = Maths::Max(0.5f, Maths::Abs(this.get_f32("power")));
-					if (!victim.hasTag("core"))
-						this.server_Hit(victim, pos, Vec2f_zero, hitPower, 9, true);
-					else
-						victim.server_Hit(this, pos, Vec2f_zero, hitPower, 9, true);
-				}
+				this.SendCommand(this.getCommandID("off"));
+				return;
 			}
 			
-			// effects
-			if (isClient())
+			Ship@ ship = getShipSet().getShip(col);
+			if (ship !is null)
 			{
-				const u8 tickStep = v_fastrender ? 20 : 4;
-				if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1 && !isTouchingLand(pos))
+				// move
+				Vec2f moveVel;
+				Vec2f moveNorm;
+				float angleVel;
+				
+				PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
+				
+				const f32 mass = ship.mass + ship.carryMass + 0.01f;
+				moveVel /= mass;
+				angleVel /= mass;
+				
+				ship.vel += moveVel;
+				ship.angle_vel += angleVel;
+				
+				if (isServer() && (gameTime + this.getNetworkID()) % 15 == 0)
 				{
-					const Vec2f rpos = Vec2f(_r.NextFloat() * -4 + 4, _r.NextFloat() * -4 + 4);
-					MakeWaterParticle(pos + moveNorm * -6 + rpos, moveNorm * (-0.8f + _r.NextFloat() * -0.3f));
+					//low health stall failure
+					const f32 healthPct = this.getHealth()/this.getInitialHealth();
+					if (healthPct < 0.25f && !stalled && XORRandom(25) == 0)
+					{
+						const u8 stallTime = 30 + XORRandom(50);
+						this.set_u8("stallTime", stallTime);
+						CBitStream params;
+						params.write_u8(stallTime);
+						this.SendCommand(this.getCommandID("stall"), params);
+					}
+					
+					//eat stuff
+					if(!this.hasTag("landMotor"))
+					{
+						Vec2f faceNorm(0,-1);
+						faceNorm.RotateBy(this.getAngleDegrees());
+						CBlob@ victim = getMap().getBlobAtPosition(pos - faceNorm * 8);
+						if (victim !is null && victim.getShape().getVars().customData > 0)
+						{
+							const f32 hitPower = Maths::Max(0.5f, Maths::Abs(this.get_f32("power")));
+							if (!victim.hasTag("core"))
+								this.server_Hit(victim, pos, Vec2f_zero, hitPower, 9, true);
+							else
+								victim.server_Hit(this, pos, Vec2f_zero, hitPower, 9, true);
+						}
+					}
 				}
 				
-				// limit sounds
-				if (ship.soundsPlayed == 0 && sprite.getEmitSoundPaused())
+				// effects
+				if (isClient())
 				{
-					sprite.SetEmitSoundPaused(false);
-				}
+					const u8 tickStep = v_fastrender ? 20 : 4;
+					if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1 && !isTouchingLand(pos))
+					{
+						const Vec2f rpos = Vec2f(_r.NextFloat() * -4 + 4, _r.NextFloat() * -4 + 4);
+						MakeWaterParticle(pos + moveNorm * -6 + rpos, moveNorm * (-0.8f + _r.NextFloat() * -0.3f));
+					}
+					
+					// limit sounds
+					if (ship.soundsPlayed == 0 && sprite.getEmitSoundPaused())
+					{
+						sprite.SetEmitSoundPaused(false);
+					}
 
-				ship.soundsPlayed++;
-				const f32 vol = Maths::Min(0.5f + float(ship.soundsPlayed)*0.5f, 3.0f);
-				sprite.SetEmitSoundVolume(vol);
+					ship.soundsPlayed++;
+					const f32 vol = Maths::Min(0.5f + float(ship.soundsPlayed)*0.5f, 3.0f);
+					sprite.SetEmitSoundVolume(vol);
+				}
 			}
 		}
 	}

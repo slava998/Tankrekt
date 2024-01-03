@@ -13,11 +13,13 @@
 #include "WeaponCommon.as";
 #include "GunStandard.as";
 #include "DamageBooty.as";
+#include "BlockProduction.as";
+#include "Ships.as";
 
 const int CONSTRUCT_RANGE = 48;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
-const f32 BULLET_SPREAD = 0.2f;
+const f32 BULLET_SPREAD = 0.0f;
 const Vec2f BUILD_MENU_SIZE = Vec2f(8, 3);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 3); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
@@ -46,9 +48,10 @@ void onInit(CBlob@ this)
 	this.addCommandID("swap tool");
 	this.addCommandID("run over");
 	this.addCommandID("fire");
-	
-	this.set_u8("TTL", 35); //bullet params
-	this.set_u8("speed", 9);
+	this.addCommandID("makeBlockWithNoBase");
+
+	this.set_u8("TTL", 15); //bullet params
+	this.set_u8("speed", 28);
 
 	this.chatBubbleOffset = Vec2f(0.0f, 10.0f);
 	this.getShape().getVars().onground = true;
@@ -551,11 +554,6 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	}
 	{ //Auxilliary Core
 		CGridButton@ button = AddBlock(this, menu, "secondarycore", "$SECONDARYCORE$", Trans::Auxilliary, Trans::AuxillDesc, core, 12.0f);
-		if (isStation)
-		{
-			button.SetEnabled(false);
-			button.hoverText += "\nOnly available at your Mothership.\n";
-		}
 	}
 	{ //Bomb
 		AddBlock(this, menu, "bomb", "$BOMB$", Trans::Bomb, Trans::BombDesc, core, 2.0f, warmup);
@@ -586,6 +584,12 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Missile Launcher
 		description = Trans::LauncherDesc+"\n"+Trans::AmmoCap+": 8";
 		AddBlock(this, menu, "launcher", "$LAUNCHER$", Trans::Launcher, description, core, 4.5f, warmup);
+	}
+	{ //Stone Bricks
+		AddBlock(this, menu, "stone", "$STONE$", Trans::Stone, Trans::StoneDesc, core, 12.0f);
+	}
+	{ //Tank Track
+		AddBlock(this, menu, "tanktrack", "$TANKTRACK$", Trans::TankTrack, Trans::TankTrackDesc, core, 1.0f);
 	}
 }
 
@@ -627,6 +631,49 @@ void BuildToolsMenu(CBlob@ this, const string&in description, const Vec2f&in off
 	}
 	{ //Reconstructor
 		AddTool(this, menu, "$RECONSTRUCTOR$", Trans::Reconstructor, Trans::ReconstDesc, "reconstructor");
+	}
+	
+	Vec2f MENU_POS;
+
+	MENU_POS = menu.getUpperLeftPosition() + Vec2f(-36, 46);
+	CGridMenu@ tool = CreateGridMenu(MENU_POS, this, Vec2f(1, 1), "Make Block");
+
+	if (tool !is null)
+	{
+		tool.SetCaptionEnabled(false);
+
+		CGridButton@ button = tool.AddButton("$WOOD$", "", this.getCommandID("makeBlockWithNoBase"), Vec2f(1, 1));
+		if (button !is null)
+		{
+			if(this.get_s32("shipID") == 0)
+			{
+				if(this.get_bool("onGround"))
+				{
+					if(server_getPlayerBooty(this.getPlayer().getUsername()) >= 7)
+					{
+						button.SetHoverText(Trans::IndependentBlock);
+					}
+					else
+					{
+						button.SetEnabled(false);
+						button.SetSelected(1);
+						button.SetHoverText(Trans::NotEnoughBooty);
+					}
+				}
+				else
+				{
+					button.SetEnabled(false);
+					button.SetSelected(1);
+					button.SetHoverText(Trans::IndBlNotOnGr);
+				}
+			}
+			else
+			{
+				button.SetEnabled(false);
+				button.SetSelected(1);
+				button.SetHoverText(Trans::IndBlNotOnGr);
+			}
+		}
 	}
 }
 
@@ -916,13 +963,13 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				bullet.setAngleDegrees(-velocity.Angle());
 				bullet.server_SetTimeToDie(lifetime); 
 			}*/
-			shootGun(this.getNetworkID(), -velocity.Angle() + XORRandom(BULLET_SPREAD) - XORRandom(BULLET_SPREAD * 2), pos); //make bullets!
+			shootGun(this.getNetworkID(), -velocity.Angle() + XORRandom(BULLET_SPREAD) - XORRandom(BULLET_SPREAD * 2), pos);
 		}
 		
 		if (isClient())
 		{
 			shotParticles(pos + Vec2f(0,0).RotateBy(-velocity.Angle())*6.0f, velocity.Angle(), true, 0.02f , 0.6f);
-			directionalSoundPlay("Gunshot.ogg", pos, 0.75f);
+			directionalSoundPlay("RifleFire" + XORRandom(3) + ".ogg", pos, 2.0f);
 		}
 	}
 	else if (this.getCommandID("construct") == cmd)
@@ -1064,6 +1111,22 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		}
 		
 		this.set_string("current tool", tool);
+	}
+	else if (this.getCommandID("makeBlockWithNoBase") == cmd)
+	{
+		if(this.get_bool("onGround") && this.get_s32("shipID") == 0 && server_getPlayerBooty(this.getPlayer().getUsername()) >= 7)
+		{
+			CBlob@ b = makeBlock(this.getPosition(), 0.0f, "platform", this.getTeamNum());
+			b.set_u32("placedTime", getGameTime());
+			CRules@ rules = getRules();
+				
+			ShipDictionary@ ShipSet = getShipSet(rules);
+				
+			Ship@ newShip = CreateShip(rules, ShipSet);
+			ColorBlocks(b, newShip);
+			SetShipOrigin(b, newShip);
+			server_addPlayerBooty(this.getPlayer().getUsername(), -7);
+		}
 	}
 	else if (this.getCommandID("run over") == cmd)
 	{
@@ -1249,6 +1312,47 @@ void onHealthChange(CBlob@ this, f32 oldHealth)
 		{
 			directionalSoundPlay("Heal.ogg", this.getPosition(), 2.0f);
 			makeHealParticle(this);
+		}
+	}
+}
+
+void onCreateInventoryMenu(CInventory@ this, CBlob@ forBlob, CGridMenu@ menu)
+{
+	CBlob@ blob = this.getBlob();
+	print("0");
+	
+	if (blob is null) return;
+
+	CRules@ rules = getRules();
+	Vec2f MENU_POS;
+
+	MENU_POS = menu.getUpperLeftPosition() + Vec2f(-36, 46);
+	CGridMenu@ tool = CreateGridMenu(MENU_POS, blob, Vec2f(1, 1), "Make Block");
+	print("1");
+
+	if (tool !is null)
+	{
+		tool.SetCaptionEnabled(false);
+		
+		CPlayer@ player = null;
+		if (forBlob is null)
+			@player = blob.getPlayer();
+			
+		print("2");
+		
+		if (player !is null)
+		{
+			CBitStream params;
+			string player_name = "";
+			player_name = player.getUsername();
+			params.write_string(player_name);
+			
+			print("emememem");
+			CGridButton@ button = tool.AddButton(("make block"), "", blob.getCommandID("makeBlockWithNoBase"), Vec2f(1, 1), params);
+			if (button !is null)
+			{
+				button.SetHoverText("amogus");
+			}
 		}
 	}
 }

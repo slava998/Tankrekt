@@ -2,7 +2,7 @@
 
 void onInit(CRules@ this)
 {
-	u16[] motherships(8); // length is the amount of teams on the gamemode (8)
+	u16[] motherships(2); // length is the amount of teams on the gamemode (2)
 	this.set("motherships", motherships);
 	
 	onRestart(this);
@@ -58,27 +58,27 @@ void SpawnMothership(Vec2f pos, const u8&in team)
 
 	// surrounding
 
-	makeBlock(pos + Vec2f(-8*2, -8*1), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(-8*2, -8*2), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(-8*1, -8*2), 0.0f, "solid", team);
+	makeBlock(pos + Vec2f(-8*2, -8*1), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(-8*2, -8*2), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(-8*1, -8*2), 0.0f, "stone", team);
 
 	makeOuterPlatform(pos + Vec2f(0, -8*2), team);
 
-	makeBlock(pos + Vec2f(8*1, -8*2), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(8*2, -8*2), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(8*2, -8*1), 0.0f, "solid", team);
+	makeBlock(pos + Vec2f(8*1, -8*2), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(8*2, -8*2), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(8*2, -8*1), 0.0f, "stone", team);
 
 	makeOuterPlatform(pos + Vec2f(8*2, 0), team);
 
-	makeBlock(pos + Vec2f(8*2, 8*1), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(8*2, 8*2), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(8*1, 8*2), 0.0f, "solid", team);
+	makeBlock(pos + Vec2f(8*2, 8*1), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(8*2, 8*2), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(8*1, 8*2), 0.0f, "stone", team);
 
 	makeOuterPlatform(pos + Vec2f(0, 8*2), team);
 
-	makeBlock(pos + Vec2f(-8*1, 8*2), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(-8*2, 8*2), 0.0f, "solid", team);
-	makeBlock(pos + Vec2f(-8*2, 8*1), 0.0f, "solid", team);
+	makeBlock(pos + Vec2f(-8*1, 8*2), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(-8*2, 8*2), 0.0f, "stone", team);
+	makeBlock(pos + Vec2f(-8*2, 8*1), 0.0f, "stone", team);
 
 	makeOuterPlatform(pos + Vec2f(-8*2, 0), team);
 }

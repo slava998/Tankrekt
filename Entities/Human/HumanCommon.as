@@ -1,10 +1,10 @@
 namespace Human
 {
-	const float walkSpeed = 1.0f;
+	const float walkSpeed = 1.5f;
 	const float swimSlow = 0.4f;
 	
 	const int PUNCH_RATE = 15;
-	const int FIRE_RATE = 40;
+	const int FIRE_RATE = 45;
 	const int CONSTRUCT_RATE = 14;
 };
 
