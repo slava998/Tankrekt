@@ -640,32 +640,15 @@ void BuildToolsMenu(CBlob@ this, const string&in description, const Vec2f&in off
 
 	if (tool !is null)
 	{
+		print("" + server_getPlayerBooty(this.getPlayer().getUsername()));
 		tool.SetCaptionEnabled(false);
 
 		CGridButton@ button = tool.AddButton("$WOOD$", "", this.getCommandID("makeBlockWithNoBase"), Vec2f(1, 1));
 		if (button !is null)
 		{
-			if(this.get_s32("shipID") == 0)
+			if(this.get_s32("shipID") == 0 && this.get_bool("onGround"))
 			{
-				if(this.get_bool("onGround"))
-				{
-					if(server_getPlayerBooty(this.getPlayer().getUsername()) >= 7 || getRules().get_bool("freebuild"))
-					{
-						button.SetHoverText(Trans::IndependentBlock);
-					}
-					else
-					{
-						button.SetEnabled(false);
-						button.SetSelected(1);
-						button.SetHoverText(Trans::NotEnoughBooty);
-					}
-				}
-				else
-				{
-					button.SetEnabled(false);
-					button.SetSelected(1);
-					button.SetHoverText(Trans::IndBlNotOnGr);
-				}
+				button.SetHoverText(Trans::IndependentBlock);
 			}
 			else
 			{
@@ -1143,7 +1126,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				else b.getShape().getVars().customData = 0; // push on ship
 				
 				server_addPlayerBooty(this.getPlayer().getUsername(), -7);
-				directionalSoundPlay("build_ladder.ogg", this.getPosition());
 			}
 		}
 	}

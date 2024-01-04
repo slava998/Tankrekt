@@ -70,9 +70,8 @@ namespace Trans
 	FindNewTip    = Translate("Press [{key}] to find another tip\\Нажмите [{key}], чтобы найти другую подсказку.\\Pressione [{key}] para encontrar outra dica.\\Naciśnij klawisz [{key}], aby znaleźć następną wskazówkę.\\Appuyez sur [{key}] pour trouver le conseil suivant.\\Presione [{key}] para encontrar el siguiente consejo."),
 	Respawn       = Translate("Respawning...\\Возрождение...\\Renascendo...\\Odradzanie...\\Résurrection...\\Reapareciendo..."),
 	RespawnSoon   = Translate("Respawning soon...\\Скоро возрождение...\\Renascendo em breve...\\Odrodzenie wkrótce...\\Résurrection proche...\\Reapareciendo pronto..."),
-	IndependentBlock = Translate("Create an independent block\\Создать независимый блок\\Create an independent block\\Create an independent block\\Create an independent block\\Create an independent block"),
+	IndependentBlock = Translate("Create an independent block (7 booty)\\Создать независимый блок (7 Добычи)\\Create an independent block (7 booty)\\Create an independent block (7 booty)\\Create an independent block(7 booty) \\Create an independent block (7 booty)"),
 	IndBlNotOnGr  = Translate("You must be standing on the ground to create an independent block\\Вы должны стоять на земле чтобы создать независимый блок\\You must be standing on the ground to create an independent block\\You must be standing on the ground to create an independent block\\You must be standing on the ground to create an independent block\\You must be standing on the ground to create an independent block"),
-	NotEnoughBooty = Translate("Not enough booty\\Недостаточно Добычи\\Not enough booty\\Not enough booty\\Not enough booty\\Not enough booty"),
 	
 	//Votes
 	Vote          = Translate("Vote\\Голосование\\Vote\\Głosować\\Vote\\Votar"),
