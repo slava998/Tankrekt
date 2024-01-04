@@ -162,10 +162,10 @@ class BulletObj
 		Vec2f newPos = Vec2f_lerp(LastPos, CurrentPos, FRAME_TIME);
 		LastPos = newPos;
 
-		Vec2f TopLeft  = Vec2f(newPos.x -1.0, newPos.y-5);
-		Vec2f TopRight = Vec2f(newPos.x -1.0, newPos.y+5);
-		Vec2f BotLeft  = Vec2f(newPos.x +1.0, newPos.y-5);
-		Vec2f BotRight = Vec2f(newPos.x +1.0, newPos.y+5);
+		Vec2f TopLeft  = Vec2f(newPos.x -1.0, newPos.y-8);
+		Vec2f TopRight = Vec2f(newPos.x -1.0, newPos.y+8);
+		Vec2f BotLeft  = Vec2f(newPos.x +1.0, newPos.y-8);
+		Vec2f BotRight = Vec2f(newPos.x +1.0, newPos.y+8);
 
 		BotLeft.RotateBy( StartingAngle-90,newPos);
 		BotRight.RotateBy(StartingAngle-90,newPos);
@@ -239,7 +239,9 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 
 	if(gunBlob.getName() == "human")
 	{
-		if (hitBlob.getName() == "shark" || hitBlob.getName() == "human" || hitBlob.hasTag("weapon"))
+		if (hitBlob.getName() == "shark")
+			return 0.4f;
+		if (hitBlob.getName() == "human" || hitBlob.hasTag("weapon"))
 			return 0.8f;
 		if (hitBlob.hasTag("bomb"))
 			return 1.35f;

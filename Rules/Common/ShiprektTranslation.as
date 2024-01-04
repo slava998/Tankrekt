@@ -199,8 +199,8 @@ namespace Trans
 	
 	//Tools
 	ToolsMenu     = Translate("Tools Menu\\Меню инструментов\\Menu de Ferramentas\\Menu narzędzi\\Menu des Outils\\Menú de herramientas"),
-	Pistol        = Translate("Pistol\\Пистолет\\Pistola\\Pistolet\\Pistolet\\Pistola"),
-	PistolDesc    = Translate("A basic, ranged, personal defense weapon.\\Обычное средство персональной защиты дальнего действия.\\Uma arma básica de defesa pessoal à distância.\\Podstawowa, dystansowa, osobista broń obronna.\\Une arme de défense personnelle basique à distance.\\Un arma básica de defensa personal a distancia."),
+	Pistol        = Translate("Rifle\\Винтовка\\Rifle\\Karabin\\Fusil\\Fucile"),
+	PistolDesc    = Translate("An accurate, long-range handgun.\\Точное, дальнобойное ручное огнестрельное оружие.\\An accurate, long-range handgun.\\An accurate, long-range handgun.\\An accurate, long-range handgun.\\An accurate, long-range handgun."),
 	Deconstructor = Translate("Deconstructor\\Деконструктор\\Desconstrutor\\Dekonstruktor\\Déconstructeur\\Deconstructor"),
 	DeconstDesc   = Translate("A tool that can reclaim ship parts for booty.\\Инструмент для разборки частей корабля на Добычу.\\Uma ferramenta que consegue recuperar partes do navio para saque.\\Narzędzie, które może odzyskać części do statku na łupy.\\Un outil qui peut recycler des pièces de navire pour du Trésor.\\Una herramienta que puede recuperar piezas de barcos para obtener botín."),
 	Reconstructor = Translate("Reconstructor\\Реконструктор\\Reconstrutor\\Rekonstruktor\\Reconstructeur\\Reconstructor"),

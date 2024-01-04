@@ -823,7 +823,7 @@ void Construct(CBlob@ this)
 			bool doWarning = false;
 			
 			const f32 constructDiscount = 0.5f; //50 percent cheaper to repair block than to replace it
-			const f32 constructFactor = blobCost / (5.0f + blobCost * 0.04f);
+			const f32 constructFactor = (blobCost * (blob.getName() == "stone" ? 2.5f : 1)) / (5.0f + blobCost * 0.04f);
 			const f32 constructAmount = initHealth / (blob.hasTag("mothership") ? 100.0f : constructFactor);
 			
 			if (currentTool == "deconstructor")
