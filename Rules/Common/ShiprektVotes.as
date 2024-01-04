@@ -422,7 +422,7 @@ void onMainMenuCreated(CRules@ this, CContextMenu@ menu)
 	//vote options menu
 
 	CContextMenu@ kickmenu = Menu::addContextMenu(votemenu, getTranslatedString("Kick"));
-	CContextMenu@ mapmenu = Menu::addContextMenu(votemenu, Trans::SuddenDeath);
+	//CContextMenu@ mapmenu = Menu::addContextMenu(votemenu, Trans::SuddenDeath);
 	CContextMenu@ freebuildmenu = Menu::addContextMenu(votemenu, Trans::Freebuild);
 	CContextMenu@ surrendermenu = Menu::addContextMenu(votemenu, "Self-Destruct Mothership");
 	Menu::addSeparator(votemenu); //before the back button
@@ -524,7 +524,7 @@ void onMainMenuCreated(CRules@ this, CContextMenu@ menu)
 	Menu::addSeparator(kickmenu);
 
 	//Sudden Death menu
-	if (getSecurity().checkAccess_Feature(me, "map_vote"))
+	/*if (getSecurity().checkAccess_Feature(me, "map_vote"))
 	{
 		CMap@ map = getMap();
 		CBlob@[] cores;
@@ -560,7 +560,7 @@ void onMainMenuCreated(CRules@ this, CContextMenu@ menu)
 	{
 		Menu::addInfoBox(mapmenu, getTranslatedString("Can't vote"), "You are not allowed to vote\nto activate sudden death on this server\n");
 	}
-	Menu::addSeparator(mapmenu);
+	Menu::addSeparator(mapmenu);*/
 
 	//Freebuild menu
 	//vote free building mode

@@ -75,11 +75,11 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 
 void onTick(CRules@ this)
 {
-	/*if (!shouldBarrier(this))
+	if (!shouldBarrier(this))
 	{
 		IS_BARRIER_SET = false;
 		return;
-	}*/
+	}
 
 	CMap@ map = getMap();
 
@@ -129,8 +129,8 @@ void onTick(CRules@ this)
 
 void onRender(CRules@ this)
 {
-	//if (!shouldBarrier(this))
-		//return;
+	if (!shouldBarrier(this))
+		return;
 	Vertex[] Verts;
 	CMap@ map = getMap();
 	

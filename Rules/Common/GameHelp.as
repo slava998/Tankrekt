@@ -148,7 +148,7 @@ void onRender(CRules@ this)
 	if (page1)
 	{
 		//PAGE 1
-		const string shiprektVersion = "Shiprekt++ "+Trans::Version+" "+this.get_string("version")+"\n";
+		const string shiprektVersion = "Amogus "+Trans::Version+" "+this.get_string("version")+"\n";
 		const string lastChangesInfo = Trans::LastChanges+":\n"
 		+ "- 12-25-2023 - By Gingerbeard\n"
 		+ "  * Cannonballs do less damage and give less coins.\n"
