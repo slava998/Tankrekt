@@ -53,11 +53,9 @@ void onTick(CSprite@ this)
 	
 	//set camera rotation
 	f32 angle = camera.getRotation();
-	if (blob.isAttached()) //use angle of seat
+	if (controls.isKeyJustPressed(KEY_LCONTROL))
 	{
-		CBlob@ seat = blob.getAttachmentPoint(0).getOccupied();
-		if (seat !is null && seat.hasTag("hasSeat"))
-			angle = seat.getAngleDegrees() + 90.0f;
+		angle += 90.0f;
 	}
 	else
 	{
