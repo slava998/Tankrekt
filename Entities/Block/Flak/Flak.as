@@ -9,7 +9,7 @@ const int FIRE_RATE = 60;
 const int FIRE_RATE_MANUAL = 40;
 const f32 PROJECTILE_RANGE = 460.0f;
 const f32 CLONE_RADIUS = 20.0f;
-const f32 AUTO_RADIUS = 380.0f;
+const f32 AUTO_RADIUS = 140.0f;
 
 const u8 MAX_AMMO = 15;
 const u8 REFILL_AMOUNT = 1;
