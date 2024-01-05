@@ -950,7 +950,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		
 		if (isClient())
 		{
-			shotParticles(pos + Vec2f(0,0).RotateBy(-velocity.Angle())*6.0f, velocity.Angle(), true, 0.02f , 0.6f);
+			shotParticles(pos + Vec2f(0.1f ,0).RotateBy(-velocity.Angle())*6.0f, velocity.Angle(), true, 0.02f , 0.6f);
 			directionalSoundPlay("RifleFire" + XORRandom(3) + ".ogg", pos, 2.0f);
 		}
 	}
