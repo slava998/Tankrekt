@@ -70,7 +70,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		if (getGameTime() - caller.get_u32("placedTime") > 26)
 			caller.set_u32("placedTime", getGameTime() - 20);
 
-		if (!isServer() || Human::isHoldingBlocks(caller) || this.getTeamNum() != caller.getTeamNum())
+		if (!isServer() || Human::isHoldingBlocks(caller) || !this.hasTag("mothership") || this.getTeamNum() != caller.getTeamNum())
 			return;
 		
 		BuyBlock(this, caller, block, cost);
