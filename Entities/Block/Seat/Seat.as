@@ -322,13 +322,13 @@ void onTick(CBlob@ this)
 			f32 power, reverse_power;
 			if (ship.isMothership)
 			{
-				power = -1.05f;
-				reverse_power = 0.15f;
+				power = -1.00f;
+				reverse_power = 1.0f;
 			}
 			else
 			{
 				power = -1.0f;
-				reverse_power = 0.1f;
+				reverse_power = 1.0f;
 			}
 			
 			//movement modes
