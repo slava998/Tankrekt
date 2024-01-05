@@ -105,7 +105,8 @@ void onRender(CRules@ this)
 	" [ " + zoomIn_key + " ], [ " + zoomOut_key + " ] "+ Trans::Zoom+"\n"+
 	" [ " + party_key + " ] "+ Trans::AccessTools+"\n"+
 	" [ " + map_key + " ] "+ Trans::ScaleCompass+"\n"+
-	" [ " + pick_key + " ] / [ " + taunts_key + " ] "+ Trans::Hold+" "+Trans::Strafe+".";
+	" [ " + pick_key + " ] / [ " + taunts_key + " ] "+ Trans::Hold+" "+Trans::Strafe+"\n"+
+	" [ LCTRL ] "+Trans::RotateCamera+".";
 	
 	GUI::SetFont("menu");
 	

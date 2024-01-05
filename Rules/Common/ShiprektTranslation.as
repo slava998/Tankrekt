@@ -136,7 +136,7 @@ namespace Trans
 	AccessTools   = Translate("access the tools menu.\\открыть меню инструментов.\\acessar o menu de ferramentas.\\przejdź do menu narzędzi.\\accéder au menu des outils.\\Acceder al menú de herramientas."),
 	ScaleCompass  = Translate("scale the Compass 2x. Tap to toggle. Hold for a quick view.\\увеличит компас в 2 раза. Нажми для удержания или зажми для временного просмотра.\\escalar a Bússola 2x. Clique para habilitar. Sgure para uma olhada breve.\\skaluj Kompas 2x. Dotknij, aby przełączyć. Przytrzymaj, aby wyświetlić szybki widok.\\aggrandit la Boussole 2x. Appuyer pour basculer. Maintenez pour une vue rapide.\\Escala la brújula 2x. Toque para alternar. Mantén para una vista rápida."),
 	Strafe        = Translate("toggle engines strafe mode\\переключить режим стрейфа двигателей\\habilitar o modo strafe dos motores\\włącz tryb strafe silników\\basculer en mode mitraillage des moteurs\\Alternar el modo de desplazamiento de los motores"),
-	
+	RotateCamera  = Translate("rotate camera\\повернуть камеру\\girar câmera\\obróć kamerę\\faire pivoter la caméra\\girar la cámara"),
 	//Build menu
 	Components    = Translate("Components\\Компоненты\\Componentes\\Składniki\\Composants\\Componentes"),
 	AmmoCap       = Translate("AmmoCap\\Боеприпасы\\Munição\\Amunicja\\MunitionsCap\\Munición máxima"),
