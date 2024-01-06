@@ -15,6 +15,7 @@
 #include "DamageBooty.as";
 #include "BlockProduction.as";
 #include "Ships.as";
+#include "Knocked.as"
 
 const int CONSTRUCT_RANGE = 48;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
@@ -78,6 +79,8 @@ void onInit(CBlob@ this)
 		}
 	}
 	
+	setKnockable(this);
+	
 	if (booty_reward is null)
 	{
 		BootyRewards _booty_reward;
@@ -103,6 +106,8 @@ void onInit(CBlob@ this)
 void onTick(CBlob@ this)
 {
 	Move(this);
+	
+	DoKnockedUpdate(this);
 
 	if (this.isMyPlayer())
 	{
@@ -226,24 +231,27 @@ void Move(CBlob@ this)
 		}
 
 		// move
-		Vec2f moveVel;
-
-		if (up)
-		{
-			moveVel.y -= Human::walkSpeed;
-		}
-		else if (down)
-		{
-			moveVel.y += Human::walkSpeed;
-		}
+		Vec2f moveVel = Vec2f(0,0);
 		
-		if (left)
+		if(this.get_u8("knocked") <= 0)
 		{
-			moveVel.x -= Human::walkSpeed;
-		}
-		else if (right)
-		{
-			moveVel.x += Human::walkSpeed;
+			if (up)
+			{
+				moveVel.y -= Human::walkSpeed;
+			}
+			else if (down)
+			{
+				moveVel.y += Human::walkSpeed;
+			}
+			
+			if (left)
+			{
+				moveVel.x -= Human::walkSpeed;
+			}
+			else if (right)
+			{
+				moveVel.x += Human::walkSpeed;
+			}
 		}
 
 		if (!this.get_bool("onGround"))
@@ -264,7 +272,7 @@ void Move(CBlob@ this)
 				}
 			}
 		}
-		else
+		else if(this.get_u8("knocked") <= 0)
 		{
 			// punch
 			if (isClient() && punch && !Human::isHoldingBlocks(this) && canPunch(this))
