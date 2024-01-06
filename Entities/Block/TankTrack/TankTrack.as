@@ -22,6 +22,10 @@ void onInit(CBlob@ this)
 		animcharge.AddFrame(3);
 		animcharge.AddFrame(4);
 		animcharge.AddFrame(5);
+		Animation@ animcharge2 = propeller.addAnimation("reverse", 1, true);
+		animcharge2.AddFrame(5);
+		animcharge2.AddFrame(4);
+		animcharge2.AddFrame(3);
 		propeller.SetAnimation("go");
 	}
 
