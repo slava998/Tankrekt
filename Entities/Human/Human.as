@@ -564,34 +564,34 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		CGridButton@ button = AddBlock(this, menu, "secondarycore", "$SECONDARYCORE$", Trans::Auxilliary, Trans::AuxillDesc, core, 12.0f);
 	}
 	{ //Bomb
-		AddBlock(this, menu, "bomb", "$BOMB$", Trans::Bomb, Trans::BombDesc, core, 2.0f, warmup);
+		AddBlock(this, menu, "bomb", "$BOMB$", Trans::Bomb, Trans::BombDesc, core, 2.0f);
 	}
 	{ //Ram Hull
-		AddBlock(this, menu, "ram", "$RAM$", Trans::Ram, Trans::RamDesc, core, 2.0f, warmup);
+		AddBlock(this, menu, "ram", "$RAM$", Trans::Ram, Trans::RamDesc, core, 2.0f);
 	}
 	{ //Machinegun
 		description = Trans::MGDesc+"\n"+Trans::AmmoCap+": 250";
-		AddBlock(this, menu, "machinegun", "$MACHINEGUN$", Trans::Machinegun, description, core, 2.0f, warmup);
+		AddBlock(this, menu, "machinegun", "$MACHINEGUN$", Trans::Machinegun, description, core, 2.0f);
 	}
 	{ //Point Defense
 		description = Trans::PointDefDesc+"\n"+Trans::AmmoCap+": 15";
-		AddBlock(this, menu, "pointdefense", "$POINTDEFENSE$", Trans::PointDefense, description, core, 3.5f, warmup);
+		AddBlock(this, menu, "pointdefense", "$POINTDEFENSE$", Trans::PointDefense, description, core, 3.5f);
 	}
 	{ //Flak
 		description = Trans::FlakDesc+"\n"+Trans::AmmoCap+": 15";
-		AddBlock(this, menu, "flak", "$FLAK$", Trans::FlakCannon, description, core, 2.5f, warmup);
+		AddBlock(this, menu, "flak", "$FLAK$", Trans::FlakCannon, description, core, 2.5f);
 	}
 	{ //Heavy Machinegun
 		description = Trans::HeavyMGDesc+"\n"+Trans::AmmoCap+": 160";
-		AddBlock(this, menu, "heavymachinegun", "$HEAVYMACHINEGUN$", Trans::HeavyMG, description, core, 3.0f, warmup);
+		AddBlock(this, menu, "heavymachinegun", "$HEAVYMACHINEGUN$", Trans::HeavyMG, description, core, 3.0f);
 	}
 	{ //AP Cannon
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "cannon", "$CANNON$", Trans::Cannon, description, core, 3.25f, warmup);
+		AddBlock(this, menu, "cannon", "$CANNON$", Trans::Cannon, description, core, 3.25f);
 	}
 	{ //Missile Launcher
 		description = Trans::LauncherDesc+"\n"+Trans::AmmoCap+": 8";
-		AddBlock(this, menu, "launcher", "$LAUNCHER$", Trans::Launcher, description, core, 4.5f, warmup);
+		AddBlock(this, menu, "launcher", "$LAUNCHER$", Trans::Launcher, description, core, 4.5f);
 	}
 	{ //Stone Bricks
 		AddBlock(this, menu, "stone", "$STONE$", Trans::Stone, Trans::StoneDesc, core, 12.0f);
@@ -599,9 +599,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Tank Track
 		AddBlock(this, menu, "tanktrack", "$TANKTRACK$", Trans::TankTrack, Trans::TankTrackDesc, core, 1.0f);
 	}
-	{ //AP Cannon
+	{ //Tank Cannon
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, description, core, 5.0f, warmup);
+		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, description, core, 7.0f);
 	}
 }
 

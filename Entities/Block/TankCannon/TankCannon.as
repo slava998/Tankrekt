@@ -21,7 +21,7 @@ void onInit(CBlob@ this)
 	this.Tag("usesAmmo");
 	this.Tag("fixed_gun");
 	
-	this.set_f32("weight", 5.0f);
+	this.set_f32("weight", 7.0f);
 	
 	this.addCommandID("fire");
 
