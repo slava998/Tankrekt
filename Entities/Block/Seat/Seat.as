@@ -319,17 +319,9 @@ void onTick(CBlob@ this)
 			}
 			
 			//power to use
-			f32 power, reverse_power;
-			if (ship.isMothership)
-			{
-				power = -1.00f;
-				reverse_power = 0.8f;
-			}
-			else
-			{
-				power = -1.0f;
-				reverse_power = 0.8f;
-			}
+			
+			f32 power = -1.0f;
+			f32 reverse_power = 0.5f; //for porpellers
 			
 			//movement modes
 			if (up || down)
@@ -342,7 +334,8 @@ void onTick(CBlob@ this)
 					if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
 					{
 						prop.set_u32("onTime", gameTime);
-						prop.set_f32("power", up ? power * prop.get_f32("powerFactor") : reverse_power * prop.get_f32("powerFactor"));
+						if(prop.hasTag("landMotor")) prop.set_f32("power", prop.get_f32("powerFactor"));
+						else prop.set_f32("power", up ? power * prop.get_f32("powerFactor") : reverse_power * prop.get_f32("powerFactor"));
 					}
 				}
 				for (u16 i = 0; i < downPropLength; ++i)

@@ -48,9 +48,12 @@ void onTick(CBlob@ this)
 		CSpriteLayer@ propeller = sprite.getSpriteLayer("propeller");
 		if (propeller !is null)
 			propeller.animation.time = on ? 1 : 0;
-
-			if(this.get_f32("power") < 0) propeller.SetAnimation("go");
-			else propeller.SetAnimation("reverse");
+			if(this.hasTag("landMotor"))
+			{
+				if(this.get_f32("power") < 0) propeller.SetAnimation("go");
+				else propeller.SetAnimation("reverse");
+			}
+			else propeller.SetAnimation("go");
 	}
 
 	if (isServer())
