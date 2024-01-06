@@ -6,7 +6,7 @@
 #include "GunStandard.as";
 
 const f32 MIN_FIRE_PAUSE = 2.85f; //min wait between shots
-const f32 MAX_FIRE_PAUSE = 8.0f; //max wait between shots
+const f32 MAX_FIRE_PAUSE = 2.85f; //max wait between shots
 const f32 FIRE_PAUSE_RATE = 0.08f; //higher values = higher recover
 
 const u8 MAX_AMMO = 250;
