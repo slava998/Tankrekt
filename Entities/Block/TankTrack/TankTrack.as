@@ -7,7 +7,7 @@ void onInit(CBlob@ this)
 	this.set_f32("weight", 1.0f);
 	
 	this.set_f32("power", 0.0f);
-	this.set_f32("powerFactor", 3.0f);
+	this.set_f32("powerFactor", 4f);
 	this.set_u32("onTime", 0);
 	this.set_u8("stallTime", 0);
 
