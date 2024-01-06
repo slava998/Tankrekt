@@ -231,6 +231,8 @@ const f32 getDamage(CBlob@ hitBlob)
 		return 0.5f;
 	if (hitBlob.hasTag("projectile"))
 		return 1.0f;
+	if (hitBlob.getName() == "human")
+		return 0.25f;
 
 	return 0.01f;//cores, solids
 }
