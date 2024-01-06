@@ -258,24 +258,24 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 	}
 	else if (gunBlob.hasTag("heavy machinegun"))
 	{
-		damage = 0.05f;
+		damage = 0.1f;
 
 		if (hitBlob.hasTag("ramengine"))
-			return 0.4f;
+			return 0.8f;
 		if (hitBlob.hasTag("propeller"))
-			return 0.135f;
+			return 0.27f;
 		if (hitBlob.hasTag("plank"))
-			return 0.1f;
+			return 0.2f;
 		if (hitBlob.hasTag("decoyCore"))
-			return 0.1f;
+			return 0.2f;
 		if (hitBlob.hasTag("bomb"))
-			return 0.5f;
+			return 1.0f;
 		if (hitBlob.hasTag("rocket"))
-			return 0.5f;
-		if (hitBlob.hasTag("weapon"))
-			return 0.125f;
+			return 1.0f;
 		if (hitBlob.getName() == "human")
 			return 0.25f;
+		if (hitBlob.hasTag("weapon"))
+			return 0.5f;
 
 		return damage;//cores, solids
 	}
