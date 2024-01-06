@@ -164,7 +164,7 @@ namespace Trans
 	Machinegun    = Translate("Machinegun\\Пулемёт\\Metralhadora\\Karabin maszynowy\\Mitrailleuse\\Ametralladora"),
 	HeavyMG       = Translate("Heavy Machinegun\\Тяжелый пулемет\\Metralhadora pesada\\Ciężka broń maszynowa\\Mitrailleuse lourde\\Ametralladora pesada"),
 	Cannon        = Translate("Cannon\\Пушка\\Canhão\\Armata\\Canon\\Cañón"),
-	Cannon        = Translate("Tank Cannon\Танковая Пушка\\Tank Cannon\\Tank Cannon\\Tank Cannon\\Tank Cannon"),
+	TankCannon        = Translate("Tank Cannon\Танковая Пушка\\Tank Cannon\\Tank Cannon\\Tank Cannon\\Tank Cannon"),
 	Launcher      = Translate("Missile Launcher\\Ракетная Установка\\Lança-Mísseis\\Wyrzutnia pocisków\\Lance-Missiles\\Lanzamisiles"),
 	DecoyCore     = Translate("Decoy Core\\Фальшивое Сердце\\Núcleo de Distração\\Rdzeń wabika\\Noyau Leurre\\Núcleo de señuelo"),
 	Stone         = Translate("Stone Bricks\\Каменные кирпичи\\Stone Bricks\\Stone Bricks\\Stone Bricks\\Stone Bricks"),
