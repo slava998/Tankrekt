@@ -164,6 +164,7 @@ namespace Trans
 	Machinegun    = Translate("Machinegun\\Пулемёт\\Metralhadora\\Karabin maszynowy\\Mitrailleuse\\Ametralladora"),
 	HeavyMG       = Translate("Heavy Machinegun\\Тяжелый пулемет\\Metralhadora pesada\\Ciężka broń maszynowa\\Mitrailleuse lourde\\Ametralladora pesada"),
 	Cannon        = Translate("Cannon\\Пушка\\Canhão\\Armata\\Canon\\Cañón"),
+	TankCannon        = Translate("Tank Cannon\Танковая Пушка\\Tank Cannon\\Tank Cannon\\Tank Cannon\\Tank Cannon"),
 	Launcher      = Translate("Missile Launcher\\Ракетная Установка\\Lança-Mísseis\\Wyrzutnia pocisków\\Lance-Missiles\\Lanzamisiles"),
 	DecoyCore     = Translate("Decoy Core\\Фальшивое Сердце\\Núcleo de Distração\\Rdzeń wabika\\Noyau Leurre\\Núcleo de señuelo"),
 	Stone         = Translate("Stone Bricks\\Каменные кирпичи\\Stone Bricks\\Stone Bricks\\Stone Bricks\\Stone Bricks"),
@@ -195,6 +196,7 @@ namespace Trans
 	DecoyCoreDesc = Translate("A fake core to fool enemies. Replaces the Mothership on the compass.\\Фальшивое сердце, чтобы одурачить врагов. Заменяет главное сердце на компасе.\\Um núcleo falso para enganar inimigos. Substitui o Navio-mãe na bússola.\\Fałszywy rdzeń do oszukiwania wrogów. Zastępuje statek macierzysty na kompasie.\\Un faux noyau pour tromper les ennemis. Remplace le Navire-mère sur la boussole.\\Un núcleo falso para engañar a los enemigos. Reemplaza a la nave nodriza en la brújula."),
 	StoneDesc     = Translate("A very strong but incredibly heavy block for the construction of fortresses.\\Крайне прочный, но очень тяжёлый блок для строительства крепостей.\\A very strong but incredibly heavy block for the construction of fortresses.\\A very strong but incredibly heavy block for the construction of fortresses.\\A very strong but incredibly heavy block for the construction of fortresses.\\A very strong but incredibly heavy block for the construction of fortresses."),
 	TankTrackDesc = Translate("Tracks for moving on land with some armor plating for protection.\\Гусеницы для перемещения по суше с броней для защиты.\\Tracks for moving on land with some armor plating for protection.\\Tracks for moving on land with some armor plating for protection.\\Tracks for moving on land with some armor plating for protection.\\Tracks for moving on land with some armor plating for protection."),
+	TankCannonDesc    = Translate("Я не успел написать.\\Я не успел написать.\\Um canhão fixo que dispara projéteis perfurantes com impulso.\\Stałe działo, które wystrzeliwuje pociski przeciwpancerne z pędem.\\Un canon fixe qui tire des obus perforants.\\Un cañón fijo que dispara proyectiles perforantes que llevan impulso."),
 	
 	//Tools
 	ToolsMenu     = Translate("Tools Menu\\Меню инструментов\\Menu de Ferramentas\\Menu narzędzi\\Menu des Outils\\Menú de herramientas"),

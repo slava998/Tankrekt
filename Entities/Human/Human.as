@@ -20,8 +20,8 @@ const int CONSTRUCT_RANGE = 48;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 3);
-const Vec2f BUILD_MENU_TEST = Vec2f(8, 3); //for testing, only activates when sv_test is on
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 4);
+const Vec2f BUILD_MENU_TEST = Vec2f(8, 4); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 
 //global is fine since only used with isMyPlayer
@@ -424,7 +424,7 @@ void PlayerControls(CBlob@ this)
 						const s32 overlappingShipID = this.get_s32("shipID");
 						Ship@ pShip = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
 						if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-							|| pShip.centerBlock.getTeamNum() == this.getTeamNum()))
+							|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
 						{
 							buildMenuOpen = true;
 							this.set_bool("justMenuClicked", true);
@@ -591,6 +591,10 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Tank Track
 		AddBlock(this, menu, "tanktrack", "$TANKTRACK$", Trans::TankTrack, Trans::TankTrackDesc, core, 1.0f);
 	}
+	{ //AP Cannon
+		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
+		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, description, core, 5.0f, warmup);
+	}
 }
 
 // Add a block to the build menu
@@ -640,7 +644,6 @@ void BuildToolsMenu(CBlob@ this, const string&in description, const Vec2f&in off
 
 	if (tool !is null)
 	{
-		print("" + server_getPlayerBooty(this.getPlayer().getUsername()));
 		tool.SetCaptionEnabled(false);
 
 		CGridButton@ button = tool.AddButton("$WOOD$", "", this.getCommandID("makeBlockWithNoBase"), Vec2f(1, 1));
