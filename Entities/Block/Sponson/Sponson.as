@@ -45,10 +45,11 @@ void onInit(CBlob@ this)
 	this.set_u16("childID", 0);
 
 	CSprite@ sprite = this.getSprite();
-    CSpriteLayer@ layer = sprite.addSpriteLayer("weapon", "Sponson.png", 16, 16);
+    CSpriteLayer@ layer = sprite.addSpriteLayer("weapon", "Sponson_barrel.png", 16, 6);
     if (layer !is null)
     {
-    	layer.SetRelativeZ(2);
+    	layer.SetRelativeZ(-2);
+		layer.SetOffset(Vec2f(-4, 0));
     	layer.SetLighting(false);
      	Animation@ anim = layer.addAnimation("fire", 15, false);
         anim.AddFrame(1);
@@ -180,7 +181,8 @@ void Rotate(CBlob@ this, Vec2f&in aimVector)
 	if (layer !is null)
 	{
 		layer.ResetTransform();
-		layer.RotateBy(-aimVector.getAngleDegrees() - this.getAngleDegrees(), Vec2f_zero);
+		layer.SetOffset(Vec2f(-4, 0));
+		layer.RotateBy(-aimVector.getAngleDegrees() - this.getAngleDegrees(), Vec2f(4, 0));
 	}
 }
 
@@ -244,7 +246,8 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			if (layer !is null)
 			{
 				layer.ResetTransform();
-				layer.RotateBy(-aimVector.getAngleDegrees() - this.getAngleDegrees(), Vec2f_zero);
+				layer.SetOffset(Vec2f(-4, 0));
+				layer.RotateBy(-aimVector.getAngleDegrees() - this.getAngleDegrees(), Vec2f(4, 0));
 			}
 		}
 	}
@@ -259,7 +262,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		const Vec2f _vel = (aimVector * PROJECTILE_SPEED) + offset;
 		const f32 _lifetime = Maths::Max(0.05f + aimdist/PROJECTILE_SPEED/32.0f, 0.25f);
 
-		print(canShoot(this) + "");
 		if (isServer())
 		{
 			if(canShoot(this))
