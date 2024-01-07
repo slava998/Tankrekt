@@ -605,7 +605,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	}
 	{ //Sponson Cannon
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "sponson", "$FLAK$", Trans::Sponson, SponsonCannonDesc, core, 3.5f);
+		AddBlock(this, menu, "sponson", "$FLAK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
 	}
 }
 
