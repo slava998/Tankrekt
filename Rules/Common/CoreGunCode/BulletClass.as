@@ -286,17 +286,17 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 	if (hitBlob.hasTag("ramengine"))
 		return 0.25f;
 	if (hitBlob.hasTag("propeller"))
-		return 0.08f;
+		return 0.20f;
 	if (hitBlob.hasTag("plank"))
-		return 0.05f;
+		return 0.12f;
 	if (hitBlob.hasTag("decoyCore"))
 		return 0.075f;
 	if (hitBlob.hasTag("bomb"))
-		return 0.4f;
+		return 0.6f;
 	if (hitBlob.hasTag("rocket"))
-		return 0.35f;
+		return 0.50f;
 	if (hitBlob.hasTag("weapon"))
-		return 0.075f;
+		return 0.25f;
 	if (hitBlob.getName() == "human")
 		return 0.2f;
 
