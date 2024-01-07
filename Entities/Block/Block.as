@@ -278,21 +278,6 @@ void onDie(CBlob@ this)
 	//gib the sprite
 	if (this.getShape().getVars().customData > 0)
 		this.getSprite().Gib();
-	
-	//kill humans standing on top. done locally because lag makes server unable to catch the overlapping playerblobs
-	if (!this.hasTag("removable") && !this.hasTag("disabled"))
-	{
-		CBlob@ localBlob = getLocalPlayerBlob();
-		if (localBlob !is null && localBlob.get_u16("shipBlobID") == this.getNetworkID())
-		{
-			if (localBlob.isMyPlayer() && localBlob.getDistanceTo(this) < 6.5f)
-			{
-				CBitStream params;
-				params.write_netid(localBlob.getNetworkID());
-				localBlob.SendCommand(localBlob.getCommandID("run over"), params);
-			}
-		}
-	}
 }
 
 void Die(CBlob@ this)
