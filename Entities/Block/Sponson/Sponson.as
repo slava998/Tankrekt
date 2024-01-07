@@ -259,14 +259,18 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		const Vec2f _vel = (aimVector * PROJECTILE_SPEED) + offset;
 		const f32 _lifetime = Maths::Max(0.05f + aimdist/PROJECTILE_SPEED/32.0f, 0.25f);
 
-		if(canShoot(this))
+		print(canShoot(this) + "");
+		if (isServer())
 		{
-			CBitStream bs;
-			bs.write_netid(params.read_netid());
-			bs.write_Vec2f(_vel);
-			bs.write_f32(_lifetime);
-			this.SendCommand(this.getCommandID("fire"), bs);
-			this.set_u32("fire time", getGameTime());
+			if(canShoot(this))
+			{
+				CBitStream bs;
+				bs.write_netid(params.read_netid());
+				bs.write_Vec2f(_vel);
+				bs.write_f32(_lifetime);
+				this.SendCommand(this.getCommandID("fire"), bs);
+				this.set_u32("fire time", getGameTime());
+			}
 		}
 	}
 }
