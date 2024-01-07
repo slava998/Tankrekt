@@ -438,13 +438,16 @@ void onTick(CBlob@ this)
 					for (u16 i = 0; i < sponsonsLength; ++i)
 					{
 						CBlob@ weap = getBlobByNetworkID(sponsons[i]);
-						pos = weap.getPosition();
-						AimVec = aimpos - pos;
-						if (weap is null || !weap.get_bool("fire ready")) continue;
-									
-						Vec2f dirFacing = Vec2f(1, 0).RotateBy(weap.getAngleDegrees());
-						//if (Maths::Abs(dirFacing.AngleWith(aimpos)) < 40)
-							fireSponsons.push_back(weap);
+						if(weap !is null)
+						{
+							pos = weap.getPosition();
+							AimVec = aimpos - pos;
+							if (weap is null || !weap.get_bool("fire ready")) continue;
+										
+							Vec2f dirFacing = Vec2f(1, 0).RotateBy(weap.getAngleDegrees());
+							//if (Maths::Abs(dirFacing.AngleWith(aimpos)) < 40)
+								fireSponsons.push_back(weap);
+						}
 					}
 							
 					if (fireSponsons.length > 0)
