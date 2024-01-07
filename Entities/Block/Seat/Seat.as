@@ -7,6 +7,7 @@ const u16 COUPLINGS_COOLDOWN = 8 * 30;
 const u16 CREW_COUPLINGS_LEASE = 10 * 30;//time till the captain can control crew's couplings
 const u16 UNUSED_RESET = 2 * 60 * 30;
 const u8 CANNON_FIRE_CYCLE = 15;
+const u8 SPONSON_FIRE_CYCLE = 5;
 
 void onInit(CBlob@ this)
 {
@@ -14,7 +15,7 @@ void onInit(CBlob@ this)
 
 	if (isServer())
 	{
-		u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons;					
+		u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons;					
 		this.set("left_propellers", left_propellers);
 		this.set("strafe_left_propellers", strafe_left_propellers);
 		this.set("strafe_right_propellers", strafe_right_propellers);
@@ -23,6 +24,7 @@ void onInit(CBlob@ this)
 		this.set("down_propellers", down_propellers);
 		this.set("machineguns", machineguns);
 		this.set("cannons", cannons);
+		this.set("sponsons", sponsons);
 		
 		this.set_bool("kUD", false);
 		this.set_bool("kLR", false);
@@ -263,8 +265,8 @@ void onTick(CBlob@ this)
 		//ship controlling: only ship 'captain' OR enemy can steer /direct fire
 		if (isCaptain || canHijack)
 		{
-			// gather propellers, couplings, machineguns and cannons
-			u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons;					
+			// gather propellers, couplings, machineguns, cannons and sponsons
+			u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons;					
 			this.get("left_propellers", left_propellers);
 			this.get("strafe_left_propellers", strafe_left_propellers);
 			this.get("strafe_right_propellers", strafe_right_propellers);
@@ -273,6 +275,7 @@ void onTick(CBlob@ this)
 			this.get("down_propellers", down_propellers);
 			this.get("machineguns", machineguns);
 			this.get("cannons", cannons);
+			this.get("sponsons", sponsons);
 
 			//propellers
 			const bool teamInsensitive = ship.owner != "*"; //combined ships, every side controls their own props
@@ -411,6 +414,59 @@ void onTick(CBlob@ this)
 			
 			if (!space && !Human::isHoldingBlocks(occupier) && !Human::wasHoldingBlocks(occupier))
 			{
+				//rotate & fire sponsons
+				Vec2f aimpos = occupier.getAimPos();
+				Vec2f pos, AimVec;
+				const u16 sponsonsLength = sponsons.length;
+				for (u16 i = 0; i < sponsonsLength; ++i)
+				{
+					CBlob@ sponson = getBlobByNetworkID(sponsons[i]);;
+					if(sponson !is null)
+					{
+						pos = sponson.getPosition();
+						AimVec = aimpos - pos;
+						//rotate
+						CBitStream bs;
+						bs.write_Vec2f(AimVec);
+						sponson.SendCommand(sponson.getCommandID("rotate"), bs);
+					}
+				}
+				//fire
+				if (left_click && sponsonsLength > 0 && this.get_u32("lastSponsonFire") + SPONSON_FIRE_CYCLE < gameTime)
+				{
+					CBlob@[] fireSponsons;
+					for (u16 i = 0; i < sponsonsLength; ++i)
+					{
+						CBlob@ weap = getBlobByNetworkID(sponsons[i]);
+						pos = weap.getPosition();
+						AimVec = aimpos - pos;
+						if (weap is null || !weap.get_bool("fire ready")) continue;
+									
+						Vec2f dirFacing = Vec2f(1, 0).RotateBy(weap.getAngleDegrees());
+						//if (Maths::Abs(dirFacing.AngleWith(aimpos)) < 40)
+							fireSponsons.push_back(weap);
+					}
+							
+					if (fireSponsons.length > 0)
+					{
+						const u8 index = this.get_u8("sponsonFireIndex");
+						CBlob@ weap = fireSponsons[index % fireSponsons.length];
+						pos = weap.getPosition();
+						AimVec = aimpos - pos;
+						if(isClearShot(weap, AimVec))
+						{
+							CBitStream bs;
+							bs.write_Vec2f(AimVec);
+							bs.write_netid(occupier.getNetworkID());
+							
+							weap.SendCommand(weap.getCommandID("RecieveFireCMD"), bs);
+							this.set_u32("lastSponsonFire", gameTime);
+						}
+						this.set_u8("sponsonFireIndex", index + 1);
+					}		
+				
+				}
+
 				//machineguns on left click
 				Vec2f aim = occupier.getAimPos() - this.getPosition();//relative to seat
 				if (left_click)
@@ -432,7 +488,7 @@ void onTick(CBlob@ this)
 				}
 				//cannons on right click
 				const u16 cannonsLength = cannons.length;
-				if (right_click && cannonsLength > 0 && this.get_u32("lastCannonFire") + CANNON_FIRE_CYCLE < gameTime)
+				if (right_click && cannonsLength > 0 && this.get_u32("lastSponsonFire") + CANNON_FIRE_CYCLE < gameTime)
 				{
 					CBlob@[] fireCannons;
 					
@@ -469,6 +525,56 @@ void onTick(CBlob@ this)
 	}
 }
 
+const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged = false)
+{
+	Vec2f pos = blob.getPosition();
+	const f32 distanceToTarget = Maths::Max(aimVec.Length(), 80.0f);
+	CMap@ map = getMap();
+
+	Vec2f offset = aimVec;
+	offset.Normalize();
+	offset *= 7.0f;
+
+	HitInfo@[] hitInfos;
+	map.getHitInfosFromRay(pos + offset.RotateBy(30), -aimVec.Angle(), distanceToTarget, blob, @hitInfos);
+	map.getHitInfosFromRay(pos + offset.RotateBy(-60), -aimVec.Angle(), distanceToTarget, blob, @hitInfos);
+	
+	const u8 hitLength = hitInfos.length;
+	if (hitLength > 0)
+	{
+		//HitInfo objects are sorted, first come closest hits
+		for (u8 i = 0; i < hitLength; i++)
+		{
+			HitInfo@ hi = hitInfos[i];
+			CBlob@ b = hi.blob;
+			if (b is null || b is blob) continue;
+
+			const int thisColor = blob.getShape().getVars().customData;
+			const int bColor = b.getShape().getVars().customData;
+			
+			const bool sameShip = bColor != 0 && thisColor == bColor;
+			const bool canShootSelf = targetMerged && hi.distance > distanceToTarget * 0.7f;
+
+			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && ((b.hasTag("solid") && !b.hasTag("plank"))) && sameShip && !canShootSelf)
+			{
+				return false;
+			}
+		}
+	}
+	
+	//check to make sure we aren't shooting through rock
+	Vec2f solidPos;
+	if (map.rayCastSolid(pos, pos + aimVec, solidPos))
+	{
+		AttachmentPoint@ seat = blob.getAttachmentPoint(0);
+		CBlob@ occupier = seat.getOccupied();
+
+		if (occupier is null) return false;
+	}
+
+	return true;
+}
+
 //stop props on sit down if possible
 void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint@ attachedPoint)
 {
@@ -497,7 +603,7 @@ void updateArrays(CBlob@ this, Ship@ ship)
 {
 	this.set_bool("updateBlock", false);
 
-	u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons;	
+	u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons;	
 	const u16 blocksLength = ship.blocks.length;
 	for (u16 i = 0; i < blocksLength; ++i)
 	{
@@ -513,6 +619,8 @@ void updateArrays(CBlob@ this, Ship@ ship)
 			machineguns.push_back(netID);
 		else if (block.hasTag("cannon"))
 			cannons.push_back(netID);
+		else if (block.hasTag("sponson"))
+			sponsons.push_back(netID);
 		
 		//propellers
 		if (block.hasTag("engine"))
@@ -553,6 +661,7 @@ void updateArrays(CBlob@ this, Ship@ ship)
 	this.set("down_propellers", down_propellers);
 	this.set("machineguns", machineguns);
 	this.set("cannons", cannons);
+	this.set("sponsons", sponsons);
 }
 
 void server_setOwner(CBlob@ this, const string&in owner)
