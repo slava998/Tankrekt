@@ -147,7 +147,7 @@ const f32 getDamage(CBlob@ hitBlob)
 	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("core"))
 		return 0.15f;
 	if (hitBlob.hasTag("stone"))
-		return 0.4f;
+		return 0.3f;
 	return 0.5f; //solids
 }
 
