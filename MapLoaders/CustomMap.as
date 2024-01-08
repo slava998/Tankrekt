@@ -18,7 +18,6 @@ namespace CMap
 	{
 		color_main_spawn = 0xff00ffff,
 		color_station = 0xffff0000,
-		color_stationnobuild = 0xffff1111,	
 		color_palmtree = 0xff009600
 	};
 	
@@ -61,16 +60,6 @@ namespace CMap
 			case color_station:
 			{
 				CBlob@ stationBlob = spawnBlob(map, "station", offset, 255, false);	
-				stationBlob.getSprite().SetFrame(0);
-				
-				map.SetTile(offset, CMap::sand_inland);	
-				map.AddTileFlag(offset, Tile::BACKGROUND);
-				map.AddTileFlag(offset, Tile::LIGHT_PASSES);
-				return;
-			}
-			case color_stationnobuild:
-			{
-				CBlob@ stationBlob = spawnBlob(map, "stationnobuild", offset, 255, false);	
 				stationBlob.getSprite().SetFrame(0);
 				
 				map.SetTile(offset, CMap::sand_inland);	

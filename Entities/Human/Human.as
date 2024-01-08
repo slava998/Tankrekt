@@ -432,7 +432,7 @@ void PlayerControls(CBlob@ this)
 						const s32 overlappingShipID = this.get_s32("shipID");
 						Ship@ pShip = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
 						if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-							|| ((pShip.isStation && !pShip.isStationNoBuild|| pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
+							|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
 						{
 							buildMenuOpen = true;
 							this.set_bool("justMenuClicked", true);
@@ -606,9 +606,6 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Sponson Cannon
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
 		AddBlock(this, menu, "sponson", "$FLAK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
-	}
-	{ //Wheel
-		AddBlock(this, menu, "wheel", "$WHEEL$", Trans::Wheel, Trans::Wheel, core, 1.0f);
 	}
 }
 
