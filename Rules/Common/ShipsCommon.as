@@ -14,6 +14,7 @@ shared class Ship
 	Vec2f origin_offset;      //origin's offset from the ship's center
 	bool isMothership;        //does the ship contain a mothership core?
 	bool isStation;           //does the ship contain a station?
+	bool isStationNoBuild;    //station without permission to build.
 	bool isSecondaryCore;     //does the ship contain an auxiliary core?
 	bool colliding;           //used in ship collisions to stop ships from colliding twice in the same tick
 	
@@ -23,7 +24,7 @@ shared class Ship
 	Ship()
 	{
 		angle = angle_vel = old_angle = mass = carryMass = 0.0f;
-		colliding = isMothership = isStation = isSecondaryCore = false;
+		colliding = isMothership = isStation = isSecondaryCore = isStationNoBuild = false;
 		@centerBlock = null;
 		id = soundsPlayed = 0;
 		owner = "";
