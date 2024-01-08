@@ -515,7 +515,6 @@ bool onServerProcessChat(CRules@ this, const string& in text_in, string& out tex
 					string shipType = !ship.owner.isEmpty() ? "Miniship" : "";
 					if (ship.isMothership) shipType = "Mothership";
 					if (ship.isSecondaryCore) shipType += (shipType.length > 0 ? ", " : "")+"Secondary Core";
-					if (ship.isStationNoBuild) shipType += (shipType.length > 0 ? ", " : "")+"StationNoBuild";
 					if (ship.isStation) shipType += (shipType.length > 0 ? ", " : "")+"Station";
 					
 					//RGB cause cool
