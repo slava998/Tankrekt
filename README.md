@@ -3,7 +3,9 @@ Tankrekt is a mod about building huge forts and tanks from blocks, driving them 
 Based on Gingerbeard's Shiprekt++
 
 Our discord server: https://discord.gg/Mk4Kcrg5R5
+
 If not works:
+
 Slava discord: pankovvyacheslav
 Slait discord: slait12
 
