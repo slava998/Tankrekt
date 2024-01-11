@@ -21,7 +21,7 @@ const int CONSTRUCT_RANGE = 48;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 4);
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 4); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 
@@ -606,6 +606,10 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Sponson Cannon
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
 		AddBlock(this, menu, "sponson", "$FLAK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
+	}
+	{ //Engine
+		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
+		AddBlock(this, menu, "engineblock", "$ENGINE$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
 	}
 }
 

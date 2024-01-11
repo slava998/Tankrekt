@@ -9,6 +9,16 @@ shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&o
 	moveVel = Vec2f(0.0f, PROPELLER_SPEED * power).RotateBy(this.getAngleDegrees());
 	moveNorm = moveVel;
 	const f32 moveSpeed = moveNorm.Normalize();
+	int engineblockcount = 0;
+	
+	const u16 blocksLength = ship.blocks.length;
+	for (u16 q = 0; q < blocksLength; ++q)
+	{
+		ShipBlock@ ship_block = ship.blocks[q];
+		CBlob@ b = getBlobByNetworkID(ship_block.blobID);
+		if (b.hasTag("engineblock"))
+			engineblockcount += 1;
+	}
 
 	// calculate "proper" force
 
@@ -19,7 +29,7 @@ shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&o
 	const f32 directionMag = ship.blocks.length > 2 ? Maths::Abs(fromCenter * moveNorm) : 1.0f; //how "aligned" it is from center
 	const f32 velCoef = (directionMag + centerMag)*0.5f;
 
-	moveVel *= velCoef;
+	moveVel *= velCoef + (engineblockcount * 1.5);
 
 	const f32 dragFactor = Maths::Max(0.2f, 1.1f - 0.005f * ship.blocks.length);
 	const f32 turnDirection = Vec2f(dragFactor * moveNorm.y, dragFactor * -moveNorm.x) * fromCenter; //how "disaligned" it is from center
