@@ -245,10 +245,10 @@ void DrawCoreStatus(CBlob@ core, Vec2f&in tl, CControls@ controls)
 
 void DrawStationStatus(const u8&in teamnum, Vec2f&in tl, CControls@ controls)
 {
-	GUI::DrawIcon("Station.png", 0, Vec2f(16,16), tl + Vec2f(210, 4), 1.0f, teamnum);
+	GUI::DrawIcon("BootyStation.png", 0, Vec2f(16,16), tl + Vec2f(210, 4), 1.0f, teamnum);
 	
 	CBlob@[] stations;
-	getBlobsByTag("station", @stations);
+	getBlobsByTag("booty_station", @stations);
 	
 	const u8 totalStationCount = stations.length;
 	u8 teamStationCount = 0;

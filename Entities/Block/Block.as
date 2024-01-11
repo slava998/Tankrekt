@@ -125,7 +125,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 		//TODO: isolate collision code in each blob's script rather than here
 				
 		const bool docking = (this.hasTag("coupling") || blob.hasTag("coupling")) && this.getTeamNum() == blob.getTeamNum()
-				&& ((ship.isMothership || other_ship.isMothership) || (ship.isSecondaryCore || other_ship.isSecondaryCore) || (ship.isStation || other_ship.isStation))
+				&& ((ship.isMothership || other_ship.isMothership) || (ship.isSecondaryCore || other_ship.isSecondaryCore) || (ship.isStation || (other_ship.isStation && !other_ship.isBootyStation)))
 				&& ((!ship.isMothership && !ship.isSecondaryCore && !ship.owner.isEmpty()) || (!other_ship.isMothership && !other_ship.isSecondaryCore && !other_ship.owner.isEmpty()));
 		
 		if (docking) //force ship merge

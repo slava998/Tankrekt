@@ -90,7 +90,7 @@ void onTick(CRules@ this)
 			const u8 pteam = player.getTeamNum();
 			u8 pStationCount = 0;
 			CBlob@[] stations;
-			getBlobsByTag("station", @stations);
+			getBlobsByTag("booty_station", @stations);
 			const u8 stationsLength = stations.length;
 			for (u8 u = 0; u < stationsLength; u++)
 			{
