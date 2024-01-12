@@ -122,8 +122,6 @@ void onTick(CBlob@ this)
 	{
 		EndConstructEffects(this, sprite);
 	}
-	const SColor col = SColor(0xfff000ff);
-	print("" + col.color);
 }
 
 // Move the player
@@ -611,7 +609,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	}
 	{ //Engine
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "engineblock", "$ENGINE$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
+		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.0f);
 	}
 }
 

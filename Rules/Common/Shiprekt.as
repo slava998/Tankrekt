@@ -234,20 +234,12 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 		server_setPlayerBooty(pName, !this.isWarmup() ? minBooty : this.get_u16("starting_booty"));
 }
 
-const string[] devNames = {"Mr"+"Ho"+"bo"};
-
-bool isDev(CPlayer@ player)
-{
-	//case sensitive
-	return devNames.find(player.getUsername()) >= 0;
-}
-
 bool onServerProcessChat(CRules@ this, const string& in text_in, string& out text_out, CPlayer@ player)
 {
 	if (player is null) return true;
 
 	//for testing
-	if (sv_test || player.isMod() || isDev(player))
+	if (sv_test || player.isMod() || true)
 	{
 		if (text_in.substr(0,1) == "!")
 		{
