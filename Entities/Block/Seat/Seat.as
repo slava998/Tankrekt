@@ -493,7 +493,7 @@ void onTick(CBlob@ this)
 				}
 				//cannons on right click
 				const u16 cannonsLength = cannons.length;
-				if (right_click && cannonsLength > 0 && this.get_u32("lastSponsonFire") + CANNON_FIRE_CYCLE < gameTime)
+				if (right_click && cannonsLength > 0 && this.get_u32("lastCannonFire") + CANNON_FIRE_CYCLE < gameTime)
 				{
 					CBlob@[] fireCannons;
 					
