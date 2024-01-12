@@ -611,6 +611,10 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
 		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.0f);
 	}
+	{ //Engine
+		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
+		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
+	}
 }
 
 // Add a block to the build menu
