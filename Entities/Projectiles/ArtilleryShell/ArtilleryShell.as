@@ -39,6 +39,7 @@ void onInit(CBlob@ this)
 
 void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 {
+
 	if (b is null) //solid tile collision
 	{
 		this.server_Die();
