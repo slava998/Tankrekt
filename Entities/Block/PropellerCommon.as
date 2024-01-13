@@ -91,8 +91,8 @@ void onTick(CBlob@ this)
 				PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
 				
 				const f32 mass = ship.mass + ship.carryMass + 0.01f;
-				moveVel /= mass;
-				angleVel /= mass;
+				moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+				angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
 				
 				ship.vel += moveVel;
 				ship.angle_vel += angleVel;
