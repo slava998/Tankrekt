@@ -53,7 +53,7 @@ void onTick(CBlob@ this)
 		Vec2f smoke_pos = Vec2f(this.getPosition().x + (XORRandom(4) - XORRandom(2)) * 0.5, this.getPosition().y + (XORRandom(4) - XORRandom(2)) * 0.5);
 		Vec2f smoke_vel = Vec2f(velraw.x + (XORRandom(4) - XORRandom(2)) * 0.25, velraw.y + (XORRandom(4) - XORRandom(2)) * 0.25);
 
-		if(v_fastrender) //less smoke is faster graphics is enabled
+		if(v_fastrender) //less smoke if faster graphics is enabled
 		{
 			if(getGameTime() % Maths::Floor((Maths::Clamp(64 / Maths::Max(vel * 2, 1), 2, 64))) == 0)
 			{
