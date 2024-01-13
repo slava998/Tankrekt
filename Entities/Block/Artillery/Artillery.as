@@ -2,6 +2,8 @@
 #include "AccurateSoundPlay.as";
 #include "ParticleSpark.as";
 #include "ShipsCommon.as";
+#include "Hitters.as";
+#include "ExplosionEffects.as";
 
 const f32 PROJECTILE_SPEED = 10.0f;
 const f32 PROJECTILE_SPREAD = 0.5f;
@@ -17,6 +19,9 @@ const u8 REFILL_SECONDARY_CORE_SECONDS = 30;
 const u8 REFILL_SECONDARY_CORE_AMOUNT = 1;
 const Vec2f BARREL_OFFSET = Vec2f(-5, 0);
 
+const f32 BOMB_RADIUS = 15.0f;
+const f32 BOMB_BASE_DAMAGE = 2.7f;
+
 Random _shotspreadrandom(0x11598); //clientside
 
 void onInit(CBlob@ this)
@@ -28,7 +33,7 @@ void onInit(CBlob@ this)
 	this.set_string("seat label", "Operate Artillery");
 	this.set_u8("seat icon", 7);
 	
-	this.set_f32("weight", 10.0f);
+	this.set_f32("weight", 12.0f);
 	this.set_u16("fire_rate_accelerated", FIRE_RATE);
 	
 	this.addCommandID("fire");
@@ -239,6 +244,82 @@ const f32 loopAngle(f32 angle)
 	while (angle < 0.0f)	angle += 360.0f;
 	while (angle > 360.0f)	angle -= 360.0f;
 	return angle;
+}
+
+void onDie(CBlob@ this)
+{
+	Vec2f pos = this.getPosition();
+
+	//if (isServer())
+	//	explode(this);
+		
+	if (this.getShape().getVars().customData > 0 && !this.hasTag("disabled"))
+	{
+		if (isServer()) Explode(this);
+			
+		if (isClient())
+		{
+			directionalSoundPlay("Bomb.ogg", pos, 2.0f);
+			const u8 particleAmount = v_fastrender ? 1 : 3;
+			for (u8 i = 0; i < particleAmount; i++)
+			{
+				makeSmallExplosionParticle(pos + getRandomVelocity(90, 12, 360));
+			}
+		}
+	}
+}
+
+void Explode(CBlob@ this, const f32&in radius = BOMB_RADIUS)
+{
+	const Vec2f pos = this.getPosition();
+
+	if (isClient())
+	{
+		directionalSoundPlay("Bomb.ogg", pos);
+		makeLargeExplosionParticle(pos);
+		ShakeScreen(4 * radius, 45, pos);
+	}
+
+	//hit blobs
+	CBlob@[] blobs;
+	if (!getMap().getBlobsInRadius(pos, (radius-3), @blobs))
+		return;
+	
+	ShipDictionary@ ShipSet = getShipSet();
+	const u8 blobsLength = blobs.length;
+	for (u8 i = 0; i < blobsLength; i++)
+	{
+		CBlob@ hit_blob = blobs[i];
+		if (hit_blob is this) continue;
+		
+		const int hitCol = hit_blob.getShape().getVars().customData;
+
+		if (isServer())
+		{
+			Vec2f hit_blob_pos = hit_blob.getPosition();  
+
+			if (hit_blob.hasTag("block"))
+			{
+				if (hitCol <= 0) continue;
+
+				// move the ship
+				Ship@ ship = ShipSet.getShip(hitCol);
+				if (ship !is null && ship.mass > 0.0f)
+				{
+					Vec2f impact = (hit_blob_pos - pos) * 0.15f / ship.mass;
+					ship.vel += impact;
+				}
+			}
+		
+			const f32 distanceFactor = Maths::Min(1.0f, Maths::Max(0.0f, BOMB_RADIUS - this.getDistanceTo(hit_blob) + 8.0f) / BOMB_RADIUS);
+			//f32 distanceFactor = 1.0f;
+			const f32 damageFactor = (hit_blob.hasTag("mothership")) ? 0.25f : 1.0f;
+
+			//hit the object
+			this.server_Hit(hit_blob, hit_blob_pos, Vec2f_zero, BOMB_BASE_DAMAGE * distanceFactor * damageFactor, Hitters::bomb, true);
+			//print(hit_blob.getNetworkID() + " for: " + BOMB_BASE_DAMAGE * distanceFactor + " dFctr: " + distanceFactor + ", dist: " + this.getDistanceTo(hit_blob));
+		}
+	}
 }
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
