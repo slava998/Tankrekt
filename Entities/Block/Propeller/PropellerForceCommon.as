@@ -35,5 +35,5 @@ shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&o
 	const f32 dragFactor = Maths::Max(0.2f, 1.1f - 0.005f * ship.blocks.length);
 	const f32 turnDirection = Vec2f(dragFactor * moveNorm.y, dragFactor * -moveNorm.x) * fromCenter; //how "disaligned" it is from center
 	const f32 angleCoef = (1.0f - velCoef) * (1.0f - directionMag) * turnDirection;
-	angleVel = angleCoef * moveSpeed;
+	angleVel = (angleCoef * moveSpeed)*1.6f;
 }

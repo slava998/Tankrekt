@@ -18,6 +18,7 @@
 #include "Knocked.as"
 
 const int CONSTRUCT_RANGE = 48;
+const int DECONSTRUCT_RANGE = 16;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
@@ -600,20 +601,20 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		AddBlock(this, menu, "tanktrack", "$TANKTRACK$", Trans::TankTrack, Trans::TankTrackDesc, core, 1.0f);
 	}
 	{ //Tank Cannon
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, Trans::TankCannonDesc, core, 7.0f);
+		description = Trans::TankCannonDesc+"\n"+Trans::AmmoCap+": 10";// Slava change ammo cap when you balance this all
+		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, description, core, 7.0f);
 	}
 	{ //Sponson Cannon
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "sponson", "$FLAK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
+		description = Trans::SponsonCannonDesc+"\n"+Trans::AmmoCap+": 10";
+		AddBlock(this, menu, "sponson", "$SPONSON$", Trans::Sponson, description, core, 3.5f);
 	}
 	{ //Engine
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.0f);
+		description = Trans::EngineBlockDesc;
+		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::EngineBlock, description, core, 3.0f);
 	}
 	{ //Artillery
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Sponson, Trans::SponsonCannonDesc, core, 10.0f);
+		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 10"; 
+		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 12.0f);
 	}
 }
 
@@ -807,6 +808,9 @@ void Construct(CBlob@ this)
 	CBlob@ blob = getMap().getBlobAtPosition(aimPos);
 	if (blob !is null && blob.getShape().getVars().customData > 0 && aimVector.Length() <= CONSTRUCT_RANGE && !blob.hasTag("station"))
 	{
+		if (blob.getTeamNum() != this.getTeamNum() && aimVector.Length() >= DECONSTRUCT_RANGE)
+			return;
+
 		const string currentTool = this.get_string("current tool");
 		if (this.isMyPlayer() && canConstruct(this))
 		{
@@ -844,7 +848,7 @@ void Construct(CBlob@ this)
 				}
 				else
 				{
-					reclaim = -(constructAmount / 3);
+					reclaim = -(constructAmount / 6);
 					doWarning = true;
 				}
 				
