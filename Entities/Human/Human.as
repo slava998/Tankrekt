@@ -600,20 +600,20 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		AddBlock(this, menu, "tanktrack", "$TANKTRACK$", Trans::TankTrack, Trans::TankTrackDesc, core, 1.0f);
 	}
 	{ //Tank Cannon
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, Trans::TankCannonDesc, core, 7.0f);
+		description = Trans::TankCannonDesc+"\n"+Trans::AmmoCap+": 10";// Slava change ammo cap when you balance this all
+		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, description, core, 7.0f);
 	}
 	{ //Sponson Cannon
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "sponson", "$FLAK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
+		description = Trans::SponsonCannonDesc+"\n"+Trans::AmmoCap+": 10";
+		AddBlock(this, menu, "sponson", "$SPONSON$", Trans::Sponson, description, core, 3.5f);
 	}
 	{ //Engine
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.0f);
+		description = Trans::EngineBlockDesc;
+		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::EngineBlock, description, core, 3.0f);
 	}
-	{ //Engine
-		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
-		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Sponson, Trans::SponsonCannonDesc, core, 3.5f);
+	{ //Artillery
+		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 10"; 
+		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 12.0f);
 	}
 }
 
