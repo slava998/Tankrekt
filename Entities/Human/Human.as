@@ -18,6 +18,7 @@
 #include "Knocked.as"
 
 const int CONSTRUCT_RANGE = 48;
+const int DECONSTRUCT_RANGE = 16;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
@@ -807,6 +808,9 @@ void Construct(CBlob@ this)
 	CBlob@ blob = getMap().getBlobAtPosition(aimPos);
 	if (blob !is null && blob.getShape().getVars().customData > 0 && aimVector.Length() <= CONSTRUCT_RANGE && !blob.hasTag("station"))
 	{
+		if (blob.getTeamNum() != this.getTeamNum() && aimVector.Length() >= DECONSTRUCT_RANGE)
+			return;
+
 		const string currentTool = this.get_string("current tool");
 		if (this.isMyPlayer() && canConstruct(this))
 		{
@@ -844,7 +848,7 @@ void Construct(CBlob@ this)
 				}
 				else
 				{
-					reclaim = -(constructAmount / 3);
+					reclaim = -(constructAmount / 6);
 					doWarning = true;
 				}
 				
