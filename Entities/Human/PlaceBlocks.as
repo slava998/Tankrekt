@@ -5,6 +5,7 @@
 const f32 rotate_speed = 30.0f;
 const f32 max_build_distance = 32.0f;
 const u32 placement_time = 22;
+const u32 station_placement_time = 11; //placement time on station
 u8 crewCantPlaceCounter = 0;
 
 void onInit(CBlob@ this)
@@ -61,7 +62,7 @@ void onTick(CBlob@ this)
 		const u32 gameTime = getGameTime();
 		const bool overlappingShip = blocksOverlappingShip(blocks);
 		bool onRock = false;
-		bool notReady = (gameTime - this.get_u32("placedTime")) <= placement_time; // dont show block if we are not ready to build yet
+		bool notReady = (gameTime - this.get_u32("placedTime") <= (ship.isStation ? station_placement_time : placement_time)); // dont show block if we are not ready to build yet
 		for (u8 i = 0; i < blocksLength; ++i)
 		{
 			CBlob@ block = getBlobByNetworkID(blocks[i]);
