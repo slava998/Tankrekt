@@ -65,7 +65,7 @@ void onTick(CBlob@ this)
 			smoke(smoke_pos, smoke_vel);
 		}
 		sprite.SetEmitSoundVolume(2 * Maths::Clamp(vel, 1, 2.0f));
-		sprite.SetEmitSoundSpeed(Maths::Clamp(vel, 1, 1.5f));
+		sprite.SetEmitSoundSpeed(Maths::Clamp(vel * 0.3, 1, 1.5f));
     }
 }
 
