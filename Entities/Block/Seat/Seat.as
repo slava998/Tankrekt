@@ -620,7 +620,10 @@ void updateArrays(CBlob@ this, Ship@ ship)
 		
 		const u16 netID = block.getNetworkID();
 		if (block.hasTag("engineblock"))
+		{
 			engineblocks.push_back(netID);
+			ship.engineblockcount += 1.0f;
+		}
 		//machineguns
 		else if (block.hasTag("machinegun"))
 			machineguns.push_back(netID);

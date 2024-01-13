@@ -6,7 +6,8 @@ shared class Ship
 	f32 angle, angle_vel;     //angle of ship, angular velocity
 	Vec2f old_pos, old_vel;   //comparing new to old position, velocity
 	f32 old_angle;            //comparing new to old angle
-	f32 mass, carryMass;      //weight of the entire ship, weight carried by a player
+	f32 mass, carryMass;
+	int engineblockcount;      //weight of the entire ship, weight carried by a player
 	CBlob@ centerBlock;       //the block in the center of the entire ship
 	uint soundsPlayed;        //used in limiting sounds in propellers
 	string owner;             //username of the player who owns the ship
@@ -23,7 +24,7 @@ shared class Ship
 
 	Ship()
 	{
-		angle = angle_vel = old_angle = mass = carryMass = 0.0f;
+		angle = angle_vel = old_angle = mass = carryMass = engineblockcount = 0.0f;
 		colliding = isMothership = isStation = isBootyStation = isSecondaryCore = false;
 		@centerBlock = null;
 		id = soundsPlayed = 0;

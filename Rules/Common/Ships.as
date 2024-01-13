@@ -808,6 +808,7 @@ const bool Serialize(CRules@ this, CBitStream@ stream, const bool&in full_sync)
 			stream.write_f32(ship.angle);
 			stream.write_f32(ship.angle_vel);
 			stream.write_f32(ship.mass);
+			stream.write_f32(ship.engineblockcount);
 			stream.write_bool(ship.isMothership);
 			stream.write_bool(ship.isStation);
 			stream.write_bool(ship.isBootyStation);

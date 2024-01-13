@@ -7,17 +7,8 @@ const f32 ENGINE_BOOST = 4.0f; //actual value is 0.4, divided by 10
 
 shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&out moveVel, Vec2f&out moveNorm, f32&out angleVel)
 {
-	int engineblockcount = 0;
-	const u16 blocksLength = ship.blocks.length;
-	for (u16 q = 0; q < blocksLength; ++q)
-	{
-		ShipBlock@ ship_block = ship.blocks[q];
-		CBlob@ b = getBlobByNetworkID(ship_block.blobID);
-		if (b.hasTag("engineblock"))
-			engineblockcount += 1;
-	}
 
-	moveVel = Vec2f(0.0f, (PROPELLER_SPEED + (ENGINE_BOOST * engineblockcount) / 10) * power).RotateBy(this.getAngleDegrees());
+	moveVel = Vec2f(0.0f, (PROPELLER_SPEED + (ENGINE_BOOST * ship.engineblockcount) / 10) * power).RotateBy(this.getAngleDegrees());
 	moveNorm = moveVel;
 	const f32 moveSpeed = moveNorm.Normalize();
 
@@ -35,5 +26,5 @@ shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&o
 	const f32 dragFactor = Maths::Max(0.2f, 1.1f - 0.005f * ship.blocks.length);
 	const f32 turnDirection = Vec2f(dragFactor * moveNorm.y, dragFactor * -moveNorm.x) * fromCenter; //how "disaligned" it is from center
 	const f32 angleCoef = (1.0f - velCoef) * (1.0f - directionMag) * turnDirection;
-	angleVel = angleCoef * moveSpeed;
+	angleVel = (angleCoef * moveSpeed)*1.2; // rotating tank is slow so small buff shouldn`t destroy balance
 }
