@@ -53,19 +53,15 @@ void onTick(CBlob@ this)
 		Vec2f smoke_pos = Vec2f(this.getPosition().x + (XORRandom(4) - XORRandom(2)) * 0.5, this.getPosition().y + (XORRandom(4) - XORRandom(2)) * 0.5);
 		Vec2f smoke_vel = Vec2f(velraw.x + (XORRandom(4) - XORRandom(2)) * 0.25, velraw.y + (XORRandom(4) - XORRandom(2)) * 0.25);
 
-		if(v_fastrender) //less smoke if faster graphics is enabled
+		if(!v_fastrender) //no smoke if faster graphics is enabled
 		{
-			if(getGameTime() % Maths::Floor((Maths::Clamp(64 / Maths::Max(vel * 2, 1), 2, 64))) == 0)
+			if(getGameTime() % Maths::Floor((Maths::Clamp(32 / Maths::Max(vel * 2, 1), 2, 32))) == 0)
 			{
 				smoke(smoke_pos, smoke_vel);
 			}
+			sprite.SetEmitSoundVolume(2 * Maths::Clamp(vel, 1, 2.0f));
+			sprite.SetEmitSoundSpeed(Maths::Clamp(vel * 0.3, 1, 1.5f));
 		}
-		else if(getGameTime() % Maths::Floor((Maths::Clamp(32 / Maths::Max(vel * 2, 1), 2, 32))) == 0)
-		{
-			smoke(smoke_pos, smoke_vel);
-		}
-		sprite.SetEmitSoundVolume(2 * Maths::Clamp(vel, 1, 2.0f));
-		sprite.SetEmitSoundSpeed(Maths::Clamp(vel * 0.3, 1, 1.5f));
     }
 }
 
