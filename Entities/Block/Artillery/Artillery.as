@@ -7,7 +7,7 @@
 
 const f32 PROJECTILE_SPEED = 10.0f;
 const f32 PROJECTILE_SPREAD = 0.5f;
-const int FIRE_RATE = 500;
+const f32 FIRE_RATE = 500;
 const f32 PROJECTILE_RANGE = 600.0f;
 const int ENGINE_COEF = 17; //how much engines decrease reloading time, in ticks
 const f32 TURN_SPEED = 2.0f;
@@ -91,7 +91,7 @@ void onTick(CBlob@ this)
 		CSpriteLayer@ base = this.getSprite().getSpriteLayer("weapon");
 		CSpriteLayer@ barrel = this.getSprite().getSpriteLayer("movable");
 
-		f32 difference = gameTime - this.get_u32("fire time"); //needs to be a separate variable to make it float
+		f32 difference = gameTime - this.get_u32("fire time");
 		Vec2f barrel_offset = Vec2f(3, 0) - Vec2f(8, 0) * Maths::Min(difference / this.get_u16("fire_rate_accelerated"), 1);
 
 		if (barrel !is null)
@@ -149,7 +149,8 @@ void RecountEngines(CBlob@ this)
 		if (b.hasTag("engineblock"))
 			engineblockcount += 1;
 	}
-	this.set_u16("fire_rate_accelerated", Maths::Max(FIRE_RATE - engineblockcount * ENGINE_COEF, 15));
+	u16 firerate = Maths::Max(FIRE_RATE - engineblockcount * ENGINE_COEF, 8);
+	this.set_u16("fire_rate_accelerated", firerate);
 	return;
 }
 //
@@ -370,7 +371,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		if (isClient())
 		{
 			shotParticles(bullet_offset, angle);
-			directionalSoundPlay("Artillery_fire.ogg", bullet_offset, 2.5f);
+			directionalSoundPlay("Artillery_fire.ogg", bullet_offset, 5.5f);
 		}
     }
 }
