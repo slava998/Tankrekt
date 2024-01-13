@@ -34,7 +34,6 @@ void onInit(CBlob@ this)
 	this.set_u8("seat icon", 7);
 	
 	this.set_f32("weight", 12.0f);
-	this.set_u16("fire_rate_accelerated", FIRE_RATE);
 	
 	this.addCommandID("fire");
 
@@ -71,8 +70,6 @@ void onTick(CBlob@ this)
 	AttachmentPoint@ seat = this.getAttachmentPoint(0);
 	CBlob@ occupier = seat.getOccupied();
 	if (occupier !is null) Manual(this, occupier);
-
-	if(gameTime % 120 == 0) RecountEngines(this);
 	
 	if (isServer())
 	{
@@ -92,7 +89,7 @@ void onTick(CBlob@ this)
 		CSpriteLayer@ barrel = this.getSprite().getSpriteLayer("movable");
 
 		f32 difference = gameTime - this.get_u32("fire time");
-		Vec2f barrel_offset = Vec2f(3, 0) - Vec2f(8, 0) * Maths::Min(difference / this.get_u16("fire_rate_accelerated"), 1);
+		Vec2f barrel_offset = Vec2f(3, 0) - Vec2f(8, 0) * Maths::Min(difference / getAcceleratedFireRate(this), 1);
 
 		if (barrel !is null)
 		{
@@ -107,7 +104,7 @@ void onTick(CBlob@ this)
 			base.RotateBy(angle, Vec2f_zero);
 		}
 		
-		if(this.get_u16("fire_rate_accelerated") - difference == 18) directionalSoundPlay("Artillery_loaded", this.getPosition(), 1.8f);
+		if(getAcceleratedFireRate(this) - difference == 18) directionalSoundPlay("Artillery_loaded", this.getPosition(), 1.8f);
 	}
 }
 
@@ -129,35 +126,23 @@ void Manual(CBlob@ this, CBlob@ controller)
 	controller.setAngleDegrees((-this.get_f32("rot_angle")));
 }
 
-//TODO: REMAKE THIS!!!
-void RecountEngines(CBlob@ this)
+f32 getAcceleratedFireRate(CBlob@ this)
 {
-	if(this is null) return;
+	if(this is null) return FIRE_RATE;
 
 	const int col = this.getShape().getVars().customData;
-	if (col <= 0) return;
+	if (col <= 0) return FIRE_RATE;
 
 	Ship@ ship = getShipSet().getShip(col);
-	if (ship is null) return;
+	if (ship is null) return FIRE_RATE;
 	
-	u16 engineblockcount = 0;
-	const u16 blocksLength = ship.blocks.length;
-	for (u16 q = 0; q < blocksLength; ++q)
-	{
-		ShipBlock@ ship_block = ship.blocks[q];
-		CBlob@ b = getBlobByNetworkID(ship_block.blobID);
-		if (b.hasTag("engineblock"))
-			engineblockcount += 1;
-	}
-	u16 firerate = Maths::Max(FIRE_RATE - engineblockcount * ENGINE_COEF, 8);
-	this.set_u16("fire_rate_accelerated", firerate);
-	return;
+	f32 firerate = Maths::Max(FIRE_RATE - ship.engineblockcount * ENGINE_COEF, 8);
+	return firerate;
 }
-//
 
 bool canShootManual(CBlob@ this)
 {
-	return this.get_u32("fire time") + this.get_u16("fire_rate_accelerated") < getGameTime();
+	return this.get_u32("fire time") + getAcceleratedFireRate(this) < getGameTime();
 }
 
 void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
