@@ -60,7 +60,7 @@ namespace CMap
 			}
 			case color_station:
 			{
-				CBlob@ stationBlob = spawnBlob(map, "bootystation", offset, 255, false);	
+				CBlob@ stationBlob = spawnBlob(map, "station", offset, 255, false);	
 				stationBlob.getSprite().SetFrame(0);
 				
 				map.SetTile(offset, CMap::sand_inland);	
@@ -70,7 +70,7 @@ namespace CMap
 			}
 			case color_bootystation:
 			{
-				CBlob@ stationBlob = spawnBlob(map, "station", offset, 255, false);	
+				CBlob@ stationBlob = spawnBlob(map, "bootystation", offset, 255, false);	
 				stationBlob.getSprite().SetFrame(0);
 				
 				map.SetTile(offset, CMap::sand_inland);	
