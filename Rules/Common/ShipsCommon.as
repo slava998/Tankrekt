@@ -7,7 +7,7 @@ shared class Ship
 	Vec2f old_pos, old_vel;   //comparing new to old position, velocity
 	f32 old_angle;            //comparing new to old angle
 	f32 mass, carryMass;
-	int engineblockcount;      //weight of the entire ship, weight carried by a player
+	u16 engineblockcount;      //weight of the entire ship, weight carried by a player
 	CBlob@ centerBlock;       //the block in the center of the entire ship
 	uint soundsPlayed;        //used in limiting sounds in propellers
 	string owner;             //username of the player who owns the ship
