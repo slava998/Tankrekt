@@ -641,7 +641,13 @@ void SetUpdateBlocks(const int&in shipColor = 0)
 	CBlob@[] blocks;
 	getBlobsByTag("weapon", @blocks); //update docking info
 	getBlobsByTag("seat", @blocks);   //update controls
+	
 	UpdateBlocks(shipColor, blocks);
+
+	CBlob@[] engines;
+	getBlobsByTag("engineblock", @engines);
+	
+	RecountEngienes(shipColor, engines);
 }
 
 // Update core rings spritelayer
@@ -664,6 +670,25 @@ void UpdateBlocks(const int&in shipColor, CBlob@[] blocks)
 		if (b.getShape().getVars().customData == shipColor || shipColor == 0)
 			b.set_bool("updateBlock", true);
 	}
+}
+
+void RecountEngienes(const int&in shipColor, CBlob@[] engines)
+{
+	Ship@ ship = getShipSet().getShip(shipColor);
+	if(ship is null) return;
+
+	ship.engineblockcount = 0; //we are going to recount them
+
+	const u16 enginesLength = engines.length;
+	for (u16 i = 0; i < enginesLength; i++)
+	{
+		CBlob@ b = engines[i];
+		if (b.getShape().getVars().customData == shipColor || shipColor == 0)
+		{
+			ship.engineblockcount++; //recounting engines
+		}
+	}
+	print("ship.engineblockcount " + ship.engineblockcount);
 }
 
 // For collision with tiles (rock)
