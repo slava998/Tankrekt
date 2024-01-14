@@ -18,7 +18,7 @@
 #include "Knocked.as"
 
 const int CONSTRUCT_RANGE = 48;
-const int DECONSTRUCT_RANGE = 32;
+const int DECONSTRUCT_RANGE = 16;
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
@@ -815,9 +815,6 @@ void Construct(CBlob@ this)
 			return;
 
 		const string currentTool = this.get_string("current tool");
-
-		if(currentTool == "deconstructor" && isWayClear(this, blob)) return;
-		
 		if (this.isMyPlayer() && canConstruct(this))
 		{
 			Ship@ ship = getShipSet().getShip(blob.getShape().getVars().customData);
@@ -910,48 +907,6 @@ void Construct(CBlob@ this)
 	{
 		EndConstructEffects(this, sprite);
 	}
-}
-
-const bool isWayClear(CBlob@ this, CBlob@ blob)
-{
-	Vec2f pos = this.getPosition();
-	Vec2f blobPos = blob.getPosition();
-	const f32 distanceToTarget = (pos - blobPos).Length();
-	CMap@ map = getMap();
-
-	f32 angle = (blobPos - pos).Angle();
-	//angle.Normalize();
-
-	HitInfo@[] hitInfos;
-	map.getHitInfosFromRay(pos, -angle, distanceToTarget, this, @hitInfos);
-	
-	const u8 hitLength = hitInfos.length;
-	if (hitLength > 0)
-	{
-		//HitInfo objects are sorted, first come closest hits
-		for (u8 i = 0; i < hitLength; i++)
-		{
-			HitInfo@ hi = hitInfos[i];
-			CBlob@ b = hi.blob;
-			if (b is null || b is this) continue;
-
-			const int thisColor = this.getShape().getVars().customData;
-			const int bColor = b.getShape().getVars().customData;
-			
-			const bool sameShip = bColor != 0 && thisColor == bColor;
-
-			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && !sameShip)
-			{
-				return false;
-			}
-		}
-	}
-	
-	//check to make sure we aren't shooting through rock
-	Vec2f solidPos;
-	if (map.rayCastSolid(pos, pos + angle, solidPos)) return false;
-
-	return true;
 }
 
 // End any effects from contructing
