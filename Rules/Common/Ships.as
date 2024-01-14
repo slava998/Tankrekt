@@ -688,7 +688,7 @@ void RecountEngienes(const int&in shipColor, CBlob@[] engines)
 			ship.engineblockcount++; //recounting engines
 		}
 	}
-	print("ship.engineblockcount " + ship.engineblockcount);
+	//print("ship.engineblockcount " + ship.engineblockcount);
 }
 
 // For collision with tiles (rock)
