@@ -3,6 +3,8 @@ void onInit(CBlob@ this)
 	this.Tag("propeller");
 	this.Tag("solid");
 	this.Tag("landMotor");
+	this.Tag("ramengine");
+	this.Tag("ramming");
 	this.set_f32("mass_coef", 0.05f);
 	
 	this.set_f32("weight", 1.0f);
