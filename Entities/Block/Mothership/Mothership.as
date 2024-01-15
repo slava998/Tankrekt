@@ -9,6 +9,7 @@
 #include "Hitters.as";
 #include "BlockCosts.as";
 #include "ShiprektTranslation.as";
+#include "SpawnPointIDs.as"
 
 const u16 BASE_KILL_REWARD = 275;
 const f32 HEAL_RADIUS = 16.0f;
@@ -24,8 +25,11 @@ void onInit(CBlob@ this)
 	this.Tag("mothership");
 	this.Tag("core");
 	this.Tag("noRenderHealth");
+	this.Tag("spawnPoint");
 	this.addCommandID("buyBlock");
 	this.addCommandID("returnBlocks");
+	this.addCommandID("SetSpawn");
+	this.set_u8("seat icon", 7);
 	
 	this.set_f32("weight", 12.0f);
 	
@@ -80,6 +84,37 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
 		if (caller !is null)
 			ReturnBlocks(caller);
+	}
+	else if (cmd == this.getCommandID("SetSpawn"))
+    {
+		if(!isServer()) return;
+
+		if(this is null) return;
+
+		CBlob@ caller = getBlobByNetworkID(params.read_netid());
+		if(caller is null) return;
+
+		CPlayer@ player = caller.getPlayer();
+		if(player is null) return;
+
+		server_setSpawnPoint(player.getUsername(), this.getNetworkID());
+	}
+}
+
+void GetButtonsFor(CBlob@ this, CBlob@ caller)
+{
+	if (this.getDistanceTo(caller) > 6
+		|| this.getShape().getVars().customData <= 0
+		|| this.getTeamNum() != caller.getTeamNum())
+		return;
+
+	CBitStream params;
+	params.write_netid(caller.getNetworkID());
+	CButton@ button = caller.CreateGenericButton(this.get_u8("seat icon"), Vec2f_zero, this, this.getCommandID("SetSpawn"), "Set Spawnpoint Here", params);
+	if (button !is null)
+	{
+		button.radius = 8.0f;
+		button.enableRadius = 12.0f;
 	}
 }
 
