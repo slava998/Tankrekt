@@ -3,12 +3,12 @@ void onInit(CBlob@ this)
 	this.Tag("propeller");
 	this.Tag("solid");
 	this.Tag("landMotor");
-	this.set_f32("mass_coef", 0.15f);
+	this.set_f32("mass_coef", 0.05f);
 	
 	this.set_f32("weight", 1.0f);
 	
 	this.set_f32("power", 0.0f);
-	this.set_f32("powerFactor", 7.0f);
+	this.set_f32("powerFactor", 10.0f);
 	this.set_u32("onTime", 0);
 	this.set_u8("stallTime", 0);
 
