@@ -25,7 +25,7 @@ const f32 BULLET_SPREAD = 0.0f;
 const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 4); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
-
+u32 HEAL_TICKS = 10 * 30;
 //global is fine since only used with isMyPlayer
 int useClickTime = 0;
 bool buildMenuOpen = false;
@@ -109,6 +109,12 @@ void onTick(CBlob@ this)
 	Move(this);
 	
 	DoKnockedUpdate(this);
+
+
+	if (getGameTime() % HEAL_TICKS == 0 && this.getHealth() != 1.0f)
+	{
+		this.server_SetHealth(this.getHealth() + 0.25f);
+	}
 
 	if (this.isMyPlayer())
 	{
