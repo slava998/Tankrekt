@@ -33,11 +33,12 @@ void onTick(CSprite@ this)
 		CBlob@ seat = ap.getOccupied(); //The blob player is attached to
 		if(seat !is null)
 		{
-			if(seat.get_f32("gives_zoom") < 0.5)
+			if(seat.exists("gives_zoom"))
 			{
-			binoculars_zoom = seat.get_f32("gives_zoom");
-			
-			print("" + binoculars_zoom);
+				if(seat.get_f32("gives_zoom") < 0.5)
+				{
+					binoculars_zoom = seat.get_f32("gives_zoom");
+				}
 			}
 		}                                                                                              
 	}
