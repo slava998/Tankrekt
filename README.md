@@ -1,4 +1,4 @@
-Tankrekt is a mod about building huge forts and tanks from blocks, driving them and a large-scale wars on land with a top-down view.
+Tankrekt is a mod about building huge forts and tanks from blocks, and a large-scale wars on land with a top-down view.
 
 Based on Gingerbeard's Shiprekt++
 
