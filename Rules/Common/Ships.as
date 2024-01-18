@@ -337,7 +337,7 @@ void InitShip(Ship@ ship)
 	if (ship.centerBlock is null) //when clients InitShip(), they should have key values pre-synced. no need to calculate
 	{
 		f32 totalMass = 0.0f;
-		ship.isMothership = ship.isStation = ship.isBootyStation = ship.isSecondaryCore = false; //recheck ship types
+		ship.isMothership = ship.isStation = ship.isBootyStation = ship.isBuildStation = ship.isSecondaryCore = false; //recheck ship types
 		
 		for (u16 i = 0; i < blocksLength; ++i)
 		{
@@ -352,8 +352,9 @@ void InitShip(Ship@ ship)
 			
 			//determine the ship type
 			if (b.hasTag("mothership"))     ship.isMothership = true;
-			if (b.hasTag("build_station"))  ship.isStation = true;
+			if (b.hasTag("station"))  ship.isStation = true;
 			if (b.hasTag("booty_station"))  ship.isBootyStation = true;
+			if (b.hasTag("build_station"))  ship.isBuildStation = true;
 			if (b.hasTag("secondaryCore"))  ship.isSecondaryCore = true;
 		}
 		center /= blocksLength;
@@ -837,6 +838,7 @@ const bool Serialize(CRules@ this, CBitStream@ stream, const bool&in full_sync)
 			stream.write_bool(ship.isMothership);
 			stream.write_bool(ship.isStation);
 			stream.write_bool(ship.isBootyStation);
+			stream.write_bool(ship.isBuildStation);
 			stream.write_bool(ship.isSecondaryCore);
 			stream.write_u16(blocksLength);
 			
@@ -1006,6 +1008,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 			ship.isMothership = params.read_bool();
 			ship.isStation = params.read_bool();
 			ship.isBootyStation = params.read_bool();
+			ship.isBuildStation = params.read_bool();
 			ship.isSecondaryCore = params.read_bool();
 			
 			if (ship.centerBlock !is null && ship.vel.LengthSquared() > 0.01f) //try to use local values to smoother sync

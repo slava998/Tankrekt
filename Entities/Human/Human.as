@@ -445,7 +445,7 @@ void PlayerControls(CBlob@ this)
 							this.set_bool("justMenuClicked", true);
 
 							Sound::Play("buttonclick.ogg");
-							BuildShopMenu(this, core, Trans::Components, Vec2f(0,0), (pShip.isStation || pShip.isSecondaryCore) && !pShip.isMothership);
+							BuildShopMenu(this, core, Trans::Components, Vec2f(0,0), (pShip.isBuildStation || pShip.isSecondaryCore) && !pShip.isMothership);
 						}
 					}
 				} 

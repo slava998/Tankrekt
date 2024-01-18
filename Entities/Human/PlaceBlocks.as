@@ -62,7 +62,7 @@ void onTick(CBlob@ this)
 		const u32 gameTime = getGameTime();
 		const bool overlappingShip = blocksOverlappingShip(blocks);
 		bool onRock = false;
-		bool notReady = (gameTime - this.get_u32("placedTime") <= (ship.isStation ? station_placement_time : placement_time)); // dont show block if we are not ready to build yet
+		bool notReady = (gameTime - this.get_u32("placedTime") <= (ship.isBuildStation ? station_placement_time : placement_time)); // dont show block if we are not ready to build yet
 		for (u8 i = 0; i < blocksLength; ++i)
 		{
 			CBlob@ block = getBlobByNetworkID(blocks[i]);
@@ -284,7 +284,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			const s32 overlappingShipID = this.get_s32("shipID");
 			Ship@ pShip = overlappingShipID > 0 ? ShipSet.getShip(overlappingShipID) : null;
 			if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-				|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
+				|| ((pShip.isBuildStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
 			{
 				this.set_bool("getting block", true);
 				this.Sync("getting block", false);
