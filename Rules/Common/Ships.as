@@ -337,7 +337,7 @@ void InitShip(Ship@ ship)
 	if (ship.centerBlock is null) //when clients InitShip(), they should have key values pre-synced. no need to calculate
 	{
 		f32 totalMass = 0.0f;
-		ship.isMothership = ship.isStation = ship.isBootyStation = ship.isBuildStation = ship.isSecondaryCore = false; //recheck ship types
+		ship.isMothership = ship.isStation = ship.isBootyStation = ship.isSecondaryCore = false; //recheck ship types
 		
 		for (u16 i = 0; i < blocksLength; ++i)
 		{
@@ -352,9 +352,8 @@ void InitShip(Ship@ ship)
 			
 			//determine the ship type
 			if (b.hasTag("mothership"))     ship.isMothership = true;
-			if (b.hasTag("station"))  ship.isStation = true;
+			if (b.hasTag("station"))        ship.isStation = true;
 			if (b.hasTag("booty_station"))  ship.isBootyStation = true;
-			if (b.hasTag("build_station"))  ship.isBuildStation = true;
 			if (b.hasTag("secondaryCore"))  ship.isSecondaryCore = true;
 		}
 		center /= blocksLength;
@@ -469,6 +468,9 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			ship.angle = loopAngle(ship.angle + ship.angle_vel);
 			ship.vel *= VEL_DAMPING;
 			ship.angle_vel *= ANGLE_VEL_DAMPING;
+
+			const f32 moveSpeed = ship.vel.Normalize();
+			print("sped " + moveSpeed);
 			
 			Vec2f offset = ship.origin_offset;
 			offset.RotateBy(ship.angle);
@@ -478,6 +480,8 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			
 			u16 beachedBlocks = 0;
 			u16 slowedBlocks = 0;
+			u16 roadBlocks = 0;
+			u16 mudBlocks = 0;
 			
 			for (u16 q = 0; q < blocksLength; ++q)
 			{
@@ -486,6 +490,8 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 				
 				Vec2f bPos = b.getPosition();	
 				Tile bTile = map.getTile(bPos);
+				const u16 tileType = map.getTile(bPos).type;
+				// print("tiletype: " + tileType);
 				
 				if (map.isTileSolid(bTile) && bPos.Length() > 15.0f) //are we on rock
 				{
@@ -493,24 +499,39 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 					if (!b.hasTag("mothership") || this.get_bool("whirlpool"))
 						b.server_Hit(b, bPos, Vec2f_zero, 1.0f, 0, true);
 				}
-				else if (isTouchingLand(bPos))  beachedBlocks++;
-				else if (isTouchingShoal(bPos)) slowedBlocks++;
-			}
-			
-			if (beachedBlocks > 0)
-			{
-				const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.3f);
-				ship.vel *= 1.0f - velocity;
-				ship.angle_vel *= 1.0f - velocity;
-			}
-			else if (slowedBlocks > 0)
-			{
-				const f32 velocity = Maths::Clamp(slowedBlocks / (ship.mass * 2), 0.0f, 0.02f);
-				ship.vel *= 1.0f - velocity;
-				ship.angle_vel *= 1.0f - velocity;
+				else if (isTouchingShoal(bPos)) // between water and land (slow)
+				{
+					slowedBlocks += 1;
+					const f32 velocity = Maths::Clamp(slowedBlocks / (ship.mass * 2), 0.0f, 0.02f);
+					ship.vel *= 1.0f - velocity;
+					ship.angle_vel *= 1.0f - velocity;
+				}
+				else if (tileType == 394 && !b.hasTag("tanktrack")) // road (good for wheels)
+				{
+					roadBlocks += 1;
+					const f32 velocity = Maths::Clamp(roadBlocks / ship.mass, 0.0f, 0.005f);
+					if (moveSpeed < 3.5f)
+					{
+						ship.vel *= 1.0f;
+						ship.angle_vel *= 1.0f;
+					}
+				}	
+				else if (tileType == 395 && !b.hasTag("wheel")) // mud (slow for wheels)
+				{
+					mudBlocks += 1;
+					const f32 velocity = Maths::Clamp(mudBlocks / ship.mass, 0.0f, 0.2f);
+					ship.vel *= 1.0f - velocity;
+					ship.angle_vel *= 1.0f - velocity;
+				}
+				else if (isTouchingLand(bPos)) // any land
+				{
+					beachedBlocks += 1;
+					const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.1f);
+					ship.vel *= 1.0f - velocity;
+					ship.angle_vel *= 1.0f - velocity;
+				}
 			}
 		}
-		
 		if (!isServer() || (getGameTime() + ship.id * 33) % 45 != 0)
 		{
 			for (u16 q = 0; q < blocksLength; ++q)
@@ -838,7 +859,6 @@ const bool Serialize(CRules@ this, CBitStream@ stream, const bool&in full_sync)
 			stream.write_bool(ship.isMothership);
 			stream.write_bool(ship.isStation);
 			stream.write_bool(ship.isBootyStation);
-			stream.write_bool(ship.isBuildStation);
 			stream.write_bool(ship.isSecondaryCore);
 			stream.write_u16(blocksLength);
 			
@@ -1008,7 +1028,6 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 			ship.isMothership = params.read_bool();
 			ship.isStation = params.read_bool();
 			ship.isBootyStation = params.read_bool();
-			ship.isBuildStation = params.read_bool();
 			ship.isSecondaryCore = params.read_bool();
 			
 			if (ship.centerBlock !is null && ship.vel.LengthSquared() > 0.01f) //try to use local values to smoother sync

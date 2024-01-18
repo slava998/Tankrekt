@@ -23,27 +23,7 @@ void onTick(CSprite@ this)
 	CControls@ controls = getControls();
 	const bool zoomIn = controls.isKeyJustPressed(controls.getActionKeyKey(AK_ZOOMIN));
 	const bool zoomOut = controls.isKeyJustPressed(controls.getActionKeyKey(AK_ZOOMOUT));
-
-	f32 binoculars_zoom = 0.5;
-
-	//check if we are in artillery
-	AttachmentPoint@ ap = blob.getAttachments().getAttachmentPointByName("SEAT");
-	if(ap !is null)
-	{
-		CBlob@ seat = ap.getOccupied(); //The blob player is attached to
-		if(seat !is null)
-		{
-			if(seat.exists("gives_zoom"))
-			{
-				if(seat.get_f32("gives_zoom") < 0.5)
-				{
-					binoculars_zoom = seat.get_f32("gives_zoom");
-				}
-			}
-		}                                                                                              
-	}
 	
-	//print("" + binoculars_zoom);
 	if (zoomIn)
 	{
 		if (cam_zoom == 1.0f)
@@ -53,10 +33,6 @@ void onTick(CSprite@ this)
 		else if (cam_zoom == 0.5f)
 		{
 			cam_zoom = 1.0f;
-		}
-		else if (cam_zoom < 0.5f)
-		{
-			cam_zoom = 0.5f;
 		}
 	}
 	else if (zoomOut)
@@ -69,25 +45,9 @@ void onTick(CSprite@ this)
 		{
 			cam_zoom = 1.0f;
 		}
-		else if (cam_zoom == 0.5f && binoculars_zoom < 0.5f) //unzoom farther if we are in artillery
-		{
-			cam_zoom = binoculars_zoom;
-		}
 	}
 
-	if(binoculars_zoom >= 0.5f && cam_zoom < 0.5f) cam_zoom = 0.5f; //unzoom if we got out of artillery
-
-	if(cam_zoom <= 0.5f)
-	{
-		camera.mousecamstyle = 1;
-		camera.mouseFactor = 0.0f;
-	}
-	else if(!g_fixedcamera)
-	{
-		camera.mousecamstyle = 2;
-		camera.mouseFactor = 0.5f;
-	}
-	cam_zoom = Maths::Clamp(cam_zoom, 0.1f, 2.0f);
+	cam_zoom = Maths::Clamp(cam_zoom, 0.5f, 2.0f);
 	
 	if (blob.getName() == "shark") return;
 	
@@ -117,7 +77,6 @@ void onTick(CSprite@ this)
 			angle = Maths::Ceil((camera.getRotation()-45.0f) / 90.0f) * 90.0f;
 		}
 	}
-
 	cam_angle = angle;
 }
 

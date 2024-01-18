@@ -5,7 +5,6 @@
 void onInit(CBlob@ this)
 {
 	this.Tag("station");
-	this.Tag("build_station");
 	this.Tag("noRenderHealth");
 	this.Tag("spawnPoint");
 	this.set_u8("capture time", 25);

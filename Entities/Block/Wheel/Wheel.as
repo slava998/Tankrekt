@@ -2,6 +2,7 @@ void onInit(CBlob@ this)
 {
 	this.Tag("propeller");
 	this.Tag("solid");
+	this.Tag("wheel");
 	this.Tag("landMotor");
 	this.Tag("ramengine");
 	this.Tag("ramming");
