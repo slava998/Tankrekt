@@ -498,13 +498,13 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			
 			if (beachedBlocks > 0)
 			{
-				const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass + 0.01f, 0.0f, 0.3f);
+				const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.3f);
 				ship.vel *= 1.0f - velocity;
 				ship.angle_vel *= 1.0f - velocity;
 			}
 			else if (slowedBlocks > 0)
 			{
-				const f32 velocity = Maths::Clamp(slowedBlocks / (ship.mass * 2 + 0.01f), 0.0f, 0.02f);
+				const f32 velocity = Maths::Clamp(slowedBlocks / (ship.mass * 2), 0.0f, 0.02f);
 				ship.vel *= 1.0f - velocity;
 				ship.angle_vel *= 1.0f - velocity;
 			}
