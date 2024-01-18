@@ -352,7 +352,7 @@ void InitShip(Ship@ ship)
 			
 			//determine the ship type
 			if (b.hasTag("mothership"))     ship.isMothership = true;
-			if (b.hasTag("station"))        ship.isStation = true;
+			if (b.hasTag("build_station"))  ship.isStation = true;
 			if (b.hasTag("booty_station"))  ship.isBootyStation = true;
 			if (b.hasTag("secondaryCore"))  ship.isSecondaryCore = true;
 		}

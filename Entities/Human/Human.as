@@ -53,7 +53,7 @@ void onInit(CBlob@ this)
 	this.addCommandID("makeBlockWithNoBase");
 
 	this.set_u8("TTL", 15); //bullet params
-	this.set_u8("speed", 28);
+	this.set_u8("speed", 31);
 
 	this.chatBubbleOffset = Vec2f(0.0f, 10.0f);
 	this.getShape().getVars().onground = true;
@@ -439,13 +439,13 @@ void PlayerControls(CBlob@ this)
 						const s32 overlappingShipID = this.get_s32("shipID");
 						Ship@ pShip = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
 						if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-							|| (((pShip.isStation && !pShip.isBootyStation) || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
+							|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
 						{
 							buildMenuOpen = true;
 							this.set_bool("justMenuClicked", true);
 
 							Sound::Play("buttonclick.ogg");
-							BuildShopMenu(this, core, Trans::Components, Vec2f(0,0), ((pShip.isStation && !pShip.isBootyStation) || pShip.isSecondaryCore) && !pShip.isMothership);
+							BuildShopMenu(this, core, Trans::Components, Vec2f(0,0), (pShip.isStation || pShip.isSecondaryCore) && !pShip.isMothership);
 						}
 					}
 				} 
