@@ -6,7 +6,7 @@
 #include "ParticleSpark.as";
 #include "BlockCosts.as";
  
-const f32 CONSTRUCT_RATE = 5.0f; //higher values = higher recover
+const f32 CONSTRUCT_RATE = 800.0f; //lower values = lower recover
 const int CONSTRUCT_VALUE = 5;
 const int NUM_HEALS = 5;
 
@@ -28,7 +28,7 @@ void onInit(CBlob@ this)
  
 void onTick(CBlob@ this)
 {
-	if (getGameTime() % 35 != 0) return;
+	if (getGameTime() % CONSTRUCT_RATE != 0) return;
 
 	if (this.getShape().getVars().customData <= 0) //not placed yet
 		return;
