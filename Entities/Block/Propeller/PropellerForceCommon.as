@@ -3,7 +3,7 @@
 #include "ShipsCommon.as";
 
 const f32 PROPELLER_SPEED = 0.9f; //0.9f
-const f32 ENGINE_BOOST = 4.0f; //actual value is 0.4, divided by 10
+const f32 ENGINE_BOOST = 3.0f; //actual value is 0.3, divided by 10
 
 shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&out moveVel, Vec2f&out moveNorm, f32&out angleVel)
 {
