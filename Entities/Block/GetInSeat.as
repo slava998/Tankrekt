@@ -98,4 +98,5 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint @attachedPoint)
 {
 	directionalSoundPlay("GetInVehicle.ogg", this.getPosition());
+	detached.setPosition(this.getPosition());
 }
