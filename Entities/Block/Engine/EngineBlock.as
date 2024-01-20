@@ -4,7 +4,7 @@
 #include "ExplosionEffects.as";;
 #include "ParticleSpark.as";
 
-const f32 EXPLODE_RADIUS = 30.0f;
+const f32 EXPLODE_RADIUS = 90.0f;
 
 void onInit(CBlob@ this)
 {
@@ -111,8 +111,7 @@ void explode(CBlob@ this)
 				if (b is null || b is this) continue;
 				
 				const bool sameTeam = b.getTeamNum() == this.getTeamNum();
-				if (b.hasTag("solid") || b.hasTag("door") || (!sameTeam
-					&& (b.hasTag("seat") || b.hasTag("weapon") || b.hasTag("projectile") || b.hasTag("core") || b.hasTag("bomb") || (b.hasTag("player") && !b.isAttached()))))
+				if (b.hasTag("solid") || b.hasTag("door") || b.hasTag("seat") || b.hasTag("weapon") || b.hasTag("projectile") || b.hasTag("core") || b.hasTag("bomb") || (b.hasTag("player") && !b.isAttached()))
 				{
 					this.server_Hit(b, hitInfos[i].hitpos, Vec2f_zero, getDamage(b), Hitters::bomb, true);
 					break;
@@ -126,19 +125,23 @@ void explode(CBlob@ this)
 
 const f32 getDamage(CBlob@ hitBlob)
 {
+	if (hitBlob.hasTag("engineblock"))
+		return 40.0f; //chain explosion
 	if (hitBlob.hasTag("rocket"))
-		return 0.25f; 
+		return 1.25f; 
 	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank"))
-		return 0.4f;
+		return 1.5f;
 	if (hitBlob.hasTag("ramengine"))
-		return 0.4f;
+		return 3.0f;
 	if (hitBlob.hasTag("door"))
-		return 0.3f;
+		return 1.0f;
 	if (hitBlob.getName() == "shark" || hitBlob.getName() == "human")
-		return 0.3f;
-	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("bomb") || hitBlob.hasTag("core"))
+		return 1.0f;
+	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("bomb"))
+		return 2.0f;
+	if (hitBlob.hasTag("core"))
 		return 0.2f;
-	return 0.09f;
+	return 1.0f;
 }
 
 Random _smokerandom(0x15125); //clientside
