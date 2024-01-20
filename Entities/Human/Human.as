@@ -623,7 +623,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	}
 	{ //Artillery
 		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 6"; 
-		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 12.0f);
+		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 40.0f);
 	}
 }
 

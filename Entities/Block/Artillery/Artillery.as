@@ -33,7 +33,7 @@ void onInit(CBlob@ this)
 	this.set_string("seat label", "Operate Artillery");
 	this.set_u8("seat icon", 7);
 	
-	this.set_f32("weight", 12.0f);
+	this.set_f32("weight", 40.0f);
 	
 	this.set_f32("gives_zoom", 0.3f);
 	
