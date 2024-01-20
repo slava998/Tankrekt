@@ -38,7 +38,7 @@ const f32 getDamage(CBlob@ hitBlob)
 		return 0.4f;
 	if (hitBlob.hasTag("bomb"))
 		return 1.35f;
-	if (hitBlob.hasTag("propeller"))
+	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 		return 0.75f;
 	if (hitBlob.hasTag("ramengine"))
 		return 1.5f;

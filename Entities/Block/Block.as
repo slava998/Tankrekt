@@ -155,7 +155,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				{
 					if (blob.hasTag("core"))
 						this.server_Hit(blob, point1, ship.vel, 0.5f, 0, true);
-					else if (blob.hasTag("propeller"))
+					else if (blob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 						this.server_Hit(blob, point1, ship.vel, 2.1f, 0, true);
 					else if (blob.hasTag("platform") || blob.hasTag("ramengine"))
 						Die(blob);
@@ -166,7 +166,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				}
 				else if (this.hasTag("ram"))
 				{
-					if (blob.hasTag("propeller") || blob.hasTag("plank"))
+					if (blob.hasTag("propeller") || blob.hasTag("plank") || blob.hasTag("engineblock"))
 					{
 						this.server_Hit(this, point1, ship.vel, 2.2f, 0, true);
 						Die(blob);

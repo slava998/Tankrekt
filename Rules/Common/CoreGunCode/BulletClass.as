@@ -245,7 +245,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 			return 0.8f;
 		if (hitBlob.hasTag("bomb"))
 			return 1.35f;
-		if (hitBlob.hasTag("propeller"))
+		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 			return 0.75f;
 		if (hitBlob.hasTag("ramengine"))
 			return 1.5f;
@@ -262,7 +262,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 
 		if (hitBlob.hasTag("ramengine"))
 			return 0.8f;
-		if (hitBlob.hasTag("propeller"))
+		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 			return 0.27f;
 		if (hitBlob.hasTag("plank"))
 			return 0.2f;
@@ -285,7 +285,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 	
 	if (hitBlob.hasTag("ramengine"))
 		return 0.25f;
-	if (hitBlob.hasTag("propeller"))
+	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 		return 0.20f;
 	if (hitBlob.hasTag("plank"))
 		return 0.12f;

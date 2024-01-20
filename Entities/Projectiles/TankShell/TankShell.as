@@ -136,12 +136,12 @@ const f32 getDamage(CBlob@ hitBlob)
 {
 	if (hitBlob.hasTag("rocket"))
 		return 3.0f; 
-	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank") || hitBlob.hasTag("bomb"))
+	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank") || hitBlob.hasTag("bomb") || hitBlob.hasTag("engineblock"))
 		return 0.5f;
 	if (hitBlob.hasTag("ramengine"))
 		return 0.5f;
 	if (hitBlob.hasTag("door"))
-		return 0.6f;
+		return 0.5f;
 	if (hitBlob.getName() == "shark" || hitBlob.getName() == "human")
 		return 3.0f; //no chances to survive
 	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("core"))

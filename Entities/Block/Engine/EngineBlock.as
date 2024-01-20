@@ -4,7 +4,7 @@
 #include "ExplosionEffects.as";;
 #include "ParticleSpark.as";
 
-const f32 EXPLODE_RADIUS = 90.0f;
+const f32 EXPLODE_RADIUS = 15.0f;
 
 void onInit(CBlob@ this)
 {
