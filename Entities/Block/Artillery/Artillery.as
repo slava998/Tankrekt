@@ -9,7 +9,7 @@ const f32 PROJECTILE_SPEED = 10.0f;
 const f32 PROJECTILE_SPREAD = 0.5f;
 const f32 FIRE_RATE = 500;
 const f32 PROJECTILE_RANGE = 1000.0f;
-const int ENGINE_COEF = 17; //how much engines decrease reloading time, in ticks
+const int ENGINE_COEF = 9; //how much engines decrease reloading time, in ticks
 const f32 TURN_SPEED = 2.0f;
 
 const u8 MAX_AMMO = 6;
