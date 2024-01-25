@@ -79,7 +79,7 @@ void onTick(CBlob@ this)
 		if (ship !is null)
 			refillAmmo(this, ship, REFILL_AMOUNT, REFILL_SECONDS, REFILL_SECONDARY_CORE_AMOUNT, REFILL_SECONDARY_CORE_SECONDS);
 	}
-	f32 angle = -this.get_f32("rot_angle") - this.getAngleDegrees();
+	f32 angle = -this.get_f32("rot_angle");
 	
 	Vec2f seat_offset = Vec2f(-5, -6).RotateBy(angle);
 	this.getAttachments().getAttachmentPointByName("SEAT").offset = seat_offset;
@@ -105,7 +105,6 @@ void onTick(CBlob@ this)
 			base.ResetTransform();
 			base.RotateBy(angle, Vec2f_zero);
 		}
-		
 		if(getAcceleratedFireRate(this) - difference == 18) directionalSoundPlay("Artillery_loaded", this.getPosition(), 1.8f);
 	}
 }
@@ -124,8 +123,7 @@ void Manual(CBlob@ this, CBlob@ controller)
 
 	// rotate turret
 	Rotate(this, aimVec);
-	aimVec.y *= -1;
-	controller.setAngleDegrees((-this.get_f32("rot_angle")));
+	controller.setAngleDegrees(-this.get_f32("rot_angle") + this.getAngleDegrees());
 }
 
 f32 getAcceleratedFireRate(CBlob@ this)
@@ -166,7 +164,7 @@ void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
 
 void Rotate(CBlob@ this, Vec2f&in aimVector)
 {
-	f32 degrees = aimVector.getAngleDegrees();
+	f32 degrees = aimVector.getAngleDegrees() + this.getAngleDegrees();
 	f32 curr_angle = this.get_f32("rot_angle");
 	f32 diff = curr_angle - degrees;
 	if(diff < 180 && diff > -180) diff = curr_angle - degrees;
@@ -282,11 +280,11 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		Vec2f offset(_shotspreadrandom.NextFloat() * PROJECTILE_SPREAD, 0);
 		offset.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
 		
-		f32 angle = this.get_f32("rot_angle");
+		f32 angle = -this.get_f32("rot_angle") + this.getAngleDegrees();
 
-		const Vec2f velocity = Vec2f((PROJECTILE_SPEED), 0).RotateBy(-angle, Vec2f()) + offset;
+		const Vec2f velocity = Vec2f((PROJECTILE_SPEED), 0).RotateBy(angle, Vec2f()) + offset;
 		
-		Vec2f bullet_offset = pos + Vec2f(25, 0).RotateBy(-angle, Vec2f());
+		Vec2f bullet_offset = pos + Vec2f(25, 0).RotateBy(angle, Vec2f());
 
 		if (isServer())
 		{
@@ -301,13 +299,13 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
                 bullet.setVelocity(velocity);
                 bullet.server_SetTimeToDie(params.read_f32());
-				bullet.setAngleDegrees(-angle);
+				bullet.setAngleDegrees(angle);
             }
     	}
 
 		if (isClient())
 		{
-			shotParticles(bullet_offset, angle);
+			shotParticles(bullet_offset, -angle);
 			directionalSoundPlay("Artillery_fire.ogg", bullet_offset, 5.5f);
 		}
     }
