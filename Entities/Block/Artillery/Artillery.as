@@ -164,7 +164,7 @@ void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
 
 void Rotate(CBlob@ this, Vec2f&in aimVector)
 {
-	f32 degrees = aimVector.getAngleDegrees() + this.getAngleDegrees();
+	f32 degrees = loopAngle(aimVector.getAngleDegrees() + this.getAngleDegrees());
 	f32 curr_angle = this.get_f32("rot_angle");
 	f32 diff = curr_angle - degrees;
 	if(diff < 180 && diff > -180) diff = curr_angle - degrees;
