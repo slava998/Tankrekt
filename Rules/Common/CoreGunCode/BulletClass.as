@@ -235,68 +235,74 @@ bool canHit(CBlob@ gunBlob, CBlob@ b)
 
 const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 {
-	f32 damage = 0.0f;
+	// TODO: Make better damage system where damage depends on hitter, like in TC
+
+	f32 damage = gunBlob.get_f32("bullet_damage");
 
 	if(gunBlob.getName() == "human")
 	{
+		if (hitBlob.hasTag("sponson"))
+			return damage; //sponsons get same damage as hulls
 		if (hitBlob.getName() == "shark")
-			return 0.4f;
+			damage *= 1.6f;
 		if (hitBlob.getName() == "human" || hitBlob.hasTag("weapon"))
-			return 0.8f;
+			damage *= 3.2f;
 		if (hitBlob.hasTag("bomb"))
-			return 1.35f;
+			damage *= 5.4f;
 		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
-			return 0.75f;
+			damage *= 3;
 		if (hitBlob.hasTag("ramengine"))
-			return 1.5f;
-		if (hitBlob.hasTag("door"))
-			return 0.7f;
-		if (hitBlob.hasTag("seat") || hitBlob.hasTag("decoyCore"))
-			return 0.4f;
+			damage *= 6;
+		if (hitBlob.hasTag("seat") || hitBlob.hasTag("decoyCore") || hitBlob.hasTag("plank"))
+			damage *= 1.6f;
 		
-		return 0.25f; //cores | solids
+		return damage; //cores | solids
 	}
 	else if (gunBlob.hasTag("heavy machinegun"))
 	{
-		damage = 0.066f;
-
 		if (hitBlob.hasTag("stone"))
 			return 0.022f;
+		if (hitBlob.hasTag("sponson"))
+			return damage; //sponsons get same damage as hulls
 		if (hitBlob.hasTag("ramengine"))
-			return 0.8f;
+			damage *= 8;
 		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
-			return 0.27f;
+			damage *= 2.7f;
+		if (hitBlob.hasTag("plank"))
+			damage *= 2;
 		if (hitBlob.hasTag("decoyCore"))
-			return 0.2f;
+			damage *= 2;
 		if (hitBlob.hasTag("bomb"))
-			return 1.0f;
+			damage *= 10;
 		if (hitBlob.hasTag("rocket"))
-			return 1.0f;
+			damage *= 10;
 		if (hitBlob.getName() == "human")
-			return 0.25f;
+			damage *= 2.5f;
 		if (hitBlob.hasTag("weapon"))
-			return 0.5f;
+			damage *= 5;
 
 		return damage;//cores, solids
 	}
 	else //machinegun
 	
-	damage = 0.01f;
-	
+	if (hitBlob.hasTag("sponson"))
+		return damage; //sponsons get same damage as hulls
 	if (hitBlob.hasTag("ramengine"))
-		return 0.25f;
+		damage *= 25;
 	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
-		return 0.20f;
+		damage *= 20;
+	if (hitBlob.hasTag("plank"))
+		damage *= 5;
 	if (hitBlob.hasTag("decoyCore"))
-		return 0.075f;
+		damage *= 7.5f;
 	if (hitBlob.hasTag("bomb"))
-		return 0.6f;
+		damage *= 60;
 	if (hitBlob.hasTag("rocket"))
-		return 0.50f;
+		damage *= 50;
 	if (hitBlob.hasTag("weapon"))
-		return 0.25f;
+		damage *= 25;
 	if (hitBlob.getName() == "human")
-		return 0.2f;
+		damage *= 20;
 
 	return damage;//cores, solids
 

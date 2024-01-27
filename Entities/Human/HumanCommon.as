@@ -4,7 +4,6 @@ namespace Human
 	const float swimSlow = 0.4f;
 	
 	const int PUNCH_RATE = 15;
-	const int FIRE_RATE = 45;
 	const int CONSTRUCT_RATE = 14;
 };
 
@@ -45,12 +44,12 @@ namespace Human
 
 shared bool canPunch(CBlob@ this)
 {
-	return !this.hasTag("dead") && this.get_u32("punch time") + Human::PUNCH_RATE < getGameTime();
+	return !this.hasTag("dead") && this.get_u32("punch time") + Human::PUNCH_RATE < getGameTime() && !this.get_bool("currently_reloading");
 }
 
 shared bool canShootPistol(CBlob@ this)
 {
-	return !this.hasTag("dead") && this.get_string("current tool") == "pistol" && this.get_u32("fire time") + Human::FIRE_RATE < getGameTime();
+	return this.get_u8("ammo") > 0 && !this.hasTag("dead") && this.get_string("current tool") == "pistol" && this.get_u32("fire time") + this.get_u16("fire_rate") < getGameTime() && !this.get_bool("currently_reloading");
 }
 
 shared bool canConstruct(CBlob@ this)

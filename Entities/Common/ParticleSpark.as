@@ -23,12 +23,27 @@ Random shotrandom(0x15125);
 void shotParticles(const Vec2f&in pos, const f32&in angle, const bool&in smoke = true, const f32&in smokeVelocity = 0.1f, const f32&in scale = 1.0f)
 {
 	//muzzle flash
+	if(smoke)
 	{
 		CParticle@ p = ParticleAnimated("Entities/Block/turret_muzzle_flash.png",
 										pos, Vec2f(),
 										-angle, //angle
 										1.0f, //scale
 										3, //animtime
+										0.0f, //gravity
+										true); //selflit
+		if (p !is null)
+		{
+			p.Z = 650.0f;
+		}
+	}
+	else
+	{
+		CParticle@ p = ParticleAnimated("Entities/Block/handgun_muzzle_flash.png",
+										pos, Vec2f(),
+										-angle, //angle
+										1.0f, //scale
+										2, //animtime
 										0.0f, //gravity
 										true); //selflit
 		if (p !is null)

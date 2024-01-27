@@ -16,7 +16,7 @@ void shootGun(const u16&in gunID, const f32&in aimangle, const Vec2f&in pos)
 	rules.SendCommand(rules.getCommandID("fireGun"), params);
 }
 
-/*void shootShotgun(const u16&in gunID, const f32&in aimangle, const Vec2f&in pos) 
+void shootShotgun(const u16&in gunID, const f32&in aimangle, const Vec2f&in pos) 
 {
 	CRules@ rules = getRules();
 	CBitStream params;
@@ -27,4 +27,4 @@ void shootGun(const u16&in gunID, const f32&in aimangle, const Vec2f&in pos)
 	params.write_u32(getGameTime());
 
 	rules.SendCommand(rules.getCommandID("fireShotgun"), params);
-}*/
+}

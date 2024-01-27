@@ -35,6 +35,7 @@ void onInit(CBlob@ this)
 	
 	this.set_u8("TTL", 20);
 	this.set_u8("speed", 20);
+	this.set_f32("bullet_damage", 0.066f); 
 	
 	this.set_f32("weight", 3.0f);
 	
