@@ -164,15 +164,16 @@ namespace Trans
 	Machinegun    = Translate("Machinegun\\Пулемёт\\Metralhadora\\Karabin maszynowy\\Mitrailleuse\\Ametralladora"),
 	HeavyMG       = Translate("Heavy Machinegun\\Тяжелый пулемет\\Metralhadora pesada\\Ciężka broń maszynowa\\Mitrailleuse lourde\\Ametralladora pesada"),
 	Cannon        = Translate("Cannon\\Пушка\\Canhão\\Armata\\Canon\\Cañón"),
-	TankCannon        = Translate("Tank Cannon\\Танковая Пушка\\Tank Cannon\\Tank Cannon\\Tank Cannon\\Tank Cannon"),
+	TankCannon    = Translate("Tank Cannon\\Танковая Пушка\\Tank Cannon\\Tank Cannon\\Tank Cannon\\Tank Cannon"),
 	Launcher      = Translate("Missile Launcher\\Ракетная Установка\\Lança-Mísseis\\Wyrzutnia pocisków\\Lance-Missiles\\Lanzamisiles"),
 	DecoyCore     = Translate("Decoy Core\\Фальшивое Сердце\\Núcleo de Distração\\Rdzeń wabika\\Noyau Leurre\\Núcleo de señuelo"),
 	Stone         = Translate("Stone Bricks\\Каменные кирпичи\\Stone Bricks\\Stone Bricks\\Stone Bricks\\Stone Bricks"),
 	TankTrack     = Translate("Tank Track\\Танковая гусеница\\Tank Track\\Tank Track\\Tank Track\\Tank Track"),
 	Sponson       = Translate("Sponson Cannon\\Спонсонная Пушка\\Sponson Cannon\\Sponson Cannon\\Sponson Cannon\\Sponson Cannon"),
-	EngineBlock        = Translate("Engine\\Двигатель\\Engine\\Engine\\Engine\\Engine"),
+	EngineBlock   = Translate("Engine\\Двигатель\\Engine\\Engine\\Engine\\Engine"),
 	Artillery     = Translate("Artillery\\Артиллерия\\Artillery\\Artillery\\Artillery"),
 	Wheel         = Translate("Wheel\\Колесо\\Wheel\\Wheel\\Wheel"),
+	Armory        = Translate("Armory\\Оружейная\\Armory\\Armory\\Armory"),
 
 	SeatDesc      = Translate("Use it to control your ship. It can also release and produce Couplings.\nBreaks on impact.\\Используйте его, чтобы управлять своим кораблем. Он также может освобождать и производить соединения.\nЛомается при ударе.\\Use-o para controlar seu navio. Ele Também pode liberar e produzir Acoplamentos.\nQuebra com impacto.\\Użyj go do kontrolowania swojego statku. Może również uwalniać i produkować sprzęgła.\nPrzerwy przy uderzeniu.\\Utilisez ceci pour contrôler votre Navire. Il peut également relacher et faire des raccords.\nCassent à l'impact.\\Úsalo para controlar tu nave. También se puede liberar y producir acoplamientos. Se rompe con el impacto."),
 	EngineDesc    = Translate("A ship motor with some armor plating for protection.\\Корабельный мотор с броней для защиты.\\Um motor de navio com um pouco de blindagem para proteção.\\Silnik okrętowy z pewnym pancerzem dla ochrony.\\Un moteur de navire avec un peu d'armure pour protection.\\Un motor de barco con algunas placas de blindaje para protección."),
@@ -205,15 +206,24 @@ namespace Trans
 	SponsonCannonDesc = Translate("Rotatable cannon with good damage. Most effective against fast tanks. Controlled by the driver.\\Поворачиваемая пушка, наносящая внушительный урон по области. Наиболее эффективна против манёвренных танков. Управляется водителем.\\Rotatable cannon with good damage. Most effective against fast tanks. Controlled by the driver.\\Rotatable cannon with good damage. Most effective against fast tanks. Controlled by the driver.\\Rotatable cannon with good damage. Most effective against fast tanks. Controlled by the driver.\\Rotatable cannon with good damage. Most effective against fast tanks. Controlled by the driver."),
 	ArtilleryDesc     = Translate("Long-range artillery with huge damage but very slow reloading. Explodes after being destroyed and very heavy. Engines boost its reloading speed.\\Дальнобойная артиллерия которая наносит огромный урон, но очень долго перезаряжается. Взрывается после уничтожения и много весит. Двигатели ускоряют её перезарядку.\\Long-range artillery with huge damage but very slow reloading. Explodes after being destroyed and very heavy. Engines boost its reloading speed.\\Long-range artillery with huge damage but very slow reloading. Explodes after being destroyed and very heavy. Engines boost its reloading speed.\\Long-range artillery with huge damage but very slow reloading. Explodes after being destroyed and very heavy. Engines boost its reloading speed.\\Long-range artillery with huge damage but very slow reloading. Explodes after being destroyed and very heavy. Engines boost its reloading speed."),
 	WheelDesc     = Translate("Fast wheels that lose their effectiveness on heavy vehicles, with no armor.\\Быстрые колёса, теряющие свою эффективность на тяжёлых машинах.\\Fast wheels that lose their effectiveness on heavy vehicles, with no armor.\\Fast wheels that lose their effectiveness on heavy vehicles, with no armor.\\Fast wheels that lose their effectiveness on heavy vehicles, with no armor.\\Fast wheels that lose their effectiveness on heavy vehicles, with no armor."),
+	ArmoryDesc     = Translate("Allows you to change weapons.\\Позволяет выбирать оружия.\\Allows you to change weapons.\\Allows you to change weapons.\\Allows you to change weapons.\\Allows you to change weapons."),
 	
 	//Tools
 	ToolsMenu     = Translate("Tools Menu\\Меню инструментов\\Menu de Ferramentas\\Menu narzędzi\\Menu des Outils\\Menú de herramientas"),
-	Pistol        = Translate("Rifle\\Винтовка\\Rifle\\Karabin\\Fusil\\Fucile"),
-	PistolDesc    = Translate("An accurate, long-range handgun.\\Точное, дальнобойное ручное огнестрельное оружие.\\An accurate, long-range handgun.\\An accurate, long-range handgun.\\An accurate, long-range handgun.\\An accurate, long-range handgun."),
 	Deconstructor = Translate("Deconstructor\\Деконструктор\\Desconstrutor\\Dekonstruktor\\Déconstructeur\\Deconstructor"),
 	DeconstDesc   = Translate("A tool that can reclaim ship parts for booty.\\Инструмент для разборки частей корабля на Добычу.\\Uma ferramenta que consegue recuperar partes do navio para saque.\\Narzędzie, które może odzyskać części do statku na łupy.\\Un outil qui peut recycler des pièces de navire pour du Trésor.\\Una herramienta que puede recuperar piezas de barcos para obtener botín."),
 	Reconstructor = Translate("Reconstructor\\Реконструктор\\Reconstrutor\\Rekonstruktor\\Reconstructeur\\Reconstructor"),
 	ReconstDesc   = Translate("A tool that can repair ship parts at the cost of booty.\\Инструмент для починки частей корабля за Добычу.\\Uma ferramenta que consegue reparar partes do navio ao custo de saque.\\Narzędzie, które może naprawiać części do statków kosztem łupów.\\Un outil qui peut réparer les pièces d'un navire au prix de Trésor.\\Una herramienta que puede reparar piezas de barcos por botín."),
+	
+	//Guns
+	Rifle     	  = Translate("Rifle\\Винтовка\\Rifle\\Karabin\\Fusil\\Rifle"),
+	RifleDesc     = Translate("An accurate, long-range handgun.\\Точное, дальнобойное ручное огнестрельное оружие.\\An accurate, long-range handgun.\\An accurate, long-range handgun.\\An accurate, long-range handgun.\\An accurate, long-range handgun."),
+	SMG			  = Translate("Submachine gun\\Пистолет-Пулемёт\\Submetralhadora\\Pistolet Maszynowy\\Mitraillette\\Pistola Ametralladora"),
+	SMGDesc		  = Translate("Medium-range rapid-fire weapon for suppressing infantry.\\Скорострельное оружие средней дальности для подавления пехоты.\\Medium-range rapid-fire weapon for suppressing infantry.\\Medium-range rapid-fire weapon for suppressing infantry.\\Medium-range rapid-fire weapon for suppressing infantry.\\Medium-range rapid-fire weapon for suppressing infantry."),
+	Shotgun		  = Translate("Shotgun\\Дробовик\\Shotgun\\Shotgun\\Shotgun\\Shotgun"),
+	ShotgunDesc	  = Translate("A powerful melee weapon.\\Мощное оружие ближнего боя.\\A powerful melee weapon.\\A powerful melee weapon.\\A powerful melee weapon.\\A powerful melee weapon."),
+	Carbine		  = Translate("Carbine\\Карабин\\Carbine\\Carbine\\Carbine\\Carbine"),
+	CarbineDesc   = Translate("A special rifle that shoots several bullets with a some spread for greater ease of hitting infantry.\\Особая винтовка, стреляющая несколькими пулями с небольшим разбросом для большей лёгкости поражения пехоты.\\A special rifle that shoots several bullets with a some spread for greater ease of hitting infantry.\\A special rifle that shoots several bullets with a some spread for greater ease of hitting infantry.\\A special rifle that shoots several bullets with a some spread for greater ease of hitting infantry.\\A special rifle that shoots several bullets with a some spread for greater ease of hitting infantry."),
 	
 	//Events
 	SettingFree   = Translate("{playercount} player(s) in map. Setting freebuild mode until more players join.\\игроков на карте. Включён режим свободного строительства, пока не присоединятся другие игроки.\\{playercount} jogadores no mapa. Configurando o modo freebuild até que mais jogadores se juntem.\\{playercount} graczy na mapie. Ustawiam tryb swobodnej budowy, dopóki nie dołączy więcej graczy.\\{playercount} joueurs sur la carte. Mode de Construction-Libre jusqu'à ce que plus de joueurs rejoignent.\\{playercount} jugador(es) en el mapa. Configuración del modo de construcción libre hasta que se unan más jugadores."),

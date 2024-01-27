@@ -57,7 +57,7 @@ void onInit(CRules@ this)
 	AddIconToken("$FREEMAN$", "InteractionIconsBig.png", Vec2f(32,32), 14);
 	AddIconToken("$SEA$", "InteractionIconsBig.png", Vec2f(32,32), 9);
 	AddIconToken("$ASSAIL$", "InteractionIconsBig.png", Vec2f(32,32), 10);
-	AddIconToken("$PISTOL$", "Tools.png", Vec2f(32,32), 0);
+	AddIconToken("$RIFLE$", "Rifle.png", Vec2f(32,32), 0);
 	AddIconToken("$DECONSTRUCTOR$", "Tools.png", Vec2f(32,32), 1);
 	AddIconToken("$RECONSTRUCTOR$", "Tools.png", Vec2f(32,32), 2);
 	AddIconToken("$WOOD$", "platform.png", Vec2f(8,8), 0);
@@ -88,6 +88,10 @@ void onInit(CRules@ this)
 	AddIconToken("$ARTILLERY$", "Artillery_icon.png", Vec2f(32,16), 0);
 	AddIconToken("$SPONSON$", "SponsonIcon.png", Vec2f(16,8), 0);
 	AddIconToken("$WHEEL$", "Wheel_icon.png", Vec2f(8,8), 0);
+	AddIconToken("$SMG$", "SMG.png", Vec2f(32,32), 0);
+	AddIconToken("$SHOTGUN$", "shotgun.png", Vec2f(32,32), 0);
+	AddIconToken("$CARBINE$", "carbine.png", Vec2f(32,32), 0);
+	AddIconToken("$ARMORY$", "armory.png", Vec2f(8,8), 0);
 	
 	//spectator stuff
 	this.addCommandID("pick teams");

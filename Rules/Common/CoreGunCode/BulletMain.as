@@ -29,7 +29,7 @@ Vertex[] v_r_bullet;
 SColor white = SColor(255,255,255,255);
 
 int FireGunID;
-//int FireShotgunID;
+int FireShotgunID;
 
 f32 FRAME_TIME = 0;
 //
@@ -65,7 +65,7 @@ void Reset(CRules@ this)
 {
 	r.Reset(12345);
 	FireGunID     = this.addCommandID("fireGun");
-	//FireShotgunID = this.addCommandID("fireShotgun");
+	FireShotgunID = this.addCommandID("fireShotgun");
 	v_r_bullet.clear();
 }
 
@@ -121,14 +121,14 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 
 		BulletGrouped.AddNewObj(bullet);
 	}
-	/*else if (cmd == FireShotgunID)
+	else if (cmd == FireShotgunID)
 	{
 		CBlob@ gunBlob = getBlobByNetworkID(params.read_netid());
 		if (gunBlob is null) return;
 
 		const f32 angle  = params.read_f32();
 		const Vec2f pos  = params.read_Vec2f();
-		const u8 spread  = gunBlob.get_u8("spread");
+		const u8 spread  = gunBlob.get_u8("shot_spread");
 		const u8 b_count = gunBlob.get_u8("b_count");
 		const bool sFLB  = gunBlob.get_bool("sFLB");
 		const u32 timeSpawnedAt = params.read_u32(); // getGameTime() it spawned at
@@ -167,5 +167,5 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 				BulletGrouped.AddNewObj(bullet);
 			}
 		}
-	}*/
+	}
 }
