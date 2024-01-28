@@ -8,7 +8,7 @@ void onInit(CRules@ this)
 	this.set_string("version", "1.0");
 	
 	//dedicated server name
-	const string server_name = "[EU] Tankrekt "+this.get_string("version")+;
+	const string server_name = "[EU] Tankrekt "+this.get_string("version");
 	
 	if (sv_name != server_name)
 	{
@@ -98,7 +98,7 @@ void onInit(CRules@ this)
 	AddIconToken("$SPECTATOR$", "GUI/MenuItems.png", Vec2f(32,32), 19);
 	
 	//minimap only appears on browsing
-	this.minimap = !isClient();
+	this.minimap = true;
 	
 	//add shaders
 	Driver@ driver = getDriver();
