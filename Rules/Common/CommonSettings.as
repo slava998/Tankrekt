@@ -8,7 +8,7 @@ void onInit(CRules@ this)
 	this.set_string("version", "1.0");
 	
 	//dedicated server name
-	const string server_name = "[EU] Amogus ("+this.get_string("version")+")";
+	const string server_name = "[EU] Tankrekt "+this.get_string("version")+;
 	
 	if (sv_name != server_name)
 	{
