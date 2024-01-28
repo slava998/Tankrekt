@@ -39,7 +39,7 @@ void ChangeGun(CBlob@ this, const string gun)
 	else if(this.get_string("gunName") == "smg") 	//SMG
 	{
 		//Fire parameters
-		this.set_f32("bullet_damage", 0.0375f); 	//Bullet damage
+		this.set_f32("bullet_damage", 0.05f); 	//Bullet damage
 		this.set_u16("fire_rate", 3); 				//Delay after shoot (in ticks)
 		this.set_u8("clip_size", 30); 				//Max ammo in clip
 		this.set_u8("TTL", 11); 					//How long bullet will live (in ticks)
