@@ -66,7 +66,7 @@ void flak(CBlob@ this)
 	if (isClient())
 	{
 		directionalSoundPlay("Bomb.ogg", pos);
-		makeLargeExplosionParticle(pos);
+		makeHugeExplosionParticle(pos);
 		ShakeScreen(4 * EXPLODE_RADIUS, 45, pos);
 	}
 
@@ -139,7 +139,7 @@ const f32 getDamage(CBlob@ hitBlob)
 	if (hitBlob.hasTag("rocket"))
 		return 3.0f; 
 	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank") || hitBlob.hasTag("bomb") || hitBlob.hasTag("engineblock"))
-		return 0.5f;
+		return 0.8f;
 	if (hitBlob.hasTag("ramengine"))
 		return 0.5f;
 	if (hitBlob.hasTag("door"))
@@ -149,7 +149,7 @@ const f32 getDamage(CBlob@ hitBlob)
 	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("core"))
 		return 0.15f;
 	if (hitBlob.hasTag("stone"))
-		return 0.3f;
+		return 0.5f;
 	return 0.5f; //solids
 }
 

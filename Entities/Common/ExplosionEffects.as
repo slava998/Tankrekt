@@ -31,8 +31,8 @@ shared void makeLargeExplosionParticle(const Vec2f&in pos)
 shared void makeHugeExplosionParticle(const Vec2f&in pos)
 {
     CParticle@ p = ParticleAnimated("Entities/Effects/Sprites/Explosion.png",
-                      pos, Vec2f_zero, 0.0f, 2.0f,
-                      8,
+                      pos, Vec2f_zero, 0.0f, 2.1f,
+                      5,
                       0.0f, true);
     if (p !is null)
         p.Z = 650.0f;
