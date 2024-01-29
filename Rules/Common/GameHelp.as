@@ -149,15 +149,15 @@ void onRender(CRules@ this)
 	if (page1)
 	{
 		//PAGE 1
-		const string shiprektVersion = "Amogus "+Trans::Version+" "+this.get_string("version")+"\n";
+		const string shiprektVersion = "Tankrekt "+Trans::Version+" "+this.get_string("version")+"\n";
 		const string lastChangesInfo = Trans::LastChanges+":\n"
-		+ "- 12-25-2023 - By Gingerbeard\n"
-		+ "  * Cannonballs do less damage and give less coins.\n"
-		+ "  * Heavy machinegun firerate is now the same for all players.\n"
-		+ "  * Capturing ships is now similiar to capturing stations.\n"
-		+ "  * Ram is twice as effective against half-walls.\n"
-		+ "  * Secondary cores no longer take damage from propellers or blow up instantly from bombs.\n"
-		+ "  * Decoy cores now have their own map symbol- only appearing for teammates.\n";
+		+ "- 01-29-2023 - By Tactical Mods\n"
+		+ "  * Mod created, major changes:\n"
+		+ "  * Tracks and wheels, wheels are fast but weak, while tracks are slow but powerful\n"
+		+ "  * Stone blocks, they are good for forts or very armored tanks\n"
+		+ "  * All weapons got damage buff because of economy and balance changes\n"
+		+ "  * Artillery is new weapon, deals huge damage in big area but explodes after destroying\n"
+		+ "  * Small changes in sprites, and remake some blocks (patcher is healing in area for example)\n";
 		
 		GUI::SetFont("menu");
 		Vec2f lastChangesSize;
@@ -237,8 +237,8 @@ void onRender(CRules@ this)
 	
 	//Add social links
 	GUI::SetFont("menu");
-	makeWebsiteLink(Vec2f(brBox.x, 100.0f), Trans::Go_to_the+" Shiprekt Github", "https://github.com/Gingerbeard5773/shiprekt");
-	makeWebsiteLink(Vec2f(brBox.x, 150.0f), Trans::Go_to_the+" Shiprekt Discord", "https://discord.gg/V29BBeba3C");
+	makeWebsiteLink(Vec2f(brBox.x, 100.0f), Trans::Go_to_the+" Shiprekt Github", "https://github.com/slava998/Tankrekt");
+	makeWebsiteLink(Vec2f(brBox.x, 150.0f), Trans::Go_to_the+" Shiprekt Discord", "https://discord.gg/Mk4Kcrg5R5");
 	
 	mouseWasPressed1 = controls.mousePressed1; 
 }

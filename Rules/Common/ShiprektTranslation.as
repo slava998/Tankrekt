@@ -153,7 +153,7 @@ namespace Trans
 	//Piston        = Translate("Wooden Piston\\Поршень\\Pistão de madeira\\Tłok\\Piston\\Pistón de madera"),
 	Harpoon       = Translate("Harpoon\\Гарпун\\Harpão\\Harpun\\Harpon\\Arpón"),
 	Harvester     = Translate("Harvester\\Ломатель\\Colheitadeira\\Żniwiarka\\Recycleur\\Cosechador"),
-	Patcher       = Translate("Patcher\\Ремонтник\\Reparador\\Łatacz\\Réparateur\\Parcheador"),
+	Patcher       = Translate("Repairs blocks in 4 blocks around it\\Чинит блоки в 4 блоках от себя\\Reparador\\Łatacz\\Réparateur\\Parcheador"),
 	//AntiRam       = Translate("Anti-Ram\\Анти-Таран\\Anti-Aríete\\Anty-Baran\\Anti-Frappe\\Anti-ariete"),
 	Repulsor      = Translate("Repulsor\\Репульсор\\Repulsor\\Repulsor\\Répulseur\\Repulsor"),
 	Ram           = Translate("Ram Hull\\Таран\\Aríete\\Baran\\Frappe\\Ariete"),

@@ -23,7 +23,7 @@ void onInit(CRules@ this)
 	}
 	
 	//mod support
-	sv_contact_info = "github.com/Gingerbeard5773/shiprekt"; //if red circles appear, this link will show
+	sv_contact_info = "https://github.com/slava998/Tankrekt"; //if red circles appear, this link will show
 	
 	print("\n      ------- INITIALIZING SHIPREKT ------- "+
 		  "\n" +
