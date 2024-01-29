@@ -7,7 +7,7 @@
 #include "PlankCommon.as";
 
 const f32 SPLASH_RADIUS = 8.0f;
-const f32 SPLASH_DAMAGE = 0.25f;
+const f32 SPLASH_DAMAGE = 1.5f;
 const f32 MAX_PIERCED = 2;
 
 BootyRewards@ booty_reward;
