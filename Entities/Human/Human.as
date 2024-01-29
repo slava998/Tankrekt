@@ -185,7 +185,7 @@ void Move(CBlob@ this)
 		const bool right = this.isKeyPressed(key_right);	
 		const bool punch = this.isKeyPressed(key_action1);
 		const bool shoot = this.isKeyPressed(key_action2);
-		const bool reload = getControls().isKeyJustPressed(KEY_KEY_R);
+		const bool reload = getControls().isKeyJustPressed(KEY_KEY_R) && this.isMyPlayer();
 		
 		const bool reloading = this.get_bool("currently_reloading");
 		
@@ -319,7 +319,7 @@ void Move(CBlob@ this)
 		}
 		else if(reload && !reloading && this.get_u8("ammo") < this.get_u8("clip_size")) //reload gun
 		{
-			this.SendCommand(this.getCommandID("reload"));
+			if(isClient()) this.SendCommand(this.getCommandID("reload"));
 		}
 		//canmove check
 		if (this.get_bool("onGround") || !rules.get_bool("whirlpool"))
