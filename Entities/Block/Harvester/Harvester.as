@@ -8,7 +8,7 @@
 #include "PlankCommon.as";
  
 const f32 BULLET_RANGE = 60.0f;
-const f32 DECONSTRUCT_RATE = 10.0f; //higher values = higher recover
+const f32 DECONSTRUCT_RATE = 15.0f; //higher values = higher recover
 const int CONSTRUCT_VALUE = 35;
 
 void onInit(CBlob@ this)
