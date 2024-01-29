@@ -3,8 +3,8 @@
 #include "DamageBooty.as";
 #include "AccurateSoundPlay.as";
 
-const f32 BOMB_RADIUS = 15.0f;
-const f32 BOMB_BASE_DAMAGE = 2.7f;
+const f32 BOMB_RADIUS = 20.0f;
+const f32 BOMB_BASE_DAMAGE = 3.0f;
 
 BootyRewards@ booty_reward;
 
