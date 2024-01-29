@@ -3,7 +3,6 @@ void onInit(CBlob@ this)
 	this.Tag("propeller");
 	this.Tag("solid");
 	this.Tag("landMotor");
-	this.Tag("ramengine");
 	this.Tag("ramming");
 	this.set_f32("mass_coef", 0.05f); //has an extremely strong effect on heavy tanks, high values will make them literally immovable
 	
@@ -15,9 +14,10 @@ void onInit(CBlob@ this)
 	this.set_u8("stallTime", 0);
 
 	CSprite@ sprite = this.getSprite();
-	CSpriteLayer@ propeller = sprite.addSpriteLayer( "propeller","Wheel.png", 8,8 );
+	CSpriteLayer@ propeller = sprite.addSpriteLayer( "propeller","Wheel.png", 16,16 );
 	if(propeller !is null)
 	{
+		propeller.ScaleBy(Vec2f(0.5f, 0.5f));
 		propeller.SetOffset(Vec2f(0,0));
 		propeller.SetRelativeZ(-2);
 		propeller.SetLighting(false);
