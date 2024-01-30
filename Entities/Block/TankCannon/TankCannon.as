@@ -156,7 +156,7 @@ void Fire(CBlob@ this, CBlob@ shooter)
 	if (isClient())
 	{
 		this.getSprite().animation.SetFrameIndex(0);
-		shotParticles(pos + aimVector*9, aimVector.Angle());
+		shotParticles(pos + aimVector*18, aimVector.Angle());
 		directionalSoundPlay("TankCannonFire.ogg", pos, 7.0f);
 	}
 }

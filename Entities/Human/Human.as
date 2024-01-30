@@ -611,7 +611,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	}
 	{ //Tank Cannon
 		description = Trans::TankCannonDesc+"\n"+Trans::AmmoCap+": 8";
-		AddBlock(this, menu, "tankcannon", "$CANNON$", Trans::TankCannon, description, core, 7.0f);
+		AddBlock(this, menu, "tankcannon", "$TANKCANNON$", Trans::TankCannon, description, core, 7.0f);
 	}
 	{ //Sponson Cannon
 		description = Trans::SponsonCannonDesc+"\n"+Trans::AmmoCap+": 15";
