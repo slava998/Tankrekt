@@ -24,6 +24,7 @@ const u16 MOTHERSHIP_HEAL_COST = 10;
 const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 4); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
+const f32 RELOAD_SLOW = 0.5f; //how much player is slowed while reloading
 u32 HEAL_TICKS = 15 * 30;
 //global is fine since only used with isMyPlayer
 int useClickTime = 0;
@@ -255,7 +256,7 @@ void Move(CBlob@ this)
 				moveVel.x += Human::walkSpeed;
 			}
 			
-			if(reloading) moveVel *= 0.3f; //slowing during reloading
+			if(reloading) moveVel *= RELOAD_SLOW; //slowing during reloading
 		}
 
 		if (!this.get_bool("onGround"))
