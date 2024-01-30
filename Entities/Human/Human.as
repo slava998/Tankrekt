@@ -309,7 +309,7 @@ void Move(CBlob@ this)
 			
 			if (currentTool == "pistol" && canShootPistol(this)) // shoot
 			{
-				if(isServer()) this.SendCommand(this.getCommandID("fire"));
+				this.SendCommand(this.getCommandID("fire"));
 				if (!sprite.isAnimation("shoot"))
 					sprite.SetAnimation("shoot");
 			}

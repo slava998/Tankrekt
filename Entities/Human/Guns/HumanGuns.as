@@ -109,7 +109,7 @@ void ChangeGun(CBlob@ this, const string gun)
 
 void onInit(CBlob@ this)
 {
-	this.addCommandID("shoot");
+	this.addCommandID("shoot_clientside");
 	this.addCommandID("fire");
 	this.addCommandID("updateGun");
 	this.addCommandID("recieveSyncGun");
@@ -148,78 +148,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 	if (this.getCommandID("fire") == cmd)
 	{
+		printf("recieved fire cmd");
 		ShootPistol(this);
-	}
-	if (this.getCommandID("shoot") == cmd)
-	{
-		//shoot pistol
-		Vec2f velocity = params.read_Vec2f();
-		Vec2f pos = this.getPosition();
-		const bool relative = params.read_bool();
-		
-		if (relative) //relative positioning
-		{
-			Vec2f rPos = params.read_Vec2f();
-			const int shipColor = params.read_u32();
-			Ship@ ship = getShipSet().getShip(shipColor);
-			if (ship !is null)
-			{
-				pos = rPos + ship.origin_pos;
-			}
-		}
-		else
-			pos = params.read_Vec2f();
-		
-		if (isServer())
-		{
-			/*CBlob@ bullet = server_CreateBlob("bullet", this.getTeamNum(), pos);
-			if (bullet !is null)
-			{
-				if (this.getPlayer() !is null)
-				{
-					bullet.SetDamageOwnerPlayer(this.getPlayer());
-				}
-				bullet.setVelocity(velocity);
-				bullet.setAngleDegrees(-velocity.Angle());
-				bullet.server_SetTimeToDie(lifetime); 
-			}*/
-
-			if(!this.get_bool("shotgun"))
-			{
-				const u8 spr = this.get_u8("shot_spread");
-				shootGun(this.getNetworkID(), -velocity.Angle() + XORRandom(spr) - XORRandom(spr), pos);
-			}
-			else 
-				shootShotgun(this.getNetworkID(), -velocity.Angle(), pos);
-			
-			this.set_u8("ammo", Maths::Max(this.get_u8("ammo") - 1, 0));
-		
-			CBitStream params;
-			params.write_u32(this.get_u32("fire time"));
-			params.write_u8(this.get_u8("ammo"));
-			params.write_bool(this.get_bool("currently_reloading"));
-			
-			this.SendCommand(this.getCommandID("SyncShootVars"), params); //sync ammo and fire time
-		}
-		
-		if (isClient())
-		{
-			Vec2f offset = Vec2f(0.5f ,0).RotateBy(-velocity.Angle())*6.0f;
-			if(!relative) offset *= -1;  //for some reason offset becomes negative when standing on ship
-
-			shotParticles(pos + offset, velocity.Angle(), !this.get_bool("no_smoke"), 0.02f , 0.6f);
-			const u8 srandom = this.get_u8("sounds_random_length");
-			if(srandom > 0)
-			{
-				directionalSoundPlay(this.get_string("fire_sound") + XORRandom(srandom), pos, 3.0f);
-			}
-			else directionalSoundPlay(this.get_string("fire_sound"), pos, 3.0f);
-		}
 	}
 	else if (cmd == this.getCommandID("SyncShootVars")) //sync ammo and fire time
 	{
 		if(isClient())
 		{
+			printf("syncing shoot vars");
 			this.set_u32("fire time", params.read_u32());
 			this.set_u8("ammo", params.read_u8()); 
 			this.set_bool("currently_reloading", params.read_bool());
@@ -227,6 +163,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	}
 	else if (cmd == this.getCommandID("reload"))
 	{
+		printf("reloading");
 		this.set_bool("currently_reloading", true);
 		this.set_u32("fire time", getGameTime());
 
@@ -239,14 +176,37 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			
 		this.SendCommand(this.getCommandID("SyncShootVars"), params);
 	}
+	if (this.getCommandID("shoot_clientside") == cmd)
+	{
+		if(isClient())
+		{
+			printf("makeing smoke & sound");
+			Vec2f velocity = params.read_Vec2f();
+			const bool relative =  params.read_bool();
+			Vec2f pos = params.read_Vec2f();
+
+			Vec2f offset = Vec2f(0.5f ,0).RotateBy(-velocity.Angle())*6.0f;
+			if(!relative) offset *= -1;  //for some reason offset becomes negative when standing on ship
+
+			shotParticles(pos + offset, velocity.Angle(), !this.get_bool("no_smoke"), 0.02f , 0.6f);
+			const u8 srandom = this.get_u8("sounds_random_length");
+			if(srandom > 0)
+			{
+				directionalSoundPlay(this.get_string("fire_sound") + XORRandom(srandom), pos, 3.0f);
+			}
+			else directionalSoundPlay(this.get_string("fire_sound"), pos, 3.0f);
+		}
+	}
 	else if(this.getCommandID("updateGun") == cmd)
 	{
+		printf("recieved update gun command");
 		ChangeGun(this, this.get_string("gunName"));
 	}
 	else if(this.getCommandID("recieveSyncGun") == cmd)
 	{
 		if(isServer())
 		{
+			printf("recieved gun sync command");
 			CBitStream params;
 			params.write_u8(this.get_u8("ammo"));
 			params.write_string(this.get_string("gunName"));
@@ -273,6 +233,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	{
 		if(isClient())
 		{
+			printf("syncing gun");
 			this.set_u8("ammo",  params.read_u8());
 			this.set_string("gunName", params.read_string());
 			this.set_u8("TTL",  params.read_u8());
@@ -298,32 +259,68 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 // Send a command to shoot the pistol
 void ShootPistol(CBlob@ this)
 {
-	this.set_u32("fire time", getGameTime());
+	if(!isServer()) return;
+
+	if(!canShootPistol(this)) return;
 	
-	if (!this.isMyPlayer()) return;
+	this.set_u32("fire time", getGameTime());
 
 	Vec2f pos = this.getPosition();
 	Vec2f aimVector = this.getAimPos() - pos;
 	aimVector.Normalize();
 
-	CBitStream params;
-	params.write_Vec2f(aimVector);
+	Vec2f velocity = aimVector;
+
+	bool relative;
 
 	const s32 overlappingShipID = this.get_s32("shipID");
 	Ship@ ship = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
 	if (ship !is null) //relative positioning
 	{
-		params.write_bool(true);
-		const Vec2f rPos = (pos + aimVector*3) - ship.origin_pos;
-		params.write_Vec2f(rPos);
-		params.write_u32(ship.id);
+		relative = true;
+		Vec2f rPos = (pos + aimVector*3) - ship.origin_pos;
+		pos = rPos + ship.origin_pos;
 	}
 	else //absolute positioning
 	{
-		params.write_bool(false);
+		relative = false;
 		const Vec2f aPos = pos + aimVector*9;
-		params.write_Vec2f(aPos);
+		pos = aPos;
 	}
 	
-	this.SendCommand(this.getCommandID("shoot"), params);
+		/*CBlob@ bullet = server_CreateBlob("bullet", this.getTeamNum(), pos);
+		if (bullet !is null)
+		{
+			if (this.getPlayer() !is null)
+			{
+				bullet.SetDamageOwnerPlayer(this.getPlayer());
+			}
+			bullet.setVelocity(velocity);
+			bullet.setAngleDegrees(-velocity.Angle());
+			bullet.server_SetTimeToDie(lifetime); 
+		}*/
+
+		if(!this.get_bool("shotgun"))
+		{
+			const u8 spr = this.get_u8("shot_spread");
+			shootGun(this.getNetworkID(), -velocity.Angle() + XORRandom(spr) - XORRandom(spr), pos);
+		}
+		else 
+			shootShotgun(this.getNetworkID(), -velocity.Angle(), pos);
+			
+		this.set_u8("ammo", Maths::Max(this.get_u8("ammo") - 1, 0));
+		
+		CBitStream params;
+		params.write_u32(this.get_u32("fire time"));
+		params.write_u8(this.get_u8("ammo"));
+		params.write_bool(this.get_bool("currently_reloading"));
+		
+		printf("sending create bullet cmd");
+		this.SendCommand(this.getCommandID("SyncShootVars"), params); //sync ammo and fire time
+	
+	CBitStream params2;
+	params2.write_Vec2f(velocity);
+	params2.write_bool(relative);
+	params2.write_Vec2f(pos);
+	this.SendCommand(this.getCommandID("shoot_clientside"), params2); //smoke and sound for client	
 }
