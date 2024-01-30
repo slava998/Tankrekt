@@ -6,7 +6,7 @@ const f32 VEL_DAMPING = 0.96f; //0.96
 const f32 ANGLE_VEL_DAMPING = 0.96; //0.96
 const u32 FORCE_UPDATE_TICKS = 21;
 
-f32 UPDATE_DELTA_SMOOTHNESS = 32.0f; //~16-64
+f32 UPDATE_DELTA_SMOOTHNESS = 10.0f; //~16-64
 bool ship_debug = false;
 
 /// Ship Management
