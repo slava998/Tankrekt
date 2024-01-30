@@ -25,6 +25,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("shot_spread", 0); 				//Shooting spread angle
 		this.set_u16("reloading_time", 60);			//Reloading duration (in ticks)
 		this.set_u8("b_count", 1);					//Bullets per shot count
+		this.set_f32("human_damage_mod", 2.0f);		//Multipiller of damage to players
 		
 		//Cosmetic
 		this.set_string("fire_sound", "rifle_fire");		//Fire sound
@@ -33,13 +34,13 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_bool("no_smoke", false);					//No smoke when shooting
 		this.set_string("gun_icon", "RIFLE");				//Icon in tools menu
 		this.set_string("gun_menu_name", Trans::Rifle);		//Gun name in tools menu
-		this.set_string("gun_desc", Trans::RifleDesc);	//Gun description in tools menu
+		this.set_string("gun_desc", Trans::RifleDesc);		//Gun description in tools menu
 
 	}
 	else if(this.get_string("gunName") == "smg") 	//SMG
 	{
 		//Fire parameters
-		this.set_f32("bullet_damage", 0.05f); 	//Bullet damage
+		this.set_f32("bullet_damage", 0.08f); 		//Bullet damage
 		this.set_u16("fire_rate", 3); 				//Delay after shoot (in ticks)
 		this.set_u8("clip_size", 30); 				//Max ammo in clip
 		this.set_u8("TTL", 11); 					//How long bullet will live (in ticks)
@@ -47,6 +48,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("shot_spread", 5); 				//Shooting spread angle
 		this.set_u16("reloading_time", 120);		//Reloading duration (in ticks)
 		this.set_u8("b_count", 1);					//Bullets per shot count
+		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
 				
 		this.set_string("fire_sound", "smg_fire");			//Fire sound
 		this.set_u8("sounds_random_length", 0);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -54,7 +56,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_bool("no_smoke", true);					//No smoke when shooting
 		this.set_string("gun_icon", "SMG");					//Icon in tools menu
 		this.set_string("gun_menu_name", Trans::SMG);		//Gun name in tools menu
-		this.set_string("gun_desc", Trans::SMGDesc);	//Gun description in tools menu
+		this.set_string("gun_desc", Trans::SMGDesc);		//Gun description in tools menu
 	}
 	else if(this.get_string("gunName") == "shotgun") 	//Shotgun
 	{
@@ -67,6 +69,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("shot_spread", 7); 				//Shooting spread angle
 		this.set_u16("reloading_time", 100);		//Reloading duration (in ticks)
 		this.set_u8("b_count", 9);					//Bullets per shot count
+		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
 				
 		this.set_string("fire_sound", "shotgun_fire");		//Fire sound
 		this.set_u8("sounds_random_length", 2);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -87,6 +90,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("shot_spread", 2); 				//Shooting spread angle
 		this.set_u16("reloading_time", 90);			//Reloading duration (in ticks)
 		this.set_u8("b_count", 8);					//Bullets per shot count
+		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
 				
 		this.set_string("fire_sound", "carbine_fire");		//Fire sound
 		this.set_u8("sounds_random_length", 0);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -261,6 +265,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			params.write_string(this.get_string("gun_icon"));
 			params.write_string(this.get_string("gun_menu_name"));
 			params.write_string(this.get_string("gun_desc"));
+			params.write_f32(this.get_f32("human_damage_mod"));
 			this.SendCommand(this.getCommandID("SyncGun"), params);
 		}
 	}
@@ -285,6 +290,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			this.set_string("gun_icon", params.read_string());
 			this.set_string("gun_menu_name", params.read_string());
 			this.set_string("gun_desc", params.read_string());
+			this.set_f32("human_damage_mod", params.read_f32());
 		}
 	}
 }

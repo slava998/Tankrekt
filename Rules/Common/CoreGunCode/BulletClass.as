@@ -245,7 +245,9 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 			return damage; //sponsons get same damage as hulls
 		if (hitBlob.getName() == "shark")
 			damage *= 1.6f;
-		if (hitBlob.getName() == "human" || hitBlob.hasTag("weapon"))
+		if (hitBlob.getName() == "human")
+			damage *= 3.2f * gunBlob.get_f32("human_damage_mod");
+		if(hitBlob.hasTag("weapon"))
 			damage *= 3.2f;
 		if (hitBlob.hasTag("bomb"))
 			damage *= 5.4f;
