@@ -88,7 +88,7 @@ void onInit(CRules@ this)
 	AddIconToken("$ARTILLERY$", "Artillery_icon.png", Vec2f(32,16), 0);
 	AddIconToken("$SPONSON$", "SponsonIcon.png", Vec2f(16,8), 0);
 	AddIconToken("$WHEEL$", "Wheel_icon.png", Vec2f(8,8), 0);
-	AddIconToken("$TANKCANNON$", "TankCannon.png", Vec2f(28,12), 0);
+	AddIconToken("$TANKCANNON$", "TankCannon.png", Vec2f(26,12), 0);
 
 	
 	//spectator stuff
