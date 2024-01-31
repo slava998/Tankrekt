@@ -153,11 +153,11 @@ void onRender(CRules@ this)
 		const string lastChangesInfo = Trans::LastChanges+":\n"
 		+ "- 01-29-2023 - By Tactical Mods\n"
 		+ "  * Mod created, major changes:\n"
-		+ "  * Tracks and wheels, wheels are fast but weak, while tracks are slow but powerful\n"
+		+ "  * Tracks and wheels, wheels are good for light tanks,, while tracks are slow but good for heavy tanks\n"
 		+ "  * Stone blocks, they are good for forts or very armored tanks\n"
 		+ "  * All weapons got damage buff because of economy and balance changes\n"
 		+ "  * Artillery is new weapon, deals huge damage in big area but explodes after destroying\n"
-		+ "  * Small changes in sprites, and remake some blocks (patcher is healing in area for example)\n";
+		+ "  * Small changes in sprites and remaked some blocks (patcher heals in area for example)\n";
 		
 		GUI::SetFont("menu");
 		Vec2f lastChangesSize;
