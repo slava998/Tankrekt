@@ -185,8 +185,8 @@ const f32 loopAngle(f32 angle)
 
 void Fire(CBlob@ this, CBlob@ shooter)
 {
-	Vec2f pos = this.getPosition();
 	Vec2f aimVector = Vec2f(1, 0).RotateBy(this.getAngleDegrees() - this.get_f32("rot_angle"));
+	Vec2f pos = this.getPosition() + aimVector * 7;
 
 	if (isServer())
 	{
@@ -219,7 +219,7 @@ void Fire(CBlob@ this, CBlob@ shooter)
 	if (isClient())
 	{
 		this.getSprite().animation.SetFrameIndex(0);
-		shotParticles(pos + aimVector*9, aimVector.Angle());
+		shotParticles(pos, aimVector.Angle());
 		directionalSoundPlay("CannonFire.ogg", pos, 7.0f);
 	}
 }
