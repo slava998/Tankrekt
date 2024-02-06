@@ -6,8 +6,8 @@
 const f32 PROJECTILE_SPEED = 9.0f;
 const f32 PROJECTILE_SPREAD = 2.25;
 const int FIRE_RATE = 50;
-const f32 PROJECTILE_RANGE = 100.0f;
 const f32 AUTO_RADIUS = 100.0f;
+const f32 HUMAN_RADIUS = 50.0f; // has to be less or equal to auto radius
 
 const u8 MAX_AMMO = 15;
 const u8 REFILL_AMOUNT = 1;
@@ -93,14 +93,18 @@ void Auto(CBlob@ this)
 
 				Vec2f aimVector = bPos - pos;
 				f32 distance = aimVector.Length();
-
-				if (b.getName() == "human")
-					distance += 80.0f;//humans have lower priority
-
-				if (distance < minDistance && isClearShot(this, aimVector) && !getMap().rayCastSolid(bPos, pos))
+				
+				//if(b.getName() == "human" && distance > HUMAN_RADIUS) continue;
+				if(b.getName() != "human" || distance < HUMAN_RADIUS) //smaller radius for paleyrs
 				{
-					minDistance = distance;
-					hitBlobNetID = b.getNetworkID();
+					if (b.getName() == "human")
+						distance += 80.0f;//humans have lower priority
+
+					if (distance < minDistance && isClearShot(this, aimVector) && !getMap().rayCastSolid(bPos, pos))
+					{
+						minDistance = distance;
+						hitBlobNetID = b.getNetworkID();
+					}
 				}
 			}
 		}
