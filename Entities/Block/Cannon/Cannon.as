@@ -246,3 +246,9 @@ const bool isClear(CBlob@ this)
 
 	return true;
 }
+
+void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
+{
+	if(detached is null) return;
+	detached.getSprite().ResetTransform();
+}
