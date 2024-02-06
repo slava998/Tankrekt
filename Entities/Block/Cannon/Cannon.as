@@ -4,13 +4,16 @@
 
 const f32 PROJECTILE_RANGE = 375.0F;
 const f32 PROJECTILE_SPEED = 15.0f;;
-const u16 FIRE_RATE = 170;//max wait between shots
+const u16 FIRE_RATE = 120;//max wait between shots
 
 const u8 MAX_AMMO = 10;
 const u8 REFILL_AMOUNT = 1;
 const u8 REFILL_SECONDS = 4;
 const u8 REFILL_SECONDARY_CORE_SECONDS = 12;
 const u8 REFILL_SECONDARY_CORE_AMOUNT = 1;
+
+const f32 TURN_SPEED = 2.0f;
+const f32 MAX_ANGLE = 45.0f;
 
 Random _shotrandom(0x15125); //clientside
 
@@ -20,6 +23,10 @@ void onInit(CBlob@ this)
 	this.Tag("cannon");
 	this.Tag("usesAmmo");
 	this.Tag("fixed_gun");
+	
+	this.Tag("noEnemyEntry");
+	this.set_string("seat label", "Operate Cannono");
+	this.set_u8("seat icon", 7);
 	
 	this.set_f32("weight", 3.25f);
 	
@@ -56,14 +63,27 @@ void onTick(CBlob@ this)
 	const u32 fireTime = this.get_u32("fire time");
 	this.set_bool("fire ready", (gameTime > fireTime + FIRE_RATE));
 	
+	AttachmentPoint@ seat = this.getAttachmentPoint(0);
+	CBlob@ occupier = seat.getOccupied();
+	if (occupier !is null) Manual(this, occupier);
+	
+	f32 angle = -this.get_f32("rot_angle");
+	
+	Vec2f seat_offset = Vec2f(-7, 0).RotateBy(angle);
+	this.getAttachments().getAttachmentPointByName("SEAT").offset = seat_offset;
+	
 	if (isClient())
 	{
 		//sprite ready
-		if (fireTime + FIRE_RATE - 15 == gameTime)
+		if (fireTime + FIRE_RATE == gameTime)
 		{
 			this.getSprite().animation.SetFrameIndex(0);
 			directionalSoundPlay("Charging.ogg", this.getPosition(), 2.0f);
 		}
+
+		CSprite@ sprite = this.getSprite();
+		sprite.ResetTransform();
+		sprite.RotateBy(-this.get_f32("rot_angle"), Vec2f_zero);
 	}
 
 	if (isServer())
@@ -120,10 +140,53 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	}
 }
 
+void Manual(CBlob@ this, CBlob@ controller)
+{
+	Vec2f aimpos = controller.getAimPos();
+	Vec2f pos = this.getPosition();
+	Vec2f aimVec = aimpos - pos;
+
+	// fire
+	if (controller.isMyPlayer() && controller.isKeyPressed(key_action1) && this.get_bool("fire ready"))
+	{
+		CBitStream bs;
+		bs.write_netid(this.getNetworkID());
+		this.SendCommand(this.getCommandID("fire"), bs);
+	}
+
+	// rotate turret
+	Rotate(this, aimVec);
+	CSprite@ sprite = controller.getSprite();
+	sprite.ResetTransform();
+	sprite.RotateBy(this.getAngleDegrees() - this.get_f32("rot_angle") - controller.getAngleDegrees(), Vec2f_zero); //Rotate player sprite without rotating blob because otherwise rotation would be continious
+}
+
+void Rotate(CBlob@ this, Vec2f&in aimVector)
+{
+	f32 degrees = loopAngle(aimVector.getAngleDegrees() + this.getAngleDegrees());
+	f32 curr_angle = this.get_f32("rot_angle");
+	f32 diff = curr_angle - degrees;
+	if(diff < 180 && diff > -180) diff = curr_angle - degrees;
+	else diff = degrees - curr_angle;
+	f32 new_angle = curr_angle - Maths::Clamp(diff, -TURN_SPEED, TURN_SPEED);
+
+	new_angle = Maths::Clamp(loopAngle(new_angle - 180), 180 - MAX_ANGLE, 180 + MAX_ANGLE) + 180; //Keep angle withing given bounds
+	
+	this.set_f32("rot_angle", loopAngle(new_angle));
+}
+
+// Keeps an angle within the engine's boundaries (-740 to 740)
+const f32 loopAngle(f32 angle)
+{
+	while (angle < 0.0f)	angle += 360.0f;
+	while (angle > 360.0f)	angle -= 360.0f;
+	return angle;
+}
+
 void Fire(CBlob@ this, CBlob@ shooter)
 {
 	Vec2f pos = this.getPosition();
-	Vec2f aimVector = Vec2f(1, 0).RotateBy(this.getAngleDegrees());
+	Vec2f aimVector = Vec2f(1, 0).RotateBy(this.getAngleDegrees() - this.get_f32("rot_angle"));
 
 	if (isServer())
 	{

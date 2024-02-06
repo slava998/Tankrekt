@@ -6,7 +6,7 @@
 const u16 COUPLINGS_COOLDOWN = 8 * 30;
 const u16 CREW_COUPLINGS_LEASE = 10 * 30;//time till the captain can control crew's couplings
 const u16 UNUSED_RESET = 2 * 60 * 30;
-const u8 CANNON_FIRE_CYCLE = 15;
+const u8 CANNON_FIRE_CYCLE = 13;
 const u8 SPONSON_FIRE_CYCLE = 5;
 
 void onInit(CBlob@ this)

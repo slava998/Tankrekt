@@ -123,7 +123,9 @@ void Manual(CBlob@ this, CBlob@ controller)
 
 	// rotate turret
 	Rotate(this, aimVec);
-	controller.setAngleDegrees(-this.get_f32("rot_angle") + this.getAngleDegrees());
+	CSprite@ sprite = controller.getSprite();
+	sprite.ResetTransform();
+	sprite.RotateBy(this.getAngleDegrees() - this.get_f32("rot_angle") - controller.getAngleDegrees(), Vec2f_zero); //Rotate player sprite without rotating blob because otherwise rotation would be continious
 }
 
 f32 getAcceleratedFireRate(CBlob@ this)
