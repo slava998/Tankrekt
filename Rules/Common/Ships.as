@@ -469,19 +469,18 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			ship.vel *= VEL_DAMPING;
 			ship.angle_vel *= ANGLE_VEL_DAMPING;
 
-			const f32 moveSpeed = ship.vel.Normalize();
-			print("sped " + moveSpeed);
 			
 			Vec2f offset = ship.origin_offset;
 			offset.RotateBy(ship.angle);
 			ship.origin_pos = ship.pos + offset;
 			
 			//check for beached or slowed ships
-			
 			u16 beachedBlocks = 0;
-			u16 slowedBlocks = 0;
+			u16 shoalBlocks = 0;
 			u16 roadBlocks = 0;
 			u16 mudBlocks = 0;
+
+			f32 maxVel = 0;
 			
 			for (u16 q = 0; q < blocksLength; ++q)
 			{
@@ -499,37 +498,30 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 					if (!b.hasTag("mothership") || this.get_bool("whirlpool"))
 						b.server_Hit(b, bPos, Vec2f_zero, 1.0f, 0, true);
 				}
-				else if (isTouchingShoal(bPos)) // between water and land (slow)
+
+				else if (isTouchingShoal(bPos)) // shoal, between water and land (slow for tracks and wheels)
 				{
-					slowedBlocks += 1;
-					const f32 velocity = Maths::Clamp(slowedBlocks / (ship.mass * 2), 0.0f, 0.02f);
-					ship.vel *= 1.0f - velocity;
-					ship.angle_vel *= 1.0f - velocity;
+					shoalBlocks += 1;
+					const f32 velocity = Maths::Clamp(shoalBlocks / (ship.mass * 2), 0.0f, 0.02f);
 				}
 				else if (tileType == 394 && !b.hasTag("tanktrack")) // road (good for wheels)
 				{
-					roadBlocks += 1;
-					const f32 velocity = Maths::Clamp(roadBlocks / ship.mass, 0.0f, 0.005f);
-					if (moveSpeed < 3.5f)
-					{
-						ship.vel *= 1.0f;
-						ship.angle_vel *= 1.0f;
-					}
+					beachedBlocks += 1;
+					const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.05f);
 				}	
-				else if (tileType == 395 && !b.hasTag("wheel")) // mud (slow for wheels)
+				else if (tileType == 395 && !b.hasTag("tanktrack")) // mud (slow for wheels)
 				{
 					mudBlocks += 1;
-					const f32 velocity = Maths::Clamp(mudBlocks / ship.mass, 0.0f, 0.2f);
-					ship.vel *= 1.0f - velocity;
-					ship.angle_vel *= 1.0f - velocity;
+					const f32 velocity = Maths::Clamp(mudBlocks / ship.mass, 0.0f, 1.0f);
 				}
 				else if (isTouchingLand(bPos)) // any land
 				{
 					beachedBlocks += 1;
 					const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.1f);
-					ship.vel *= 1.0f - velocity;
-					ship.angle_vel *= 1.0f - velocity;
 				}
+				
+				ship.vel *= 1.0f - velocity;
+				ship.angle_vel *= 1.0f - velocity;
 			}
 		}
 		if (!isServer() || (getGameTime() + ship.id * 33) % 45 != 0)
