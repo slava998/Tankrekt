@@ -505,23 +505,24 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 
 				if (isTouchingShoal(bPos)) // shoal, between water and land (slow for tracks and wheels)
 				{
-					tiles = shoalBlocks++;
 					multiplier = 2;
+
+					tiles = ++shoalBlocks;
 					maxVel = 0.02f;
 				}
 				else if (tileType == 394 && !b.hasTag("tanktrack")) // road (good for wheels)
 				{
-					tiles = beachedBlocks++;
+					tiles = ++beachedBlocks;
 					maxVel = 0.05f;
 				}	
 				else if (tileType == 395 && !b.hasTag("tanktrack")) // mud (slow for wheels)
 				{
-					tiles = mudBlocks++;
+					tiles = ++mudBlocks;
 					maxVel = 1.0f;
 				}
 				else if (isTouchingLand(bPos)) // any land
 				{
-					tiles = beachedBlocks++;
+					tiles = ++beachedBlocks;
 					maxVel = 0.1f;
 				}
 

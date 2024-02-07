@@ -25,8 +25,6 @@ shared bool isTouchingShoal(const Vec2f&in pos)
 	return tileType >= CMap::shoal_inland && tileType <= CMap::shoal_shore_diagonal_L1;
 }
 
-
-
 shared bool isInWater(const Vec2f&in pos)
 {
 	CMap@ map = getMap();
