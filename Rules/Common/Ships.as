@@ -479,8 +479,11 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			u16 shoalBlocks = 0;
 			u16 roadBlocks = 0;
 			u16 mudBlocks = 0;
+			u16 tiles = 0;
 
 			f32 maxVel = 0;
+			u8 multiplier = 1;
+			
 			
 			for (u16 q = 0; q < blocksLength; ++q)
 			{
@@ -497,31 +500,35 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 					TileCollision(ship, bPos);
 					if (!b.hasTag("mothership") || this.get_bool("whirlpool"))
 						b.server_Hit(b, bPos, Vec2f_zero, 1.0f, 0, true);
+					continue;
 				}
 
-				else if (isTouchingShoal(bPos)) // shoal, between water and land (slow for tracks and wheels)
+				if (isTouchingShoal(bPos)) // shoal, between water and land (slow for tracks and wheels)
 				{
-					shoalBlocks += 1;
-					const f32 velocity = Maths::Clamp(shoalBlocks / (ship.mass * 2), 0.0f, 0.02f);
+					tiles = shoalBlocks++;
+					multiplier = 2;
+					maxVel = 0.02f;
 				}
 				else if (tileType == 394 && !b.hasTag("tanktrack")) // road (good for wheels)
 				{
-					beachedBlocks += 1;
-					const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.05f);
+					tiles = beachedBlocks++;
+					maxVel = 0.05f;
 				}	
 				else if (tileType == 395 && !b.hasTag("tanktrack")) // mud (slow for wheels)
 				{
-					mudBlocks += 1;
-					const f32 velocity = Maths::Clamp(mudBlocks / ship.mass, 0.0f, 1.0f);
+					tiles = mudBlocks++;
+					maxVel = 1.0f;
 				}
 				else if (isTouchingLand(bPos)) // any land
 				{
-					beachedBlocks += 1;
-					const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.1f);
+					tiles = beachedBlocks++;
+					maxVel = 0.1f;
 				}
-				
+
+				const f32 velocity = Maths::Clamp(tiles / (ship.mass * multiplier), 0.0f, maxVel);
 				ship.vel *= 1.0f - velocity;
 				ship.angle_vel *= 1.0f - velocity;
+				multiplier = 1;
 			}
 		}
 		if (!isServer() || (getGameTime() + ship.id * 33) % 45 != 0)
