@@ -523,7 +523,7 @@ bool onServerProcessChat(CRules@ this, const string& in text_in, string& out tex
 				}
 				else if (tokens[0] == "!list") //print all available shiprekt commands
 				{
-					print("\n      >>    SHIPREKT COMMANDS LIST    <<\n"+
+					print("\n      >>    Tankrekt COMMANDS LIST    <<\n"+
 						  "\n !kick [playername] : kick the specified player."+
 						  "\n !ban [playername OR IP address] [minutes] [reason] : soft ban the specified player. -1 for perm."+
 						  "\n !freeze [playername] : freeze or unfreeze player. works mechanically better than F2/F3 freeze method."+

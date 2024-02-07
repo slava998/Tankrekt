@@ -99,7 +99,7 @@ namespace Trans
 	BlowUp        = Translate("Blow up!\\Взрывать!\\Explodir!\\Wysadzić w powietrze!\\Exploser!\\¡Explotó!"),
 	
 	//Help menu
-	Welcome       = Translate("Welcome to Shiprekt! Last changes and fixes by\\Добро пожаловать в Shiprekt! Последние изменения и исправления:\\Bem-vindo ao Shiprekt! Últimas mudanças e correções por\\Witamy w Shiprekt! Ostatnie zmiany i poprawki autorstwa\\Bienvenue dans Shiprekt! Dernièrs changements et corrections par\\¡Bienvenido a Shiprekt! Últimos cambios y correcciones por"),
+	Welcome       = Translate("Welcome to Tankrekt! Last changes and fixes by\\Добро пожаловать в Tankrekt! Последние изменения и исправления:\\Bem-vindo ao Tankrekt! Últimas mudanças e correções por\\Witamy w Tankrekt! Ostatnie zmiany i poprawki autorstwa\\Bienvenue dans Tankrekt! Dernièrs changements et corrections par\\¡Bienvenido a Tankrekt! Últimos cambios y correcciones por"),
 	Version       = Translate("Version\\Версия\\Versão\\Wersja\\Version\\Versión"),
 	LastChanges   = Translate("Last Changes\\Последние изменения\\Últimas mudanças\\Ostatnie zmiany\\Derniers changements\\Últimos cambios"),
 	Go_to_the     = Translate("Go to the\\Перейти\\Vá para o\\Przejdź do\\Allez à l\\Ir a"),

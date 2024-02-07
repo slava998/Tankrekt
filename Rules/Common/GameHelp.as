@@ -86,14 +86,15 @@ void onRender(CRules@ this)
 
 	const string infoTitle = Trans::HowToPlay;
 	const string textInfo = "- "+ Trans::Mothership+":\n" +
-	" * "+ Trans::GatherX    +"\n"+
+	"\nSorry, this will be written later :)\n\n\n\n\n\n\n\n";
+	/*" * "+ Trans::GatherX    +"\n"+
 	" * "+ Trans::EngineWeak +"\n\n"+
 	"- " + Trans::Miniship   +":\n" +
 	" * "+ Trans::YieldX     +"\n"+
 	" * "+ Trans::Docking    +"\n\n"+
 	"- " + Trans::OtherTips  +":\n"+
 	" * "+ Trans::Leaderboard+"\n"+
-	" * "+ Trans::BlockWeight;
+	" * "+ Trans::BlockWeight;*/
 	
 	//Controls
 	const string controlsTitle = Trans::Controls;
@@ -124,7 +125,7 @@ void onRender(CRules@ this)
 	if (justJoined)
 	{
 		//welcome text
-		const string intro = Trans::Welcome+" Gingerbeard."; //last editor
+		const string intro = Trans::Welcome; //last editor
 		
 		Vec2f introSize;
 		GUI::GetTextDimensions(intro, introSize);
@@ -151,7 +152,7 @@ void onRender(CRules@ this)
 		//PAGE 1
 		const string shiprektVersion = "Tankrekt "+Trans::Version+" "+this.get_string("version")+"\n";
 		const string lastChangesInfo = Trans::LastChanges+":\n"
-		+ "- 01-29-2023 - By Tactical Mods\n"
+		+ "- 07-02-2024\n"
 		+ "  * Mod created, major changes:\n"
 		+ "  * Tracks and wheels, wheels are good for light tanks,, while tracks are slow but good for heavy tanks\n"
 		+ "  * Stone blocks, they are good for forts or very armored tanks\n"
@@ -218,7 +219,7 @@ void onRender(CRules@ this)
 			GUI::DrawText(RCONDetected, Vec2f(tlBox.x + boxMargin, tlBox.y + boxMargin * 11), tipsColor);
 			
 			GUI::SetFont("menu");
-			const string modTools = "Shiprekt offers a variety of chat commands for testing and moderation purposes." +
+			const string modTools = "Tankrekt offers a variety of chat commands for testing and moderation purposes." +
 									"\n\n Type ' !list ' in chat and then check the console to see what is available. (check cmd console on server)";
 			GUI::DrawText(modTools, Vec2f(tlBox.x + boxMargin, tlBox.y + boxMargin * 12), tipsColor);
 		}
@@ -237,8 +238,8 @@ void onRender(CRules@ this)
 	
 	//Add social links
 	GUI::SetFont("menu");
-	makeWebsiteLink(Vec2f(brBox.x, 100.0f), Trans::Go_to_the+" Shiprekt Github", "https://github.com/slava998/Tankrekt");
-	makeWebsiteLink(Vec2f(brBox.x, 150.0f), Trans::Go_to_the+" Shiprekt Discord", "https://discord.gg/Mk4Kcrg5R5");
+	makeWebsiteLink(Vec2f(brBox.x, 100.0f), Trans::Go_to_the+" Tankrekt Github", "https://github.com/slava998/Tankrekt");
+	makeWebsiteLink(Vec2f(brBox.x, 150.0f), Trans::Go_to_the+" Tankrekt Discord", "https://discord.gg/Mk4Kcrg5R5");
 	
 	mouseWasPressed1 = controls.mousePressed1; 
 }
