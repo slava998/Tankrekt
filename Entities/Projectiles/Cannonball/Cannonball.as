@@ -128,7 +128,9 @@ const f32 getDamage(CBlob@ this, CBlob@ hitBlob)
 		return 2.0f * damageFactor;
 	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 		return 1.65f * damageFactor;
-	if (hitBlob.hasTag("seat") || hitBlob.hasTag("plank"))
+	if (hitBlob.hasTag("plank"))
+		return 1.2f * damageFactor;
+	if (hitBlob.hasTag("seat"))
 		return 1.5f * damageFactor;
 	if (hitBlob.hasTag("weapon"))
 		return 1.35f * damageFactor;
