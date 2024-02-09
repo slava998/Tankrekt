@@ -258,8 +258,10 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 	}
 	else if (gunBlob.hasTag("heavy machinegun"))
 	{
-		damage = 0.1f;
+		damage = 0.066f;
 
+		if (hitBlob.hasTag("stone"))
+			return 0.022f;
 		if (hitBlob.hasTag("ramengine"))
 			return 0.8f;
 		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
