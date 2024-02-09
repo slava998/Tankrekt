@@ -186,7 +186,7 @@ void onDie(CBlob@ this)
 	
 	if (!isServer()) return;
 	
-	//splash damage
+	/*//splash damage
 	CBlob@[] blobsInRadius;
 	if (getMap().getBlobsInRadius(pos, SPLASH_RADIUS, @blobsInRadius))
 	{
@@ -197,7 +197,7 @@ void onDie(CBlob@ this)
 			if (!b.hasTag("hasSeat") && b.hasTag("block") && b.getShape().getVars().customData > 0)
 				this.server_Hit(b, Vec2f_zero, Vec2f_zero, SPLASH_DAMAGE, 9, false);
 		}
-	}
+	}*/
 }
 
 Random _sprk_r;
