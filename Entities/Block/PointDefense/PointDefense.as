@@ -1,7 +1,6 @@
 #include "WeaponCommon.as";
 #include "AccurateSoundPlay.as";
 #include "ParticleSpark.as";
-#include "Knocked.as";
 
 const f32 PROJECTILE_SPEED = 9.0f;
 const f32 PROJECTILE_SPREAD = 2.25;
@@ -191,7 +190,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		{
 			this.server_Hit(hitBlob, bPos, Vec2f_zero, getDamage(hitBlob), 0, true);
 		}
-		if(isKnockable(hitBlob)) SetKnocked(hitBlob, 15, true);
 
 		if (isClient())//effects
 		{
