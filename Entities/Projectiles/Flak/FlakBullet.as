@@ -131,7 +131,7 @@ const f32 getDamage(CBlob@ hitBlob)
 		return 0.3f;
 	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("bomb") || hitBlob.hasTag("core"))
 		return 0.1f;
-	return 0.06f;
+	return 0.15f;
 }
 
 void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
