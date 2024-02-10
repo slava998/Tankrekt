@@ -19,6 +19,7 @@
 
 const int CONSTRUCT_RANGE = 48;
 const int DECONSTRUCT_RANGE = 16;
+const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of the block will be returned after deconstructing
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
@@ -863,7 +864,7 @@ void Construct(CBlob@ this)
 				
 				if (reclaim + currentReclaim <= 0) //give money if we ate this blob
 				{
-					cost = blobCost * (health / initHealth);
+					cost = blobCost * (health / initHealth) * DECONSTRUCTOR_RETURN_MOD;
 				}
 			}
 			else if (currentTool == "reconstructor")
