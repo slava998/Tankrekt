@@ -63,13 +63,6 @@ void flak(CBlob@ this)
 {
 	const Vec2f pos = this.getPosition();
 
-	if (isClient())
-	{
-		directionalSoundPlay("Bomb.ogg", pos);
-		makeHugeExplosionParticle(pos);
-		ShakeScreen(4 * EXPLODE_RADIUS, 45, pos);
-	}
-
 	//hit blobs
 	CBlob@[] blobs;
 	if (!getMap().getBlobsInRadius(pos, EXPLODE_RADIUS, @blobs))
@@ -122,35 +115,18 @@ void onDie(CBlob@ this)
 	
 	if (isClient())
 	{
-		directionalSoundPlay("FlakExp"+XORRandom(2), pos, 2.0f);
+		directionalSoundPlay("ArtilleryShellExplode", pos, 10.0f);
 		const u8 particleAmount = v_fastrender ? 1 : 3;
 		for (u8 i = 0; i < particleAmount; i++)
 		{
 			makeSmallExplosionParticle(pos + getRandomVelocity(90, 12, 360));
 		}
+		makeHugeExplosionParticle(pos);
+		ShakeScreen(4 * EXPLODE_RADIUS, 45, pos);
 	}
 
 	if (isServer() && !this.hasTag("noFlakBoom"))
 		flak(this);
-}
-
-const f32 getDamage(CBlob@ hitBlob)
-{
-	if (hitBlob.hasTag("rocket"))
-		return 3.0f; 
-	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank") || hitBlob.hasTag("bomb") || hitBlob.hasTag("engineblock"))
-		return 0.8f;
-	if (hitBlob.hasTag("ramengine"))
-		return 0.5f;
-	if (hitBlob.hasTag("door"))
-		return 0.6f;
-	if (hitBlob.getName() == "shark" || hitBlob.getName() == "human")
-		return 3.0f; //no chances to survive
-	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("core"))
-		return 0.15f;
-	if (hitBlob.hasTag("stone"))
-		return 0.5f;
-	return 0.5f; //solids
 }
 
 void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
