@@ -143,31 +143,12 @@ void onTick(CBlob@ this)
 					
 					const bool isOwner = c.get_string("playerOwner") == occupierName;
 
-					if (isCaptain)
+
+					CButton@ button = occupier.CreateGenericButton(2, Vec2f_zero, c, c.getCommandID("decouple"), "Decouple");
+					if (button !is null)
 					{
-						CButton@ button;
-						const bool oldEnough = c.getTickSinceCreated() > CREW_COUPLINGS_LEASE;
-						if ((isOwner || oldEnough))
-						{
-							@button = occupier.CreateGenericButton(isOwner ? 2 : 1, Vec2f_zero, c, c.getCommandID("decouple"), isOwner ? "Decouple" : "Decouple (crew's)");
-						}
-						else
-							@button = occupier.CreateGenericButton(0, Vec2f_zero, c, 0, "Can't decouple yet (crew's)");
-							
-						if (button !is null) 
-						{
-							button.enableRadius = 999.0f;
-							button.radius = 1.0f; //radius change for engine issue (remove this if engine gets fixed) (shut yo goofy ass its ur brain issue m8)
-						}
-					} 
-					else if (isOwner)
-					{
-						CButton@ button = occupier.CreateGenericButton(2, Vec2f_zero, c, c.getCommandID("decouple"), "Decouple");
-						if (button !is null)
-						{
-							button.enableRadius = 999.0f;
-							button.radius = 1.0f;
-						}
+						button.enableRadius = 999.0f;
+						button.radius = 1.0f;
 					}
 				}
 				
@@ -179,7 +160,7 @@ void onTick(CBlob@ this)
 				{
 					CBlob@ r = repulsors[i];
 					const int color = r.getShape().getVars().customData;
-					if (color > 0 && r.isOnScreen() && !r.hasTag("activated") && r.get_string("playerOwner") == occupierName || (isCaptain && seatColor == color))
+					if (color > 0 && r.isOnScreen() && !r.hasTag("activated") && seatColor == color)
 					{
 						CButton@ button = occupier.CreateGenericButton(8, Vec2f_zero, r, r.getCommandID("chainReaction"), "Activate");
 						if (button !is null)
@@ -192,7 +173,7 @@ void onTick(CBlob@ this)
 			}
 			
 			//hax: update can't-decouplers
-			if (isCaptain && space)
+			if (space)
 			{
 				for (u16 i = 0; i < couplingsLength; ++i)
 				{
@@ -262,9 +243,8 @@ void onTick(CBlob@ this)
 			this.set_bool("kLR", true);
 		}
 		
-		//ship controlling: only ship 'captain' OR enemy can steer /direct fire
-		if (isCaptain || canHijack)
-		{
+		//ship controlling
+
 			// gather propellers, couplings, machineguns, cannons and sponsons
 			u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons;					
 			this.get("left_propellers", left_propellers);
@@ -517,7 +497,6 @@ void onTick(CBlob@ this)
 					}
 				}
 			}
-		}
 	}
 	else if (isServer() && ship.owner == seatOwner) //captain seats release rates
 	{
