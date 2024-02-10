@@ -6,7 +6,7 @@
 #include "ParticleSpark.as";
 #include "BlockCosts.as";
  
-const f32 CONSTRUCT_RATE = 800.0f; //lower values = lower recover
+const f32 CONSTRUCT_RATE = 500.0f; //lower values = lower recover
 const int CONSTRUCT_VALUE = 5;
 const int NUM_HEALS = 5;
 
