@@ -29,7 +29,11 @@ void onInit(CBlob@ this)
 	consts.mapCollisions = true;
 	consts.bullet = true;
 
-	this.getSprite().SetZ(550.0f);
+	CSprite@ sprite = this.getSprite();
+	sprite.SetZ(550.0f);
+	sprite.SetEmitSound("Shell_Whistle.ogg");
+	sprite.SetEmitSoundPaused(false);
+	sprite.SetEmitSoundVolume(4);
 	
 	//shake screen (onInit accounts for firing latency)
 	CPlayer@ localPlayer = getLocalPlayer();
