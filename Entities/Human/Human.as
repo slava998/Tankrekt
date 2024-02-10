@@ -588,7 +588,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		AddBlock(this, menu, "bomb", "$BOMB$", Trans::Bomb, Trans::BombDesc, core, 2.0f);
 	}
 	{ //Ram Hull
-		AddBlock(this, menu, "ram", "$RAM$", Trans::Ram, Trans::RamDesc, core, 2.0f);
+		AddBlock(this, menu, "ram", "$RAM$", Trans::Ram, Trans::RamDesc, core, 1.0f);
 	}
 	{ //Machinegun
 		description = Trans::MGDesc+"\n"+Trans::AmmoCap+": 250";

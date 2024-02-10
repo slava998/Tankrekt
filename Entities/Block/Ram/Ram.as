@@ -6,7 +6,7 @@ void onInit(CBlob@ this)
 	this.Tag("ramming");
 	this.set_u8("gibType", 1);
 	
-	this.set_f32("weight", 2.0f);
+	this.set_f32("weight", 1.0f);
 }
 
 Random _smokerandom(0x15125); //clientside
