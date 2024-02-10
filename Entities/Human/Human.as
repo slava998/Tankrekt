@@ -23,7 +23,7 @@ const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of t
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 4);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 4); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 u32 HEAL_TICKS = 15 * 30;
@@ -538,11 +538,24 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Ram Engine
 		AddBlock(this, menu, "ramengine", "$RAMENGINE$", Trans::RamEngine, Trans::RamEngineDesc, core, 1.25f);
 	}
+	{ //Tank Track
+		AddBlock(this, menu, "tanktrack", "$TANKTRACK$", Trans::TankTrack, Trans::TankTrackDesc, core, 1.0f);
+	}
+	{ //Wheel
+		AddBlock(this, menu, "wheel", "$WHEEL$", Trans::Wheel, Trans::WheelDesc, core, 1.0f);
+	}
+	{ //Engine
+		description = Trans::EngineBlockDesc;
+		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::EngineBlock, description, core, 3.0f);
+	}
 	{ //Coupling
 		AddBlock(this, menu, "coupling", "$COUPLING$", Trans::Coupling, Trans::CouplingDesc, core, 0.1f);
 	}
 	{ //Wooden Hull
 		AddBlock(this, menu, "solid", "$SOLID$", Trans::Hull, Trans::WoodHullDesc, core, 0.75f);
+	}
+	{ //Stone Bricks
+		AddBlock(this, menu, "stone", "$STONE$", Trans::Stone, Trans::StoneDesc, core, 12.0f);
 	}
 	{ //Wooden Platform
 		AddBlock(this, menu, "platform", "$WOOD$", Trans::Platform, Trans::PlatformDesc, core, 0.2f);
@@ -581,6 +594,10 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::MGDesc+"\n"+Trans::AmmoCap+": 250";
 		AddBlock(this, menu, "machinegun", "$MACHINEGUN$", Trans::Machinegun, description, core, 2.0f);
 	}
+	{ //Heavy Machinegun
+		description = Trans::HeavyMGDesc+"\n"+Trans::AmmoCap+": 160";
+		AddBlock(this, menu, "heavymachinegun", "$HEAVYMACHINEGUN$", Trans::HeavyMG, description, core, 3.0f);
+	}
 	{ //Point Defense
 		description = Trans::PointDefDesc+"\n"+Trans::AmmoCap+": 15";
 		AddBlock(this, menu, "pointdefense", "$POINTDEFENSE$", Trans::PointDefense, description, core, 3.5f);
@@ -589,11 +606,11 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::FlakDesc+"\n"+Trans::AmmoCap+": 15";
 		AddBlock(this, menu, "flak", "$FLAK$", Trans::FlakCannon, description, core, 2.5f);
 	}
-	{ //Heavy Machinegun
-		description = Trans::HeavyMGDesc+"\n"+Trans::AmmoCap+": 160";
-		AddBlock(this, menu, "heavymachinegun", "$HEAVYMACHINEGUN$", Trans::HeavyMG, description, core, 3.0f);
+	{ //Sponson Cannon
+		description = Trans::SponsonCannonDesc+"\n"+Trans::AmmoCap+": 15";
+		AddBlock(this, menu, "sponson", "$SPONSON$", Trans::Sponson, description, core, 3.5f);
 	}
-	{ //AP Cannon
+	{ //Cannon
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
 		AddBlock(this, menu, "cannon", "$CANNON$", Trans::Cannon, description, core, 3.25f);
 	}
@@ -601,26 +618,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::LauncherDesc+"\n"+Trans::AmmoCap+": 8";
 		AddBlock(this, menu, "launcher", "$LAUNCHER$", Trans::Launcher, description, core, 4.5f);
 	}
-	{ //Stone Bricks
-		AddBlock(this, menu, "stone", "$STONE$", Trans::Stone, Trans::StoneDesc, core, 12.0f);
-	}
-	{ //Tank Track
-		AddBlock(this, menu, "tanktrack", "$TANKTRACK$", Trans::TankTrack, Trans::TankTrackDesc, core, 1.0f);
-	}
-	{ //Wheel
-		AddBlock(this, menu, "wheel", "$WHEEL$", Trans::Wheel, Trans::WheelDesc, core, 1.0f);
-	}
 	{ //Tank Cannon
 		description = Trans::TankCannonDesc+"\n"+Trans::AmmoCap+": 8";
 		AddBlock(this, menu, "tankcannon", "$TANKCANNON$", Trans::TankCannon, description, core, 7.0f);
-	}
-	{ //Sponson Cannon
-		description = Trans::SponsonCannonDesc+"\n"+Trans::AmmoCap+": 15";
-		AddBlock(this, menu, "sponson", "$SPONSON$", Trans::Sponson, description, core, 3.5f);
-	}
-	{ //Engine
-		description = Trans::EngineBlockDesc;
-		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::EngineBlock, description, core, 3.0f);
 	}
 	{ //Artillery
 		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 6"; 
