@@ -1,7 +1,7 @@
 //Gingerbeard @ 3/27/2022
 //Converts a block to the player's team after some time nearby
 
-const int capture_radius = 8;
+const int capture_radius = 14;
 const u8 checkFrequency = 15;
 const u8 checkFrequencyIdle = 40;
 
