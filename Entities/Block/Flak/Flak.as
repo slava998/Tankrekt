@@ -125,7 +125,9 @@ void Manual(CBlob@ this, CBlob@ controller)
 	// rotate turret
 	Rotate(this, aimVec);
 	aimVec.y *= -1;
-	controller.setAngleDegrees(aimVec.Angle());
+	CSprite@ sprite = controller.getSprite();
+	sprite.ResetTransform();
+	sprite.RotateBy(aimVec.Angle() - controller.getAngleDegrees(), Vec2f_zero); //Rotate player sprite without rotating blob because otherwise rotation would be continious
 }
 
 void Auto(CBlob@ this)
