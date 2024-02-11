@@ -566,6 +566,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Wooden Plank
 		AddBlock(this, menu, "plank", "$PLANK$", Trans::Plank, Trans::PlankDesc, core, 0.7f);
 	}
+	{ //Wooden Plank Corner
+		AddBlock(this, menu, "plankcorner", "$PLANKCORNER$", Trans::PlankCorner, Trans::PlankDesc, core, 0.7f);
+	}
 	{ //Harpoon
 		AddBlock(this, menu, "harpoon", "$HARPOON$", Trans::Harpoon, Trans::HarpoonDesc, core, 2.0f);
 	}
