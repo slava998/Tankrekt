@@ -513,13 +513,15 @@ const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged 
 	const f32 distanceToTarget = Maths::Max(aimVec.Length(), 80.0f);
 	CMap@ map = getMap();
 
-	Vec2f offset = aimVec;
-	offset.Normalize();
-	offset *= 7.0f;
+	f32 angle = aimVec.Angle();
+	Vec2f offset1 = Vec2f(8.0, 1.5f);
+	Vec2f offset2 = Vec2f(8.0, -1.5f);
+	offset1.RotateBy(-angle);
+	offset2.RotateBy(-angle);
 
 	HitInfo@[] hitInfos;
-	map.getHitInfosFromRay(pos + offset.RotateBy(30), -aimVec.Angle(), distanceToTarget, blob, @hitInfos);
-	map.getHitInfosFromRay(pos + offset.RotateBy(-60), -aimVec.Angle(), distanceToTarget, blob, @hitInfos);
+	map.getHitInfosFromRay(pos + offset1, -angle, distanceToTarget, blob, @hitInfos);
+	map.getHitInfosFromRay(pos + offset2, -angle, distanceToTarget, blob, @hitInfos);
 	
 	const u8 hitLength = hitInfos.length;
 	if (hitLength > 0)
@@ -537,7 +539,7 @@ const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged 
 			const bool sameShip = bColor != 0 && thisColor == bColor;
 			const bool canShootSelf = targetMerged && hi.distance > distanceToTarget * 0.7f;
 
-			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && ((b.hasTag("solid") && !b.hasTag("plank"))) && sameShip && !canShootSelf)
+			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && (b.hasTag("solid") && !b.hasTag("plank")) && sameShip && !canShootSelf)
 			{
 				return false;
 			}

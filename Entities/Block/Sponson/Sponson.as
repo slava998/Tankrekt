@@ -5,7 +5,7 @@
 const f32 PROJECTILE_SPEED = 9.0f;
 const f32 PROJECTILE_SPREAD = 1.15;
 const int FIRE_RATE = 60;
-const f32 PROJECTILE_RANGE = 260.0f;
+const f32 PROJECTILE_RANGE = 340.0f;
 
 const u8 MAX_AMMO = 15;
 const u8 REFILL_AMOUNT = 1;
@@ -15,16 +15,14 @@ const u8 REFILL_SECONDARY_CORE_AMOUNT = 1;
 
 Random _shotspreadrandom(0x11598); //clientside
 
+//Some important code is in Seat.as
+
 void onInit(CBlob@ this)
 {
 	this.Tag("solid");
 	this.Tag("sponson");
 	this.Tag("weapon");
 	this.Tag("usesAmmo");
-	
-	this.Tag("noEnemyEntry");
-	this.set_string("seat label", "Get In Sponson");
-	this.set_u8("seat icon", 7);
 	
 	this.set_f32("weight", 3.5f);
 	
@@ -68,13 +66,6 @@ void onTick(CBlob@ this)
 	//fire ready
 	const u32 fireTime = this.get_u32("fire time");
 	this.set_bool("fire ready", (gameTime > fireTime + FIRE_RATE));
-	
-	AttachmentPoint@ seat = this.getAttachmentPoint(0);
-	CBlob@ occupier = seat.getOccupied();
-	if (occupier !is null)
-	{
-		Manual(this, occupier);
-	}
 
 	if (isServer())
 	{
@@ -82,24 +73,6 @@ void onTick(CBlob@ this)
 		if (ship !is null)
 			refillAmmo(this, ship, REFILL_AMOUNT, REFILL_SECONDS, REFILL_SECONDARY_CORE_AMOUNT, REFILL_SECONDARY_CORE_SECONDS);
 	}
-}
-
-void Manual(CBlob@ this, CBlob@ controller)
-{
-	Vec2f aimpos = controller.getAimPos();
-	Vec2f pos = this.getPosition();
-	Vec2f aimVec = aimpos - pos;
-
-	// fire
-	if (controller.isMyPlayer() && controller.isKeyPressed(key_action1) && canShoot(this) && isClearShot(this, aimVec))
-	{
-		Fire(this, aimVec, controller.getNetworkID());
-	}
-
-	// rotate turret
-	Rotate(this, aimVec);
-	aimVec.y *= -1;
-	controller.setAngleDegrees(aimVec.Angle());
 }
 
 bool canShoot(CBlob@ this)
@@ -207,11 +180,16 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 		Vec2f velocity = params.read_Vec2f();
 		Vec2f aimVector = velocity;		aimVector.Normalize();
+
+		f32 angle = aimVector.Angle();
+		Vec2f offset = Vec2f(9.6f, 0);
+		offset.RotateBy(-angle);
+
 		const f32 time = params.read_f32();
 
 		if (isServer())
 		{
-            CBlob@ bullet = server_CreateBlob("flakbullet", this.getTeamNum(), pos + aimVector*9);
+            CBlob@ bullet = server_CreateBlob("sponsonbullet", this.getTeamNum(), pos + offset);
             if (bullet !is null)
             {
             	if (caller !is null)
@@ -222,14 +200,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
                 bullet.setVelocity(velocity);
                 bullet.server_SetTimeToDie(time);
-				bullet.setAngleDegrees(-aimVector.Angle());
+				bullet.setAngleDegrees(-angle);
             }
     	}
 
 		if (isClient())
 		{
 			Rotate(this, aimVector);
-			shotParticles(pos + aimVector*9, velocity.Angle());
+			shotParticles(pos + offset, angle);
 			directionalSoundPlay("FlakFire.ogg", pos, 0.50f);
 
 			CSpriteLayer@ layer = this.getSprite().getSpriteLayer("weapon");
