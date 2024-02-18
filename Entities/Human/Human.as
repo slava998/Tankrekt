@@ -555,7 +555,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		AddBlock(this, menu, "solid", "$SOLID$", Trans::Hull, Trans::WoodHullDesc, core, 0.75f);
 	}
 	{ //Stone Bricks
-		AddBlock(this, menu, "stone", "$STONE$", Trans::Stone, Trans::StoneDesc, core, 12.0f);
+		AddBlock(this, menu, "stone", "$STONE$", Trans::Stone, Trans::StoneDesc, core, 12.0f, true);
 	}
 	{ //Wooden Platform
 		AddBlock(this, menu, "platform", "$WOOD$", Trans::Platform, Trans::PlatformDesc, core, 0.2f);
@@ -627,12 +627,12 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	}
 	{ //Artillery
 		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 6"; 
-		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 40.0f);
+		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 40.0f, true);
 	}
 }
 
 // Add a block to the build menu
-CGridButton@ AddBlock(CBlob@ this, CGridMenu@ menu, const string&in block, const string&in icon, const string&in bname, const string&in desc, CBlob@ core, const f32&in weight, const bool&in isWeapon = false)
+CGridButton@ AddBlock(CBlob@ this, CGridMenu@ menu, const string&in block, const string&in icon, const string&in bname, const string&in desc, CBlob@ core, const f32&in weight, const bool&in fortOnly = false)
 {
 	const u16 cost = getCost(block);
 	
@@ -647,9 +647,24 @@ CGridButton@ AddBlock(CBlob@ this, CGridMenu@ menu, const string&in block, const
 	const bool selected = this.get_string("last buy") == block;
 	if (selected) button.SetSelected(2);
 	
-	button.SetHoverText(isWeapon ? Trans::WarmupWarning+".\n" :
-						desc + "\n"+ Trans::Weight+": " + weight * 100 + "rkt\n" + (selected ? "\n"+Trans::BuyAgain+"\n" : ""));
-	button.SetEnabled(!isWeapon);
+	if(fortOnly)
+	{
+		s32 overlappingShipID = this.get_s32("shipID");
+		Ship@ pShip = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
+	
+		if(pShip !is null && (pShip.isStation || pShip.isMothership))
+		{
+			button.SetHoverText(desc + "\n"+ Trans::Weight+": " + weight * 100 + "rkt\n" + (selected ? "\n"+Trans::BuyAgain+"\n" : ""));
+			button.SetEnabled(true);
+		}
+		else
+		{
+			button.SetHoverText(Trans::FortOnly);
+			button.SetEnabled(false);
+		}
+	}
+	else button.SetHoverText(desc + "\n"+ Trans::Weight+": " + weight * 100 + "rkt\n" + (selected ? "\n"+Trans::BuyAgain+"\n" : ""));
+	
 	return button;
 }
 
