@@ -226,7 +226,7 @@ void Fire(CBlob@ this, CBlob@ shooter)
 
 const bool isClear(CBlob@ this)
 {
-	Vec2f aimVector = Vec2f(1, 0).RotateBy(this.getAngleDegrees());
+	Vec2f aimVector = Vec2f(1, 0).RotateBy(this.getAngleDegrees() - this.get_f32("rot_angle"));
 
 	HitInfo@[] hitInfos;
 	if (getMap().getHitInfosFromRay(this.getPosition(), -aimVector.Angle(), 60.0f, this, @hitInfos))
