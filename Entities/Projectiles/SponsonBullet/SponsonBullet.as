@@ -28,8 +28,17 @@ void onInit(CBlob@ this)
 	ShapeConsts@ consts = this.getShape().getConsts();
 	consts.mapCollisions = true;
 	consts.bullet = true;
-
-	this.getSprite().SetZ(550.0f);
+	
+	CSprite@ sprite = this.getSprite();
+	sprite.SetZ(550.0f);
+	sprite.ScaleBy(Vec2f(0.8,0.8));
+	
+	CSpriteLayer@ layer = sprite.addSpriteLayer("weapon", "SponsonBullet_trail.png", 10, 4);
+	if (layer !is null)
+	{
+		layer.setRenderStyle(RenderStyle::additive);
+		layer.ScaleBy(Vec2f(0.8,0.8));
+	}
 	
 	//shake screen (onInit accounts for firing latency)
 	CPlayer@ localPlayer = getLocalPlayer();
