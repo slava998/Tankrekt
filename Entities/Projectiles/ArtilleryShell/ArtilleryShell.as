@@ -30,10 +30,17 @@ void onInit(CBlob@ this)
 	consts.bullet = true;
 
 	CSprite@ sprite = this.getSprite();
+	//CSpriteLayer@ layer = sprite.addSpriteLayer("layer", "flakBullet.png", 15, 5);
+	//if (layer !is null)
+	//{
+	//	layer.ScaleBy(Vec2f(0.5,0.8));
+	//	layer.setRenderStyle(RenderStyle::additive);
+	//}
 	sprite.SetZ(550.0f);
 	sprite.SetEmitSound("Shell_Whistle.ogg");
 	sprite.SetEmitSoundPaused(false);
 	sprite.SetEmitSoundVolume(4);
+	sprite.ScaleBy(Vec2f(0.7,0.8));
 	
 	//shake screen (onInit accounts for firing latency)
 	CPlayer@ localPlayer = getLocalPlayer();

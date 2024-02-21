@@ -33,7 +33,7 @@ void onInit(CBlob@ this)
 	sprite.SetZ(550.0f);
 	sprite.ScaleBy(Vec2f(0.8,0.8));
 	
-	CSpriteLayer@ layer = sprite.addSpriteLayer("weapon", "SponsonBullet_trail.png", 10, 4);
+	CSpriteLayer@ layer = sprite.addSpriteLayer("layer", "SponsonBullet_trail.png", 10, 4);
 	if (layer !is null)
 	{
 		layer.setRenderStyle(RenderStyle::additive);
