@@ -28,6 +28,7 @@ void onInit(CBlob@ this)
 		
 		this.set_bool("kUD", false);
 		this.set_bool("kLR", false);
+		this.set_bool("kS", false);
 		this.set_u32("lastCannonFire", getGameTime());
 		this.set_u8("cannonFireIndex", 0);
 		this.set_u32("seatResetTime", getGameTime() + UNUSED_RESET);
@@ -87,6 +88,8 @@ void onTick(CBlob@ this)
 
 		CPlayer@ player = occupier.getPlayer();
 		if (player is null) return;
+		
+		CControls@ controls = getControls();
 
 		CRules@ rules = getRules();
 		CHUD@ HUD = getHUD();
@@ -99,9 +102,9 @@ void onTick(CBlob@ this)
 		const bool left = occupier.isKeyPressed(key_left);
 		const bool right = occupier.isKeyPressed(key_right);
 		const bool down = occupier.isKeyPressed(key_down);
+		const bool strafe = occupier.isKeyPressed(key_eat); //KAG dumbness - i cant use any key, only the ones wich are used in vanilla
 		const bool space = occupier.isKeyPressed(key_action3);	
 		const bool inv = occupier.isKeyPressed(key_inventory);
-		const bool strafe = occupier.isKeyPressed(key_pickup) || occupier.isKeyPressed(key_taunts);
 		const bool left_click = occupier.isKeyPressed(key_action1);	
 		const bool right_click = occupier.isKeyPressed(key_action2);	
 
@@ -241,6 +244,7 @@ void onTick(CBlob@ this)
 		{
 			this.set_bool("kUD", true);
 			this.set_bool("kLR", true);
+			this.set_bool("kS", true);
 		}
 		
 		//ship controlling
@@ -264,6 +268,8 @@ void onTick(CBlob@ this)
 			const u16 downPropLength = down_propellers.length;
 			const u16 leftPropLength = left_propellers.length;
 			const u16 rightPropLength = right_propellers.length;
+			const u16 leftStrafePropLength = strafe_left_propellers.length;
+			const u16 rightStrafePropLength = strafe_right_propellers.length;
 			
 			//reset			
 			if (this.get_bool("kUD") && !up && !down)
@@ -283,19 +289,39 @@ void onTick(CBlob@ this)
 						prop.set_f32("power", 0);
 				}
 			}
-			if (this.get_bool("kLR") && (strafe || (!left && !right)))
+			if (this.get_bool("kLR"))
 			{
-				this.set_bool("kLR", false);
-				
-				for (u16 i = 0; i < leftPropLength; ++i)
+				if (strafe || (!left && !right))
 				{
-					CBlob@ prop = getBlobByNetworkID(left_propellers[i]);
+					this.set_bool("kLR", false);
+					
+					for (u16 i = 0; i < leftPropLength; ++i)
+					{
+						CBlob@ prop = getBlobByNetworkID(left_propellers[i]);
+						if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+							prop.set_f32("power", 0);
+					}
+					for (u16 i = 0; i < rightPropLength; ++i)
+					{
+						CBlob@ prop = getBlobByNetworkID(right_propellers[i]);
+						if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+							prop.set_f32("power", 0);
+					}
+				}
+			}
+			if (this.get_bool("kS") || !strafe)
+			{
+				this.set_bool("kS", false);
+
+				for (u16 i = 0; i < leftStrafePropLength; ++i)
+				{
+					CBlob@ prop = getBlobByNetworkID(strafe_left_propellers[i]);
 					if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
 						prop.set_f32("power", 0);
 				}
-				for (u16 i = 0; i < rightPropLength; ++i)
+				for (u16 i = 0; i < rightStrafePropLength; ++i)
 				{
-					CBlob@ prop = getBlobByNetworkID(right_propellers[i]);
+					CBlob@ prop = getBlobByNetworkID(strafe_right_propellers[i]);
 					if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
 						prop.set_f32("power", 0);
 				}
@@ -341,10 +367,10 @@ void onTick(CBlob@ this)
 			
 			if (left || right)
 			{
-				this.set_bool("kLR", true);
-
 				if (!strafe)
 				{
+					this.set_bool("kLR", true);
+
 					for (u16 i = 0; i < leftPropLength; ++i)
 					{
 						CBlob@ prop = getBlobByNetworkID(left_propellers[i]);
@@ -366,6 +392,8 @@ void onTick(CBlob@ this)
 				}
 				else
 				{
+					this.set_bool("kS", true);
+					
 					const u8 maxStrafers = Maths::Round(Maths::FastSqrt(ship.mass)/3.0f);
 					const u16 strLeftPropLength = strafe_left_propellers.length;
 					for (u16 i = 0; i < strLeftPropLength; ++i)
@@ -566,6 +594,7 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint@ attachedPoint)
 	{
 		this.set_bool("kUD", true);
 		this.set_bool("kLR", true);
+		this.set_bool("kS", true);
 	}
 }
 
@@ -576,6 +605,7 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 	{
 		this.set_bool("kUD", false);
 		this.set_bool("kLR", false);
+		this.set_bool("kS", true);
 	}
 }
 
@@ -617,11 +647,6 @@ void updateArrays(CBlob@ this, Ship@ ship)
 
 			velNorm.RotateBy(-this.getAngleDegrees());
 
-			if (angleVel < -angleLimit || (velNorm.y < -forceLimit_side && angleVel < angleLimit))
-				right_propellers.push_back(netID);
-			else if (angleVel > angleLimit || (velNorm.y > forceLimit_side && angleVel > -angleLimit))
-				left_propellers.push_back(netID);
-
 			if (Maths::Abs(velNorm.x) < forceLimit)
 			{
 				if (velNorm.y < -forceLimit_side)
@@ -629,11 +654,18 @@ void updateArrays(CBlob@ this, Ship@ ship)
 				else if (velNorm.y > forceLimit_side)
 					strafe_left_propellers.push_back(netID);
 			}
+			else
+			{
+				if (angleVel < -angleLimit || (velNorm.y < -forceLimit_side && angleVel < angleLimit))
+					right_propellers.push_back(netID);
+				else if (angleVel > angleLimit || (velNorm.y > forceLimit_side && angleVel > -angleLimit))
+					left_propellers.push_back(netID);
 
-			if (velNorm.x > forceLimit)
-				down_propellers.push_back(netID);
-			else if (velNorm.x < -forceLimit)
-				up_propellers.push_back(netID);
+				if (velNorm.x > forceLimit)
+					down_propellers.push_back(netID);
+				else if (velNorm.x < -forceLimit)
+					up_propellers.push_back(netID);
+			}
 		}
 	}
 	

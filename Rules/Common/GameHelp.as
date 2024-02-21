@@ -22,6 +22,7 @@ const string action3_key = getControls().getActionKeyKeyName(AK_ACTION3);
 const string map_key = getControls().getActionKeyKeyName(AK_MAP);
 const string zoomIn_key = getControls().getActionKeyKeyName(AK_ZOOMIN);
 const string zoomOut_key = getControls().getActionKeyKeyName(AK_ZOOMOUT);
+const string eat_key = getControls().getActionKeyKeyName(AK_EAT);
 const string FileName = "Shiprekt/Settings.cfg";
 
 void onInit(CRules@ this)
@@ -106,7 +107,7 @@ void onRender(CRules@ this)
 	" [ " + zoomIn_key + " ], [ " + zoomOut_key + " ] "+ Trans::Zoom+"\n"+
 	" [ " + party_key + " ] "+ Trans::AccessTools+"\n"+
 	" [ " + map_key + " ] "+ Trans::ScaleCompass+"\n"+
-	" [ " + pick_key + " ] / [ " + taunts_key + " ] "+ Trans::Hold+" "+Trans::Strafe+"\n"+
+	" [ " + eat_key + " ] "+ Trans::Hold+" "+Trans::Strafe+"\n"+
 	" [ LCTRL ] "+Trans::RotateCamera+".";
 	
 	GUI::SetFont("menu");
