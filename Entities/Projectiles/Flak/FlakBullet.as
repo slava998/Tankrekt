@@ -5,7 +5,6 @@
 #include "Hitters.as";
 #include "PlankCommon.as";
 
-const f32 EXPLODE_RADIUS = 30.0f;
 const f32 FLAK_REACH = 50.0f;
 
 BootyRewards@ booty_reward;
