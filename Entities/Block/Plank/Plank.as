@@ -4,6 +4,7 @@ void onInit(CBlob@ this)
 {
 	this.Tag("plank");
 	this.Tag("solid");
+	this.Tag("armor"); //absorbs explosion damage
 	
 	this.set_f32("weight", 0.7f);
 	
