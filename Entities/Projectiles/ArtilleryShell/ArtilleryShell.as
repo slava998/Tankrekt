@@ -22,7 +22,6 @@ void onInit(CBlob@ this)
 		@booty_reward = _booty_reward;
 	}
 	
-	this.Tag("flak shell");
 	this.Tag("projectile");
 
 	ShapeConsts@ consts = this.getShape().getConsts();
