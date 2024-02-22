@@ -6,7 +6,6 @@
 #include "ExplosionEffects.as";
 
 const f32 PROJECTILE_SPEED = 10.0f;
-const f32 PROJECTILE_SPREAD = 0.5f;
 const f32 FIRE_RATE = 500;
 const f32 PROJECTILE_RANGE = 1000.0f;
 const int ENGINE_COEF = 9; //how much engines decrease reloading time, in ticks
@@ -21,8 +20,6 @@ const Vec2f BARREL_OFFSET = Vec2f(-5, 0);
 
 const f32 BOMB_RADIUS = 15.0f;
 const f32 BOMB_BASE_DAMAGE = 2.7f;
-
-Random _shotspreadrandom(0x11598); //clientside
 
 void onInit(CBlob@ this)
 {
@@ -151,10 +148,7 @@ void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
 {
 	const f32 aimdist = Maths::Min(aimVector.Normalize(), PROJECTILE_RANGE);
 
-	Vec2f offset(_shotspreadrandom.NextFloat() * PROJECTILE_SPREAD, 0);
-	offset.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
-
-	const Vec2f _vel = (aimVector * PROJECTILE_SPEED) + offset;
+	const Vec2f _vel = (aimVector * PROJECTILE_SPEED);
 	const f32 _lifetime = Maths::Max(0.05f + aimdist/PROJECTILE_SPEED/32.0f, 0.25f);
 
 	CBitStream params;
@@ -278,13 +272,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 		ammo--;
 		this.set_u16("ammo", ammo);
-
-		Vec2f offset(_shotspreadrandom.NextFloat() * PROJECTILE_SPREAD, 0);
-		offset.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
 		
 		f32 angle = -this.get_f32("rot_angle") + this.getAngleDegrees();
 
-		const Vec2f velocity = Vec2f((PROJECTILE_SPEED), 0).RotateBy(angle, Vec2f()) + offset;
+		const Vec2f velocity = Vec2f((PROJECTILE_SPEED), 0).RotateBy(angle, Vec2f());
 		
 		Vec2f bullet_offset = pos + Vec2f(25, 0).RotateBy(angle, Vec2f());
 
