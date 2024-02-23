@@ -9,7 +9,7 @@
 const f32 EXPLODE_RADIUS = 65.0f;		//Raycast range
 const f32 RAYCAST_DAMAGE = 1.0f; 		//There's 32 raycasts with this damage so it is not small
 const u8  RAYCAST_NUM = 32; 			//Number of explosion rays fired in a circle
-const f32 SPLASH_RADIUS = 12.0f;			//Splash is a damage through walls
+const f32 SPLASH_RADIUS = 12.0f;		//Splash is a damage through walls
 const f32 SPLASH_DAMAGE = 3.0f; 		//Splash is a damage through walls
 const f32 RAYCAST_DAMAGE_CORE = 0.1f; 	//Damage for cores
 const f32 SPLASH_DAMAGE_CORE = 1.0f;	//Damage for cores

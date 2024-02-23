@@ -104,6 +104,8 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 		
 		this.set_u16("pierced count", piercedCount);
 		
+		if(b.hasTag("armor")) this.Tag("no splash"); //armor cancels splash damage
+		
 		this.server_Hit(b, point1, Vec2f_zero, getDamage(this, b), Hitters::ballista, true);
 		
 		if (killed) 
@@ -186,18 +188,21 @@ void onDie(CBlob@ this)
 	
 	if (!isServer()) return;
 	
-	/*//splash damage
-	CBlob@[] blobsInRadius;
-	if (getMap().getBlobsInRadius(pos, SPLASH_RADIUS, @blobsInRadius))
+	if(!this.hasTag("no splash"))
 	{
-		const u8 blobsLength = blobsInRadius.length;
-		for (u8 i = 0; i < blobsLength; i++)
+		//splash damage
+		CBlob@[] blobsInRadius;
+		if (getMap().getBlobsInRadius(pos, SPLASH_RADIUS, @blobsInRadius))
 		{
-			CBlob@ b = blobsInRadius[i];
-			if (!b.hasTag("hasSeat") && b.hasTag("block") && b.getShape().getVars().customData > 0)
-				this.server_Hit(b, Vec2f_zero, Vec2f_zero, SPLASH_DAMAGE, 9, false);
+			const u8 blobsLength = blobsInRadius.length;
+			for (u8 i = 0; i < blobsLength; i++)
+			{
+				CBlob@ b = blobsInRadius[i];
+				if (!b.hasTag("hasSeat") && b.hasTag("block") && b.getShape().getVars().customData > 0)
+					this.server_Hit(b, Vec2f_zero, Vec2f_zero, SPLASH_DAMAGE, 9, false);
+			}
 		}
-	}*/
+	}
 }
 
 Random _sprk_r;
