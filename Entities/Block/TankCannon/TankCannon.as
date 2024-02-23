@@ -4,8 +4,7 @@
 
 const f32 PROJECTILE_RANGE = 375.0F;
 const f32 PROJECTILE_SPEED = 15.0f;;
-//const u16 FIRE_RATE = 600; //max wait between shots
-const u16 FIRE_RATE = 90;
+const u16 FIRE_RATE = 500; //max wait between shots
 
 const u8 MAX_AMMO = 8;
 const u8 REFILL_AMOUNT = 1;
