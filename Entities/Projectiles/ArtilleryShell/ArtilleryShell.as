@@ -6,13 +6,14 @@
 #include "PlankCommon.as";
 #include "TileCommon.as";
 
-const f32 EXPLODE_RADIUS = 65.0f;		//Raycast range
-const f32 RAYCAST_DAMAGE = 1.0f; 		//There's 32 raycasts with this damage so it is not small
+const f32 EXPLODE_RADIUS = 50.0f;		//Raycast range
+const f32 RAYCAST_DAMAGE = 4.0f; 		//There's 32 raycasts with this damage so it is not small
 const u8  RAYCAST_NUM = 32; 			//Number of explosion rays fired in a circle
+const u8  PIERCE_NUM = 5;				//How many blocks raycast can pierce
 const f32 SPLASH_RADIUS = 12.0f;		//Splash is a damage through walls
 const f32 SPLASH_DAMAGE = 3.0f; 		//Splash is a damage through walls
-const f32 RAYCAST_DAMAGE_CORE = 0.1f; 	//Damage for cores
-const f32 SPLASH_DAMAGE_CORE = 1.0f;	//Damage for cores
+const f32 RAYCAST_DAMAGE_CORE = 1.0f; 	//Damage for cores
+const f32 SPLASH_DAMAGE_CORE = 2.0f;	//Damage for cores
 
 BootyRewards@ booty_reward;
 
@@ -125,6 +126,9 @@ void Explode(CBlob@ this)
 		HitInfo@[] hitInfos;
 		if (map.getHitInfosFromRay(pos, angle, EXPLODE_RADIUS, this, @hitInfos))
 		{
+			u8 hitnum = 1;
+			bool absorbed = false;
+	
 			const u8 hitLength = hitInfos.length;
 			for (u8 i = 0; i < hitLength; i++)//sharpnel trail
 			{
@@ -135,9 +139,14 @@ void Explode(CBlob@ this)
 				if (b.hasTag("solid") || b.hasTag("door") || (!sameTeam
 					&& (b.hasTag("seat") || b.hasTag("weapon") || b.hasTag("projectile") || b.hasTag("core") || b.hasTag("bomb") || (b.hasTag("player") && !b.isAttached()))))
 				{
+				
 					//hit the object
-					this.server_Hit(b, hitInfos[i].hitpos, Vec2f_zero, b.hasTag("core") ? RAYCAST_DAMAGE_CORE : RAYCAST_DAMAGE, Hitters::bomb, true);
-					break;
+					if(b.hasTag("armor")) absorbed = true; //if a projectile hits armor, only armor blocks take damage
+					hitnum++;
+					f32 dmg = b.hasTag("core") ? RAYCAST_DAMAGE_CORE : RAYCAST_DAMAGE;
+					if(!absorbed || b.hasTag("armor")) this.server_Hit(b, hitInfos[i].hitpos, Vec2f_zero, dmg / hitnum, Hitters::bomb, true);
+
+					if(hitnum > PIERCE_NUM) break;
 				}
 			}
 		}

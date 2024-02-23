@@ -3,6 +3,7 @@
 void onInit(CBlob@ this)
 {
 	this.Tag("door");
+	this.Tag("armor");
 	
 	this.set_f32("weight", 1.0f);
 	
