@@ -184,10 +184,6 @@ void onDie(CBlob@ this)
 
 		if (hole !is null)
 		{
-			hole.freerotation = false;
-			hole.rotation = Vec2f(1,0).RotateBy(XORRandom(361));
-			hole.rotation.Normalize();
-			print("" + hole.rotation);
 			hole.timeout = 5600;
 			hole.Z = -5.0f;
 		}

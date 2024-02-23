@@ -303,3 +303,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		}
     }
 }
+
+void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
+{
+	if(detached is null) return;
+	detached.getSprite().ResetTransform();
+}
