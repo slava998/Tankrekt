@@ -70,7 +70,7 @@ void onTick(CBlob@ this)
 					velnorm.Normalize();
 
 					const bool ramming = this.hasTag("ramming") || blob.hasTag("ramming") || blob.hasTag("bomb");
-					if (!ship.colliding && !ramming)
+					if (!this.hasTag("platform") && (!ship.colliding && !ramming && !blob.hasTag("platform")))
 					{
 						ship.colliding = true; //only collide once per tick
 						CollisionResponse(rules, ship, other_ship, pos + velnorm);
@@ -84,7 +84,7 @@ void onTick(CBlob@ this)
 
 bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
 {
-	return (this.getShape().getVars().customData > 0 && this.getTickSinceCreated() > 0);
+	return (!this.hasTag("platform") && (this.getShape().getVars().customData > 0 && this.getTickSinceCreated() > 0 && !blob.hasTag("platform")));
 }
 
 bool doesCollideWithPlank(CBlob@ plank, const Vec2f&in blobPos)
@@ -137,7 +137,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 		}
 		else
 		{
-			if (!ship.colliding && !this.hasTag("ramming") && !blob.hasTag("ramming"))
+			if (!this.hasTag("platform") && (!ship.colliding && !this.hasTag("ramming") && !blob.hasTag("ramming") && !blob.hasTag("platform")))
 			{
 				ship.colliding = true; //only collide once per tick
 				CollisionResponse(rules, ship, other_ship, point1);
@@ -148,9 +148,15 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 			if (blob.hasTag("removable")) Die(blob);
 			else if (!this.hasTag("removable"))
 			{
-				if (this.hasTag("seat")) Die(this);
-				if (blob.hasTag("seat")) Die(blob);
-					
+				if(this.hasTag("seat") || blob.hasTag("seat"))
+				{
+					if(blob.getShape().getConsts().collidable && (!blob.hasTag("door") || this.getTeamNum() != blob.getTeamNum())) //do not kill seat if we are colliding with door or platform
+					{
+						if (this.hasTag("seat")) Die(this);
+						if (blob.hasTag("seat")) Die(blob);
+					}
+				}
+
 				if (this.hasTag("ramengine"))
 				{
 					if (blob.hasTag("core"))

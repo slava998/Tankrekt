@@ -53,7 +53,7 @@ const bool canClose(CBlob@ this)
 	for (u8 step = 0; step < count; ++step)
 	{
 		CBlob@ blob = this.getTouchingByIndex(step);
-		if (blob.hasTag("player"))
+		if (blob.hasTag("player") || (blob.hasTag("block") && this.getShape().getVars().customData != blob.getShape().getVars().customData))
 			return false;
 	}
 	return true;
@@ -75,7 +75,7 @@ bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
 
 	if (blob.getShape().getConsts().collidable && //can collide
 		this.getTeamNum() == blob.getTeamNum() && //is same team
-		blob.hasTag("player"))                    //is human
+		blob.hasTag("player") || (blob.hasTag("block") && this.getShape().getVars().customData != blob.getShape().getVars().customData))//is human or block
 	{
 		setOpen(this, true);
 		return false;
