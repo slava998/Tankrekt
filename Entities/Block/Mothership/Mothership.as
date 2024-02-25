@@ -110,7 +110,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 
 	CBitStream params;
 	params.write_netid(caller.getNetworkID());
-	CButton@ button = caller.CreateGenericButton(this.get_u8("seat icon"), Vec2f_zero, this, this.getCommandID("SetSpawn"), "Set Spawnpoint Here", params);
+	CButton@ button = caller.CreateGenericButton(this.get_u8("seat icon"), Vec2f_zero, this, this.getCommandID("SetSpawn"), Trans::SetSpawn, params);
 	if (button !is null)
 	{
 		button.radius = 8.0f;

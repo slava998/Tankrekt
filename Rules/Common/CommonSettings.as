@@ -90,6 +90,8 @@ void onInit(CRules@ this)
 	AddIconToken("$WHEEL$", "Wheel_icon.png", Vec2f(8,8), 0);
 	AddIconToken("$TANKCANNON$", "TankCannon.png", Vec2f(26,12), 0);
 	AddIconToken("$PLANKCORNER$", "PlankCorner.png", Vec2f(8,8), 0);
+	AddIconToken("$HERE$", "MenuItems.png", Vec2f(32,32), 5);
+	AddIconToken("$CROSS$", "MenuItems.png", Vec2f(32,32), 13);
 
 	
 	//spectator stuff
