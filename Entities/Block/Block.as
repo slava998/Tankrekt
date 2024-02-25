@@ -70,7 +70,7 @@ void onTick(CBlob@ this)
 					velnorm.Normalize();
 
 					const bool ramming = this.hasTag("ramming") || blob.hasTag("ramming") || blob.hasTag("bomb");
-					if (!this.hasTag("platform") && (!ship.colliding && !ramming && !blob.hasTag("platform")))
+					if (!blob.hasTag("non-solid") && !this.hasTag("non-solid") && !ship.colliding && !ramming && doesCollideWithDoor(this,blob))
 					{
 						ship.colliding = true; //only collide once per tick
 						CollisionResponse(rules, ship, other_ship, pos + velnorm);
@@ -84,7 +84,7 @@ void onTick(CBlob@ this)
 
 bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
 {
-	return (!this.hasTag("platform") && (this.getShape().getVars().customData > 0 && this.getTickSinceCreated() > 0 && !blob.hasTag("platform")));
+	return (!blob.hasTag("non-solid") && !this.hasTag("non-solid") && this.getShape().getVars().customData > 0 && this.getTickSinceCreated() > 0);
 }
 
 bool doesCollideWithPlank(CBlob@ plank, const Vec2f&in blobPos)
@@ -94,6 +94,11 @@ bool doesCollideWithPlank(CBlob@ plank, const Vec2f&in blobPos)
 	const f32 hitAngle = direction.AngleWith(plank.getPosition() - blobPos);
 
 	return !(hitAngle > -90.0f && hitAngle < 90.0f);
+}
+
+bool doesCollideWithDoor(CBlob@ this, CBlob@ blob)
+{
+	return (!((blob.hasTag("door") || this.hasTag("door")) && this.getTeamNum() == blob.getTeamNum()));
 }
 
 void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1)
@@ -137,7 +142,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 		}
 		else
 		{
-			if (!this.hasTag("platform") && (!ship.colliding && !this.hasTag("ramming") && !blob.hasTag("ramming") && !blob.hasTag("platform")))
+			if (!blob.hasTag("non-solid") && !this.hasTag("non-solid") && !ship.colliding && !this.hasTag("ramming") && !blob.hasTag("ramming") && doesCollideWithDoor(this,blob))
 			{
 				ship.colliding = true; //only collide once per tick
 				CollisionResponse(rules, ship, other_ship, point1);
@@ -150,7 +155,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 			{
 				if(this.hasTag("seat") || blob.hasTag("seat"))
 				{
-					if(blob.getShape().getConsts().collidable && (!blob.hasTag("door") || this.getTeamNum() != blob.getTeamNum())) //do not kill seat if we are colliding with door or platform
+					if(blob.getShape().getConsts().collidable && doesCollideWithDoor(this,blob)) //do not kill seat if we are colliding with door or platform
 					{
 						if (this.hasTag("seat")) Die(this);
 						if (blob.hasTag("seat")) Die(blob);
