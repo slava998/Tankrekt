@@ -73,6 +73,8 @@ namespace Trans
 	IndependentBlock = Translate("Create an independent block (7 booty)\\Создать независимый блок (7 Добычи)\\Create an independent block (7 booty)\\Create an independent block (7 booty)\\Create an independent block(7 booty) \\Create an independent block (7 booty)"),
 	IndBlNotOnGr  = Translate("You must be standing on the ground to create an independent block\\Вы должны стоять на земле чтобы создать независимый блок\\You must be standing on the ground to create an independent block\\You must be standing on the ground to create an independent block\\You must be standing on the ground to create an independent block\\You must be standing on the ground to create an independent block"),
 	FortOnly      = Translate("You can build this only on station or mothership.\\Это можно построить только на станции или на главном корабле.\\You can build this only on station or mothership.\\You can build this only on station or mothership.\\You can build this only on station or mothership.\\You can build this only on station or mothership."),
+	SetSpawn      = Translate("Set Spawnpoint Here\\Установить Точку Возрождения\\Set Spawnpoint Here\\Set Spawnpoint Here\\Set Spawnpoint Here\\Set Spawnpoint Here"),
+	ResetSpawn      = Translate("Reset Spawnpoint\\Сбросить Точку Возрождения\\Reset Spawnpoint\\Reset Spawnpoint\\Reset Spawnpoint\\Reset Spawnpoint"),
 	
 	//Votes
 	Vote          = Translate("Vote\\Голосование\\Vote\\Głosować\\Vote\\Votar"),
