@@ -62,39 +62,25 @@ void SpawnMothership(Vec2f pos, const u8&in team)
 	makeBlock(pos + Vec2f(-8*2, -8*2), 0.0f, "stone", team);
 	makeBlock(pos + Vec2f(-8*1, -8*2), 0.0f, "stone", team);
 
-	makeOuterPlatform(pos + Vec2f(0, -8*2), team);
+	makeBlock(pos + Vec2f(0, -8*2), 0.0f, "door", team);
 
 	makeBlock(pos + Vec2f(8*1, -8*2), 0.0f, "stone", team);
 	makeBlock(pos + Vec2f(8*2, -8*2), 0.0f, "stone", team);
 	makeBlock(pos + Vec2f(8*2, -8*1), 0.0f, "stone", team);
 
-	makeOuterPlatform(pos + Vec2f(8*2, 0), team);
+	makeBlock(pos + Vec2f(8*2, 0), 0.0f, "door", team);
 
 	makeBlock(pos + Vec2f(8*2, 8*1), 0.0f, "stone", team);
 	makeBlock(pos + Vec2f(8*2, 8*2), 0.0f, "stone", team);
 	makeBlock(pos + Vec2f(8*1, 8*2), 0.0f, "stone", team);
 
-	makeOuterPlatform(pos + Vec2f(0, 8*2), team);
+	makeBlock(pos + Vec2f(0, 8*2), 0.0f, "door", team);
 
 	makeBlock(pos + Vec2f(-8*1, 8*2), 0.0f, "stone", team);
 	makeBlock(pos + Vec2f(-8*2, 8*2), 0.0f, "stone", team);
 	makeBlock(pos + Vec2f(-8*2, 8*1), 0.0f, "stone", team);
 
-	makeOuterPlatform(pos + Vec2f(-8*2, 0), team);
-}
-
-void makeOuterPlatform(Vec2f pos, const u8&in team)
-{
-	CBlob@ platform = makeBlock(pos, 0.0f, "platform", team);
-	CSprite@ sprite = platform.getSprite();
-	sprite.SetFrame(3);
-	platform.Tag("noDamageAnim");
-	if (isClient())
-	{
-		Animation@ anim = sprite.getAnimation("default");
-		anim.AddFrame(3);
-		anim.SetFrameIndex(3);
-	}
+	makeBlock(pos + Vec2f(-8*2, 0), 0.0f, "door", team);
 }
 
 bool onServerProcessChat(CRules@ this, const string& in text_in, string& out text_out, CPlayer@ player)
