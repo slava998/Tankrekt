@@ -55,7 +55,7 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 	
 	if (!isServer()) return;
 	
-	if (b.hasTag("plank") && !CollidesWithPlank(b, this.getVelocity()))
+	if ((b.hasTag("plank") && !CollidesWithPlank(b, this.getVelocity())) || b.hasTag("non-solid") || !b.getShape().getConsts().collidable)
 		return;
 	
 	//blow up inside the target (big damage)
@@ -157,4 +157,9 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 		ShrapnelParticle(worldPoint, vel);
 		directionalSoundPlay("Ricochet" +  (XORRandom(3) + 1) + ".ogg", worldPoint, 0.35f);
 	}
+}
+
+bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+{
+	return !blob.hasTag("non-solid") && blob.getShape().getConsts().collidable;
 }

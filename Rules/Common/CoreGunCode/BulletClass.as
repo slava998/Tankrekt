@@ -230,7 +230,7 @@ bool canHit(CBlob@ gunBlob, CBlob@ b)
 	   (b.hasTag("core") || b.hasTag("weapon") || b.hasTag("rocket") || b.hasTag("bomb") || b.hasTag("player")))
 		return true;
 
-	return b.hasTag("solid") || (b.hasTag("door") && b.getShape().getConsts().collidable) || b.hasTag("bullet_collidable");
+	return !b.hasTag("non-solid") && b.getShape().getConsts().collidable && (b.hasTag("solid") || (b.hasTag("door") && b.getShape().getConsts().collidable) || b.hasTag("bullet_collidable"));
 }
 
 const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)

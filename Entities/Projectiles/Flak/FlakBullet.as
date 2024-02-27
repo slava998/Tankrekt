@@ -46,7 +46,7 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 	
 	if (!isServer()) return;
 	
-	if (b.hasTag("plank") && !CollidesWithPlank(b, this.getVelocity()))
+	if ((b.hasTag("plank") && !CollidesWithPlank(b, this.getVelocity())) || b.hasTag("non-solid") || !b.getShape().getConsts().collidable)
 		return;
 	
 	//blow up inside the target (big damage)

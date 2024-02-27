@@ -567,7 +567,7 @@ const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged 
 			const bool sameShip = bColor != 0 && thisColor == bColor;
 			const bool canShootSelf = targetMerged && hi.distance > distanceToTarget * 0.7f;
 
-			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && (b.hasTag("solid") && !b.hasTag("plank")) && sameShip && !canShootSelf)
+			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && !b.hasTag("non-solid") && b.getShape().getConsts().collidable && !b.hasTag("plank") && sameShip && !canShootSelf)
 			{
 				return false;
 			}
