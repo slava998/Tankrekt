@@ -23,8 +23,8 @@ const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of t
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const f32 BULLET_SPREAD = 0.0f;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 4);
-const Vec2f BUILD_MENU_TEST = Vec2f(8, 4); //for testing, only activates when sv_test is on
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 6);
+const Vec2f BUILD_MENU_TEST = Vec2f(8, 6); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 u32 HEAL_TICKS = 15 * 30;
 //global is fine since only used with isMyPlayer
@@ -562,6 +562,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	}
 	{ //Wooden Door
 		AddBlock(this, menu, "door", "$DOOR$", Trans::Door, Trans::DoorDesc, core, 1.0f);
+	}
+	{ //Gate
+		AddBlock(this, menu, "gate", "$GATE$", Trans::Gate, Trans::GateDesc, core, 3.0f);
 	}
 	{ //Wooden Plank
 		AddBlock(this, menu, "plank", "$PLANK$", Trans::Plank, Trans::PlankDesc, core, 0.7f);

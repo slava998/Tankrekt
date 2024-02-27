@@ -140,7 +140,7 @@ const bool isClearShot(CBlob@ this, Vec2f&in aimVector)
 			if (b is null || b is this) continue;
 			
 			const bool sameShip = this.getShape().getVars().customData == b.getShape().getVars().customData;
-			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && ((b.hasTag("solid") && !b.hasTag("plank")) || b.hasTag("weapon")) && sameShip)
+			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && !b.hasTag("non-solid") && b.getShape().getConsts().collidable && ((b.hasTag("solid") && !b.hasTag("plank")) || b.hasTag("weapon")) && sameShip)
 			{
 				return false;
 			}

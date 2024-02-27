@@ -73,7 +73,7 @@ const bool isClear(CBlob@ this)
 			if (b is null || b is this) continue;
 
 			if (this.getShape().getVars().customData == b.getShape().getVars().customData && 
-			   (b.hasTag("weapon") || b.hasTag("door") ||(b.hasTag("solid") && !b.hasTag("plank")))) //same ship
+			   (!b.hasTag("non-solid") && b.getShape().getConsts().collidable && (b.hasTag("weapon") || b.hasTag("door") ||(b.hasTag("solid") && !b.hasTag("plank"))))) //same ship
 			{
 				return false;
 			}

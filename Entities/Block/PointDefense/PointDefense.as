@@ -135,7 +135,7 @@ const bool isClearShot(CBlob@ this, Vec2f&in aimVector)
 			CBlob@ b = hi.blob;
 			if (b is null || b is this) continue;
 
-			if ((b.hasTag("weapon") || b.hasTag("solid") || (b.hasTag("door") && b.getShape().getConsts().collidable))
+			if ((b.hasTag("weapon") || b.hasTag("solid") || (b.hasTag("door") && !b.hasTag("non-solid")))
 				&& b.getShape().getVars().customData > 0)
 			{
 				return false;
