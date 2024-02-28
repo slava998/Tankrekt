@@ -15,6 +15,7 @@ void onInit(CBlob@ this)
 	
 	this.Tag("gate");
 	this.Tag("solid");
+	this.Tag("armor");
 	this.addCommandID("activate");
 	this.addCommandID("chain_activate");
 	this.addCommandID("client_actions");
