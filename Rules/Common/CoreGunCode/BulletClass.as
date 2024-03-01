@@ -251,7 +251,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 			return 1.5f;
 		if (hitBlob.hasTag("door"))
 			return 0.7f;
-		if (hitBlob.hasTag("seat") || hitBlob.hasTag("decoyCore") || hitBlob.hasTag("plank"))
+		if (hitBlob.hasTag("seat") || hitBlob.hasTag("decoyCore"))
 			return 0.4f;
 		
 		return 0.25f; //cores | solids
@@ -266,8 +266,6 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 			return 0.8f;
 		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 			return 0.27f;
-		if (hitBlob.hasTag("plank"))
-			return 0.2f;
 		if (hitBlob.hasTag("decoyCore"))
 			return 0.2f;
 		if (hitBlob.hasTag("bomb"))
@@ -289,8 +287,6 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 		return 0.25f;
 	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
 		return 0.20f;
-	if (hitBlob.hasTag("plank"))
-		return 0.12f;
 	if (hitBlob.hasTag("decoyCore"))
 		return 0.075f;
 	if (hitBlob.hasTag("bomb"))
