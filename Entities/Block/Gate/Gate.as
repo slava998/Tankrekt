@@ -60,7 +60,7 @@ void ChainReaction(CBlob@ this, const bool state)
 {
 	if(isServer())
 	{
-		this.set_u32("activationTime", getGameTime()); //we set it temporary because we need to mark this gate as activated. this value will be rewritten to actual activation time later.
+		this.set_u32("activationTime", getGameTime());
 
 		CBitStream bs;
 		bs.write_bool(state);
@@ -86,7 +86,7 @@ void ChainReactionStart(CBlob@ this, const bool state)
 {
 	if(isServer())
 	{
-		this.set_u32("activationTime", getGameTime()); //we set it temporary because we need to mark this gate as activated. this value will be rewritten to actual activation time later.
+		this.set_u32("activationTime", getGameTime());
 
 		CBlob@[] overlapping;
 		this.getOverlapping(@overlapping);
