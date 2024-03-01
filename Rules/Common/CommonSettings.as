@@ -5,7 +5,7 @@ const u8 BUTTON_SIZE = 4;
 void onInit(CRules@ this)
 {
 	//mod version
-	this.set_string("version", "1.0");
+	this.set_string("version", "1.1");
 	
 	//dedicated server name
 	const string server_name = "[EU] Tankrekt "+this.get_string("version");
