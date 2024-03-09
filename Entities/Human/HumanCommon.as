@@ -2,7 +2,7 @@ namespace Human
 {
 	const float walkSpeed = 1.5f;
 	const float walkSpeedMax = 1.5f;
-	const float walkSmoothness = 0.7f;
+	const float walkSmoothness = 0.5f;
 	const float swimSlow = 0.4f;
 	
 	const int PUNCH_RATE = 15;
