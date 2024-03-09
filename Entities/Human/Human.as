@@ -239,9 +239,7 @@ void Move(CBlob@ this)
 		}
 
 		// move
-		Vec2f moveVel = this.getVelocity();
-		
-		moveVel *= Human::walkSmoothness;
+		Vec2f moveVel = Vec2f(0,0);
 		
 		if(this.get_u8("knocked") <= 0)
 		{
@@ -264,9 +262,6 @@ void Move(CBlob@ this)
 			}
 		}
 
-		moveVel.x = Maths::Clamp(moveVel.x, -Human::walkSpeedMax, Human::walkSpeedMax);
-		moveVel.y = Maths::Clamp(moveVel.y, -Human::walkSpeedMax, Human::walkSpeedMax);
-		
 		if (!this.get_bool("onGround"))
 		{
 			moveVel *= isTouchingShoal(pos) ? 0.8f : Human::swimSlow;
