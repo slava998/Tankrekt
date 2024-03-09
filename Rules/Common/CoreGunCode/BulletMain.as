@@ -13,6 +13,8 @@
 //
 
 #include "BulletClass.as";
+#include "ParticleSpark.as";
+#include "AccurateSoundPlay.as";
 
 // I would use blob.getNetworkID, but without some major changes
 // It would be the same pattern every time
@@ -109,7 +111,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 		if (gunBlob is null) return;
 
 		const f32 angle = params.read_f32();
-		const Vec2f pos = params.read_Vec2f();
+		Vec2f pos = params.read_Vec2f();
 		BulletObj@ bullet = BulletObj(gunBlob, angle, pos);
 
 		u32 timeSpawnedAt = params.read_u32(); // getGameTime() it spawned at
@@ -120,6 +122,37 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 		}
 
 		BulletGrouped.AddNewObj(bullet);
+
+		if(gunBlob.hasTag("player"))
+		{
+			printf("recieved fire cmd");
+			if(isClient())
+			{
+				printf("making smoke & sound");
+
+				Vec2f offset = Vec2f(0.5f ,0).RotateBy(angle)*6.0f;
+				if(!params.read_bool()) offset *= -1;  //for some reason offset becomes negative when standing on ship
+				
+				shotParticles(pos + offset, -angle, !gunBlob.get_bool("no_smoke"), 0.02f , 0.6f);
+
+				const u8 srandom = gunBlob.get_u8("sounds_random_length");
+				if(srandom > 0)
+				{
+					directionalSoundPlay(gunBlob.get_string("fire_sound") + XORRandom(srandom), pos, 3.0f);
+				}
+				else directionalSoundPlay(gunBlob.get_string("fire_sound"), pos, 3.0f);
+			}
+			
+			if(isServer())
+			{
+				gunBlob.set_u8("ammo", Maths::Max(gunBlob.get_u8("ammo") - 1, 0));
+				CBitStream bs;
+				bs.write_u32(getGameTime());
+				bs.write_u8(gunBlob.get_u8("ammo"));
+				bs.write_bool(gunBlob.get_bool("currently_reloading"));
+				gunBlob.SendCommand(gunBlob.getCommandID("SyncShootVars"), bs); //sync ammo and fire time
+			}
+		}
 	}
 	else if (cmd == FireShotgunID)
 	{
@@ -127,7 +160,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 		if (gunBlob is null) return;
 
 		const f32 angle  = params.read_f32();
-		const Vec2f pos  = params.read_Vec2f();
+		Vec2f pos  = params.read_Vec2f();
 		const u8 spread  = gunBlob.get_u8("shot_spread");
 		const u8 b_count = gunBlob.get_u8("b_count");
 		const bool sFLB  = gunBlob.get_bool("sFLB");
@@ -165,6 +198,36 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 				}
 
 				BulletGrouped.AddNewObj(bullet);
+			}
+		}
+		if(gunBlob.hasTag("player"))
+		{
+			printf("recieved fire cmd");
+			if(isClient())
+			{
+				printf("making smoke & sound");
+
+				Vec2f offset = Vec2f(0.5f ,0).RotateBy(angle)*6.0f;
+				if(!params.read_bool()) offset *= -1;  //for some reason offset becomes negative when standing on ship
+					
+				shotParticles(pos + offset, -angle, !gunBlob.get_bool("no_smoke"), 0.02f , 0.6f);
+
+				const u8 srandom = gunBlob.get_u8("sounds_random_length");
+				if(srandom > 0)
+				{
+					directionalSoundPlay(gunBlob.get_string("fire_sound") + XORRandom(srandom), pos, 3.0f);
+				}
+				else directionalSoundPlay(gunBlob.get_string("fire_sound"), pos, 3.0f);
+			}
+				
+			if(isServer())
+			{
+				gunBlob.set_u8("ammo", Maths::Max(gunBlob.get_u8("ammo") - 1, 0));
+				CBitStream bs;
+				bs.write_u32(getGameTime());
+				bs.write_u8(gunBlob.get_u8("ammo"));
+				bs.write_bool(gunBlob.get_bool("currently_reloading"));
+				gunBlob.SendCommand(gunBlob.getCommandID("SyncShootVars"), bs); //sync ammo and fire time
 			}
 		}
 	}

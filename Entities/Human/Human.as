@@ -309,7 +309,53 @@ void Move(CBlob@ this)
 			
 			if (currentTool == "pistol" && canShootPistol(this)) // shoot
 			{
-				this.SendCommand(this.getCommandID("fire"));
+				if(isServer())
+				{
+					const bool shotgun = this.get_bool("shotgun");
+					CBitStream params;
+					params.write_netid(this.getNetworkID());
+
+					Vec2f bullet_pos = pos;
+					Vec2f aimVector = this.getAimPos() - bullet_pos;
+					aimVector.Normalize();
+
+					Vec2f velocity = aimVector;
+
+					bool relative;
+
+					const s32 overlappingShipID = this.get_s32("shipID");
+					Ship@ ship = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
+					if (ship !is null) //relative positioning
+					{
+						relative = true;
+						Vec2f rPos = (bullet_pos + aimVector*3) - ship.origin_pos;
+						bullet_pos = rPos + ship.origin_pos;
+					}
+					else //absolute positioning
+					{
+						relative = false;
+						const Vec2f aPos = bullet_pos + aimVector*9;
+						bullet_pos = aPos;
+					}
+					
+					if(!shotgun)
+					{
+						const u8 spr = this.get_u8("shot_spread");
+						params.write_f32(-velocity.Angle() + XORRandom(spr) - XORRandom(spr));
+					}
+					else params.write_f32(-velocity.Angle());
+
+					params.write_Vec2f(bullet_pos);
+					params.write_u32(getGameTime());
+					params.write_bool(relative);
+					
+					if(!shotgun) rules.SendCommand(rules.getCommandID("fireGun"), params);
+					else rules.SendCommand(rules.getCommandID("fireShotgun"), params);
+					printf("sending fire cmd");
+					this.set_u32("fire time", getGameTime());
+				}
+
+				if(sprite !is null)
 				if (!sprite.isAnimation("shoot"))
 					sprite.SetAnimation("shoot");
 			}

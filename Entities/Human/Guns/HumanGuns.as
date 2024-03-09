@@ -1,6 +1,5 @@
 #include "WeaponCommon.as";
 #include "GunStandard.as";
-#include "DamageBooty.as";
 #include "HumanCommon.as";
 #include "ParticleSpark.as";
 #include "AccurateSoundPlay.as";
@@ -104,20 +103,17 @@ void ChangeGun(CBlob@ this, const string gun)
 	this.set_bool("shotgun", this.get_u8("b_count") > 1 ? true : false);
 	this.set_u8("ammo", this.get_u8("clip_size")); 
 
-	this.SendCommand(this.getCommandID("recieveSyncGun"));
+	SyncGunVars(this);
 }
 
 void onInit(CBlob@ this)
 {
-	this.addCommandID("shoot_clientside");
-	this.addCommandID("fire");
 	this.addCommandID("updateGun");
-	this.addCommandID("recieveSyncGun");
 	this.addCommandID("SyncGun");
 	this.addCommandID("SyncShootVars");
 	this.addCommandID("reload");
 	
-	this.set_string("gunName", "rifle");
+	this.set_string("gunName", "rifle"); //starting gun
 	this.SendCommand(this.getCommandID("updateGun"));
 }
 
@@ -140,17 +136,10 @@ void onTick(CBlob@ this)
 	}
 }
 
-BootyRewards@ booty_reward;
-
 void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 {
 	if(this is null) return; //just in case
 
-	if (this.getCommandID("fire") == cmd)
-	{
-		printf("recieved fire cmd");
-		ShootPistol(this);
-	}
 	else if (cmd == this.getCommandID("SyncShootVars")) //sync ammo and fire time
 	{
 		if(isClient())
@@ -176,58 +165,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			
 		this.SendCommand(this.getCommandID("SyncShootVars"), params);
 	}
-	if (this.getCommandID("shoot_clientside") == cmd)
-	{
-		if(isClient())
-		{
-			printf("makeing smoke & sound");
-			Vec2f velocity = params.read_Vec2f();
-			const bool relative =  params.read_bool();
-			Vec2f pos = params.read_Vec2f();
-
-			Vec2f offset = Vec2f(0.5f ,0).RotateBy(-velocity.Angle())*6.0f;
-			if(!relative) offset *= -1;  //for some reason offset becomes negative when standing on ship
-
-			shotParticles(pos + offset, velocity.Angle(), !this.get_bool("no_smoke"), 0.02f , 0.6f);
-			const u8 srandom = this.get_u8("sounds_random_length");
-			if(srandom > 0)
-			{
-				directionalSoundPlay(this.get_string("fire_sound") + XORRandom(srandom), pos, 3.0f);
-			}
-			else directionalSoundPlay(this.get_string("fire_sound"), pos, 3.0f);
-		}
-	}
 	else if(this.getCommandID("updateGun") == cmd)
 	{
 		printf("recieved update gun command");
 		ChangeGun(this, this.get_string("gunName"));
-	}
-	else if(this.getCommandID("recieveSyncGun") == cmd)
-	{
-		if(isServer())
-		{
-			printf("recieved gun sync command");
-			CBitStream params;
-			params.write_u8(this.get_u8("ammo"));
-			params.write_string(this.get_string("gunName"));
-			params.write_u8(this.get_u8("TTL"));
-			params.write_u8(this.get_u8("speed"));
-			params.write_u16(this.get_u16("fire_rate"));
-			params.write_u8(this.get_u8("shot_spread"));
-			params.write_u8(this.get_u8("clip_size"));
-			params.write_u16(this.get_u16("reloading_time"));
-			params.write_bool(this.get_bool("shotgun"));
-			params.write_u8(this.get_u8("b_count"));
-			params.write_string(this.get_string("fire_sound"));
-			params.write_u8(this.get_u8("sounds_random_length"));
-			params.write_string(this.get_string("reload_sound"));
-			params.write_bool(this.get_bool("no_smoke"));
-			params.write_string(this.get_string("gun_icon"));
-			params.write_string(this.get_string("gun_menu_name"));
-			params.write_string(this.get_string("gun_desc"));
-			params.write_f32(this.get_f32("human_damage_mod"));
-			this.SendCommand(this.getCommandID("SyncGun"), params);
-		}
 	}
 	else if (cmd == this.getCommandID("SyncGun"))
 	{
@@ -256,71 +197,27 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	}
 }
 
-// Send a command to shoot the pistol
-void ShootPistol(CBlob@ this)
+void SyncGunVars(CBlob@ this)
 {
-	if(!isServer()) return;
-
-	if(!canShootPistol(this)) return;
-	
-	this.set_u32("fire time", getGameTime());
-
-	Vec2f pos = this.getPosition();
-	Vec2f aimVector = this.getAimPos() - pos;
-	aimVector.Normalize();
-
-	Vec2f velocity = aimVector;
-
-	bool relative;
-
-	const s32 overlappingShipID = this.get_s32("shipID");
-	Ship@ ship = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
-	if (ship !is null) //relative positioning
-	{
-		relative = true;
-		Vec2f rPos = (pos + aimVector*3) - ship.origin_pos;
-		pos = rPos + ship.origin_pos;
-	}
-	else //absolute positioning
-	{
-		relative = false;
-		const Vec2f aPos = pos + aimVector*9;
-		pos = aPos;
-	}
-	
-		/*CBlob@ bullet = server_CreateBlob("bullet", this.getTeamNum(), pos);
-		if (bullet !is null)
-		{
-			if (this.getPlayer() !is null)
-			{
-				bullet.SetDamageOwnerPlayer(this.getPlayer());
-			}
-			bullet.setVelocity(velocity);
-			bullet.setAngleDegrees(-velocity.Angle());
-			bullet.server_SetTimeToDie(lifetime); 
-		}*/
-
-		if(!this.get_bool("shotgun"))
-		{
-			const u8 spr = this.get_u8("shot_spread");
-			shootGun(this.getNetworkID(), -velocity.Angle() + XORRandom(spr) - XORRandom(spr), pos);
-		}
-		else 
-			shootShotgun(this.getNetworkID(), -velocity.Angle(), pos);
-			
-		this.set_u8("ammo", Maths::Max(this.get_u8("ammo") - 1, 0));
-		
-		CBitStream params;
-		params.write_u32(this.get_u32("fire time"));
-		params.write_u8(this.get_u8("ammo"));
-		params.write_bool(this.get_bool("currently_reloading"));
-		
-		printf("sending create bullet cmd");
-		this.SendCommand(this.getCommandID("SyncShootVars"), params); //sync ammo and fire time
-	
-	CBitStream params2;
-	params2.write_Vec2f(velocity);
-	params2.write_bool(relative);
-	params2.write_Vec2f(pos);
-	this.SendCommand(this.getCommandID("shoot_clientside"), params2); //smoke and sound for client	
+	printf("sending gun sync");
+	CBitStream params;
+	params.write_u8(this.get_u8("ammo"));
+	params.write_string(this.get_string("gunName"));
+	params.write_u8(this.get_u8("TTL"));
+	params.write_u8(this.get_u8("speed"));
+	params.write_u16(this.get_u16("fire_rate"));
+	params.write_u8(this.get_u8("shot_spread"));
+	params.write_u8(this.get_u8("clip_size"));
+	params.write_u16(this.get_u16("reloading_time"));
+	params.write_bool(this.get_bool("shotgun"));
+	params.write_u8(this.get_u8("b_count"));
+	params.write_string(this.get_string("fire_sound"));
+	params.write_u8(this.get_u8("sounds_random_length"));
+	params.write_string(this.get_string("reload_sound"));
+	params.write_bool(this.get_bool("no_smoke"));
+	params.write_string(this.get_string("gun_icon"));
+	params.write_string(this.get_string("gun_menu_name"));
+	params.write_string(this.get_string("gun_desc"));
+	params.write_f32(this.get_f32("human_damage_mod"));
+	this.SendCommand(this.getCommandID("SyncGun"), params);
 }
