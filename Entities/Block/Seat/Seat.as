@@ -647,6 +647,11 @@ void updateArrays(CBlob@ this, Ship@ ship)
 
 			velNorm.RotateBy(-this.getAngleDegrees());
 
+			if (angleVel < -angleLimit || (velNorm.y < -forceLimit_side && angleVel < angleLimit))
+				right_propellers.push_back(netID);
+			else if (angleVel > angleLimit || (velNorm.y > forceLimit_side && angleVel > -angleLimit))
+				left_propellers.push_back(netID);
+
 			if (Maths::Abs(velNorm.x) < forceLimit)
 			{
 				if (velNorm.y < -forceLimit_side)
@@ -654,18 +659,11 @@ void updateArrays(CBlob@ this, Ship@ ship)
 				else if (velNorm.y > forceLimit_side)
 					strafe_left_propellers.push_back(netID);
 			}
-			else
-			{
-				if (angleVel < -angleLimit || (velNorm.y < -forceLimit_side && angleVel < angleLimit))
-					right_propellers.push_back(netID);
-				else if (angleVel > angleLimit || (velNorm.y > forceLimit_side && angleVel > -angleLimit))
-					left_propellers.push_back(netID);
 
-				if (velNorm.x > forceLimit)
-					down_propellers.push_back(netID);
-				else if (velNorm.x < -forceLimit)
-					up_propellers.push_back(netID);
-			}
+			if (velNorm.x > forceLimit)
+				down_propellers.push_back(netID);
+			else if (velNorm.x < -forceLimit)
+				up_propellers.push_back(netID);
 		}
 	}
 	
