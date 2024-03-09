@@ -112,16 +112,34 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 
 		const f32 angle = params.read_f32();
 		Vec2f pos = params.read_Vec2f();
-		BulletObj@ bullet = BulletObj(gunBlob, angle, pos);
-
-		u32 timeSpawnedAt = params.read_u32(); // getGameTime() it spawned at
-		CMap@ map = getMap(); 
-		for (;timeSpawnedAt < getGameTime(); timeSpawnedAt++) // Catch up to everybody else
+		
+		if(gunBlob.get_string("proj_blob") != "") //firing projectile
 		{
-			bullet.onFakeTick(map);
+			CBlob@ bullet = server_CreateBlob(gunBlob.get_string("proj_blob"), gunBlob.getTeamNum(), pos);
+			if (bullet !is null)
+			{
+				if (gunBlob.getPlayer() !is null)
+				{
+					bullet.SetDamageOwnerPlayer(gunBlob.getPlayer());
+				}
+				bullet.setVelocity(Vec2f(gunBlob.get_u8("speed"),0).RotateBy(angle));
+				bullet.setAngleDegrees(angle);
+				bullet.server_SetTimeToDie(gunBlob.get_u8("TTL")); 
+			}
 		}
+		else
+		{
+			BulletObj@ bullet = BulletObj(gunBlob, angle, pos);
 
-		BulletGrouped.AddNewObj(bullet);
+			u32 timeSpawnedAt = params.read_u32(); // getGameTime() it spawned at
+			CMap@ map = getMap(); 
+			for (;timeSpawnedAt < getGameTime(); timeSpawnedAt++) // Catch up to everybody else
+			{
+				bullet.onFakeTick(map);
+			}
+
+			BulletGrouped.AddNewObj(bullet);
+		}
 
 		if(gunBlob.hasTag("player"))
 		{
