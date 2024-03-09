@@ -78,7 +78,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_string("gun_menu_name", Trans::Shotgun);	//Gun name in tools menu
 		this.set_string("gun_desc", Trans::ShotgunDesc);//Gun description in tools menu
 	}
-	else if(this.get_string("gunName") == "carbine") //carbine
+	/*else if(this.get_string("gunName") == "carbine") //carbine
 	{
 		//Fire parameters
 		this.set_f32("bullet_damage", 0.0468f); 	//Bullet damage
@@ -98,7 +98,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_string("gun_icon", "CARBINE");				//Icon in tools menu
 		this.set_string("gun_menu_name", Trans::Carbine);		//Gun name in tools menu
 		this.set_string("gun_desc", Trans::CarbineDesc);	//Gun description in tools menu
-	}
+	}*/
 
 	this.set_bool("shotgun", this.get_u8("b_count") > 1 ? true : false);
 	this.set_u8("ammo", this.get_u8("clip_size")); 

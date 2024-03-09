@@ -31,7 +31,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 
 void BuildShopMenu(CBlob@ this, CBlob@ caller)
 {
-	CGridMenu@ menu = CreateGridMenu(this.getScreenPos(), this, Vec2f(8, 2), "Select Gun");
+	CGridMenu@ menu = CreateGridMenu(this.getScreenPos(), this, Vec2f(6, 2), "Select Gun");
 	if (menu is null) return;
 	
 	const bool warmup = getRules().isWarmup();
@@ -43,7 +43,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ caller)
 	
 	AddOption(this, caller, menu, "shotgun", "$SHOTGUN$", Trans::Shotgun, Trans::ShotgunDesc);
 	
-	AddOption(this, caller, menu, "carbine", "$CARBINE$", Trans::Carbine, Trans::CarbineDesc);
+	//AddOption(this, caller, menu, "carbine", "$CARBINE$", Trans::Carbine, Trans::CarbineDesc);
 }
 
 CGridButton@ AddOption(CBlob@ this, CBlob@ caller, CGridMenu@ menu, const string&in weapon, const string&in icon, const string&in bname, const string&in desc)
