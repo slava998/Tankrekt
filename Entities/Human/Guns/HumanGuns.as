@@ -25,6 +25,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u16("reloading_time", 60);			//Reloading duration (in ticks)
 		this.set_u8("b_count", 1);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
+		this.set_string("proj_blob", "");			//Projectile the gun shoots. Set to "" to disable.
 		
 		//Cosmetic
 		this.set_string("fire_sound", "rifle_fire");		//Fire sound
@@ -45,9 +46,10 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("TTL", 11); 					//How long bullet will live (in ticks)
 		this.set_u8("speed", 27); 					//Bullet speed
 		this.set_u8("shot_spread", 5); 				//Shooting spread angle
-		this.set_u16("reloading_time", 60);		//Reloading duration (in ticks)
+		this.set_u16("reloading_time", 60);			//Reloading duration (in ticks)
 		this.set_u8("b_count", 1);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
+		this.set_string("proj_blob", "");			//Projectile the gun shoots. Set to "" to disable.
 				
 		this.set_string("fire_sound", "smg_fire");			//Fire sound
 		this.set_u8("sounds_random_length", 0);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -69,6 +71,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u16("reloading_time", 100);		//Reloading duration (in ticks)
 		this.set_u8("b_count", 9);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
+		this.set_string("proj_blob", "");			//Projectile the gun shoots. Set to "" to disable.
 				
 		this.set_string("fire_sound", "shotgun_fire");		//Fire sound
 		this.set_u8("sounds_random_length", 2);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -76,7 +79,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_bool("no_smoke", false);					//No smoke when shooting
 		this.set_string("gun_icon", "SHOTGUN");				//Icon in tools menu
 		this.set_string("gun_menu_name", Trans::Shotgun);	//Gun name in tools menu
-		this.set_string("gun_desc", Trans::ShotgunDesc);//Gun description in tools menu
+		this.set_string("gun_desc", Trans::ShotgunDesc);	//Gun description in tools menu
 	}
 	/*else if(this.get_string("gunName") == "carbine") //carbine
 	{
@@ -193,6 +196,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			this.set_string("gun_menu_name", params.read_string());
 			this.set_string("gun_desc", params.read_string());
 			this.set_f32("human_damage_mod", params.read_f32());
+			this.set_string("proj_blob", params.read_string());
 		}
 	}
 }
@@ -219,5 +223,6 @@ void SyncGunVars(CBlob@ this)
 	params.write_string(this.get_string("gun_menu_name"));
 	params.write_string(this.get_string("gun_desc"));
 	params.write_f32(this.get_f32("human_damage_mod"));
+	params.write_string(this.get_string("proj_blob"));
 	this.SendCommand(this.getCommandID("SyncGun"), params);
 }
