@@ -81,6 +81,28 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_string("gun_menu_name", Trans::Shotgun);	//Gun name in tools menu
 		this.set_string("gun_desc", Trans::ShotgunDesc);	//Gun description in tools menu
 	}
+	else if(this.get_string("gunName") == "rpg") 	//RPG
+	{
+		//Fire parameters
+		this.set_f32("bullet_damage", 0.0f); 		//Bullet damage
+		this.set_u16("fire_rate", 160); 				//Delay after shoot (in ticks)
+		this.set_u8("clip_size", 1); 				//Max ammo in clip
+		this.set_u8("TTL", 3); 						//How long bullet will live (in ticks)
+		this.set_u8("speed", 3); 					//Bullet speed
+		this.set_u8("shot_spread", 0); 				//Shooting spread angle
+		this.set_u16("reloading_time", 160);			//Reloading duration (in ticks)
+		this.set_u8("b_count", 1);					//Bullets per shot count
+		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
+		this.set_string("proj_blob", "rpgrocket");	//Projectile the gun shoots. Set to "" to disable.
+				
+		this.set_string("fire_sound", "RPG_fire");			//Fire sound
+		this.set_u8("sounds_random_length", 3);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
+		this.set_string("reload_sound", "RPG_reload");		//Reloading sound
+		this.set_bool("no_smoke", false);					//No smoke when shooting
+		this.set_string("gun_icon", "RPG");				//Icon in tools menu
+		this.set_string("gun_menu_name", Trans::RPG);	//Gun name in tools menu
+		this.set_string("gun_desc", Trans::RPGDesc);	//Gun description in tools menu
+	}
 	/*else if(this.get_string("gunName") == "carbine") //carbine
 	{
 		//Fire parameters
@@ -99,7 +121,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_string("reload_sound", "rifle_reload");	//Reloading sound
 		this.set_bool("no_smoke", false);					//No smoke when shooting
 		this.set_string("gun_icon", "CARBINE");				//Icon in tools menu
-		this.set_string("gun_menu_name", Trans::Carbine);		//Gun name in tools menu
+		this.set_string("gun_menu_name", Trans::Carbine);	//Gun name in tools menu
 		this.set_string("gun_desc", Trans::CarbineDesc);	//Gun description in tools menu
 	}*/
 

@@ -11,9 +11,18 @@ void onTick(CSprite@ this)
 	else if(blob.get_bool("currently_reloading")) this.SetAnimation("reload");
 	else if (blob.get_bool("onGround"))
 	{
-		if(blob.isKeyPressed(key_action2) && blob.getVelocity().Length() < 0.1f && blob.get_string("current tool") == "pistol") this.SetAnimation("shoot"); //aiming imitation
+		if(blob.isKeyPressed(key_action2) && blob.getVelocity().Length() < 0.1f && blob.get_string("current tool") == "pistol") //aiming imitation
+		{
+			if(blob.get_string("gunName") != "rpg")
+			{
+				if (!this.isAnimation("shoot"))
+					this.SetAnimation("shoot");
+			}
+			else if (!this.isAnimation("rpgshoot"))
+				this.SetAnimation("rpgshoot");
+		}
 		else if (this.isAnimationEnded() ||
-			!(this.isAnimation("punch1") || this.isAnimation("punch2") || this.isAnimation("shoot")))
+			!(this.isAnimation("punch1") || this.isAnimation("punch2") || this.isAnimation("shoot") || this.isAnimation("rpgshoot")))
 		{
 			if (blob.isKeyPressed(key_action2) && (blob.get_string("current tool") == "deconstructor") && !blob.isKeyPressed(key_action1))
 			{
@@ -39,7 +48,7 @@ void onTick(CSprite@ this)
 	}
 	else //in water
 	{
-		if (this.isAnimationEnded() || !(this.isAnimation("shoot") && !this.isAnimation("reload")))
+		if (this.isAnimationEnded() || !((this.isAnimation("shoot") || this.isAnimation("rpgshoot")) && !this.isAnimation("reload")))
 		{
 			if (blob.isKeyPressed(key_action2) && (blob.get_string("current tool") == "deconstructor"))
 			{

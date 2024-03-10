@@ -22,7 +22,7 @@ const int DECONSTRUCT_RANGE = 16;
 const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of the block will be returned after deconstructing
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 6);
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 6); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 const f32 RELOAD_SLOW = 0.5f; //how much player is slowed while reloading
@@ -357,8 +357,15 @@ void Move(CBlob@ this)
 				}
 
 				if(sprite !is null)
-				if (!sprite.isAnimation("shoot"))
-					sprite.SetAnimation("shoot");
+				{
+					if(this.get_string("gunName") != "rpg")
+					{
+						if (!sprite.isAnimation("shoot"))
+							sprite.SetAnimation("shoot");
+					}
+					else if (!sprite.isAnimation("rpgshoot"))
+						sprite.SetAnimation("rpgshoot");
+				}
 			}
 			else if (currentTool == "deconstructor" || currentTool == "reconstructor") //reclaim, repair
 			{
