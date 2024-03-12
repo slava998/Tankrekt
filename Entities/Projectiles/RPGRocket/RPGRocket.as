@@ -54,7 +54,6 @@ void onTick(CBlob@ this)
 		if(getGameTime() % 2 == 0 && g_debug > 0)
 		{
 			const u8 max_pierced = Maths::Floor(this.getVelocity().Length() / 1.2f);
-			print("" +max_pierced);
 			
 			CParticle@ p = ParticleAnimated(CFileMatcher("num_" + max_pierced).getFirst(), 
 											pos, 
