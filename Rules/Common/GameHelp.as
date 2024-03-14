@@ -105,7 +105,7 @@ void onRender(CRules@ this)
 	" [ " + action2_key + " ] "+Trans::Hold+" "+ Trans::FireGun+"\n"+
 	" [ MOUSE MIDDLE ]  "+ Trans::Hold+" "+Trans::PointEmote+"\n"+
 	" [ " + zoomIn_key + " ], [ " + zoomOut_key + " ] "+ Trans::Zoom+"\n"+
-	" [ " + party_key + " ] "+ Trans::AccessTools+"\n"+
+	" [ LSHIFT ] "+ Trans::AccessTools+"\n"+
 	" [ " + map_key + " ] "+ Trans::ScaleCompass+"\n"+
 	" [ " + eat_key + " ] "+ Trans::Hold+" "+Trans::Strafe+"\n"+
 	" [ LCTRL ] "+Trans::RotateCamera+".";

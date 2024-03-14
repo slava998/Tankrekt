@@ -414,7 +414,7 @@ void PlayerControls(CBlob@ this)
 {
 	CHUD@ hud = getHUD();
 	CControls@ controls = getControls();
-	const bool toolsKey = controls.isKeyJustPressed(KEY_KEY_Z);
+	const bool toolsKey = controls.isKeyJustPressed(KEY_LSHIFT);
 
 	if (this.isAttached())
 	{
