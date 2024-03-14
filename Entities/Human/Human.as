@@ -47,7 +47,6 @@ void onInit(CBlob@ this)
 	this.addCommandID("releaseOwnership");
 	this.addCommandID("swap tool");
 	this.addCommandID("run over");
-	this.addCommandID("makeBlockWithNoBase");
 
 	this.chatBubbleOffset = Vec2f(0.0f, 10.0f);
 	this.getShape().getVars().onground = true;
@@ -748,31 +747,6 @@ void BuildToolsMenu(CBlob@ this, const string&in description, const Vec2f&in off
 	{ //Reconstructor
 		AddTool(this, menu, "$RECONSTRUCTOR$", Trans::Reconstructor, Trans::ReconstDesc, "reconstructor");
 	}
-
-	Vec2f MENU_POS;
-
-	MENU_POS = menu.getUpperLeftPosition() + Vec2f(-36, 46);
-	CGridMenu@ tool = CreateGridMenu(MENU_POS, this, Vec2f(1, 1), "Make Block");
-
-	if (tool !is null)
-	{
-		tool.SetCaptionEnabled(false);
-
-		CGridButton@ button = tool.AddButton("$WOOD$", "", this.getCommandID("makeBlockWithNoBase"), Vec2f(1, 1));
-		if (button !is null)
-		{
-			if(this.get_s32("shipID") == 0 && this.get_bool("onGround"))
-			{
-				button.SetHoverText(Trans::IndependentBlock);
-			}
-			else
-			{
-				button.SetEnabled(false);
-				button.SetSelected(1);
-				button.SetHoverText(Trans::IndBlNotOnGr);
-			}
-		}
-	}
 }
 
 //Add a tool to the tools menu
@@ -1132,41 +1106,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		}
 		
 		this.set_string("current tool", tool);
-	}
-	else if (this.getCommandID("makeBlockWithNoBase") == cmd)
-	{
-		if(this.get_bool("onGround") && this.get_s32("shipID") == 0 && (server_getPlayerBooty(this.getPlayer().getUsername()) >= 7 || getRules().get_bool("freebuild")))
-		{
-			CBlob@ b = makeBlock(this.getPosition(), 0.0f, "platform", this.getTeamNum());
-			if (b !is null)
-			{
-				b.set_u32("placedTime", getGameTime());
-				CRules@ rules = getRules();
-				
-				ShipDictionary@ ShipSet = getShipSet(rules);
-				Ship@ ship = CreateShip(rules, ShipSet);
-				CBlob@[] blob_blocks;
-				if (b !is null) blob_blocks.push_back(b);
-				rules.push("dirtyBlocks", blob_blocks);
-				
-				b.set_netid("ownerID", 0);
-				const f32 z = b.hasTag("platform") ? 309.0f : (b.hasTag("weapon") ? 311.0f : 310.0f);
-				SetDisplay(b, color_white, RenderStyle::normal, z);
-				
-				if (!isServer()) //add it locally till a sync
-				{
-					ShipBlock ship_block;
-					ship_block.blobID = b.getNetworkID();
-					ship_block.offset = b.getPosition();
-					ship_block.angle_offset = b.getAngleDegrees();
-					b.getShape().getVars().customData = ship.id;
-					ship.blocks.push_back(ship_block);
-				}
-				else b.getShape().getVars().customData = 0; // push on ship
-				
-				server_addPlayerBooty(this.getPlayer().getUsername(), -7);
-			}
-		}
 	}
 	else if (this.getCommandID("run over") == cmd)
 	{
