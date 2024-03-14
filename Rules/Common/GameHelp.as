@@ -154,12 +154,10 @@ void onRender(CRules@ this)
 		const string shiprektVersion = "Tankrekt "+Trans::Version+" "+this.get_string("version")+"\n";
 		const string lastChangesInfo = Trans::LastChanges+":\n"
 		+ "- 07-02-2024\n"
-		+ "  * Mod created, major changes:\n"
-		+ "  * Tracks and wheels, wheels are good for light tanks,, while tracks are slow but good for heavy tanks\n"
-		+ "  * Stone blocks, they are good for forts or very armored tanks\n"
-		+ "  * All weapons got damage buff because of economy and balance changes\n"
-		+ "  * Artillery is new weapon, deals huge damage in big area but explodes after destroying\n"
-		+ "  * Small changes in sprites and remaked some blocks (patcher heals in area for example)\n";
+		+ "  * Major changes:\n"
+		+ "  * Added more firearms for players!\n"
+		+ "  * Artillery improvement and rebalance\n"
+		+ "  * Increased platform durability\n";
 		
 		GUI::SetFont("menu");
 		Vec2f lastChangesSize;
