@@ -92,12 +92,14 @@ void onInit(CRules@ this)
 	AddIconToken("$PLANKCORNER$", "PlankCorner.png", Vec2f(8,8), 0);
 	AddIconToken("$HERE$", "MenuItems.png", Vec2f(32,32), 5);
 	AddIconToken("$CROSS$", "MenuItems.png", Vec2f(32,32), 13);
+	AddIconToken("$UP$", "MenuItems.png", Vec2f(32,32), 6);
 	AddIconToken("$GATE$", "Gate.png", Vec2f(8,8), 0);
 	AddIconToken("$SMG$", "SMG.png", Vec2f(32,32), 0);
 	AddIconToken("$SHOTGUN$", "shotgun.png", Vec2f(32,32), 0);
 	//AddIconToken("$CARBINE$", "carbine.png", Vec2f(32,32), 0);
 	AddIconToken("$ARMORY$", "armory.png", Vec2f(8,8), 0);
 	AddIconToken("$RPG$", "RPG.png", Vec2f(32,32), 0);
+	AddIconToken("$ROCKETFACTORY$", "RocketFactory.png", Vec2f(20,20), 0);
 	
 	//spectator stuff
 	this.addCommandID("pick teams");

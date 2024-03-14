@@ -1,4 +1,4 @@
-Random _punchr(0xfecc);
+
 
 void onTick(CSprite@ this)
 {
@@ -22,7 +22,7 @@ void onTick(CSprite@ this)
 				this.SetAnimation("rpgshoot");
 		}
 		else if (this.isAnimationEnded() ||
-			!(this.isAnimation("punch1") || this.isAnimation("punch2") || this.isAnimation("shoot") || this.isAnimation("rpgshoot")))
+			!(this.isAnimation("slash1") || this.isAnimation("slash2") || this.isAnimation("shoot") || this.isAnimation("rpgshoot")))
 		{
 			if (blob.isKeyPressed(key_action2) && (blob.get_string("current tool") == "deconstructor") && !blob.isKeyPressed(key_action1))
 			{
@@ -34,7 +34,7 @@ void onTick(CSprite@ this)
 			}
 			else if (blob.isKeyPressed(key_action1))
 			{
-				this.SetAnimation("punch"+(_punchr.NextRanged(2)+1));
+				this.SetAnimation("slash1");
 			}
 			else if (blob.getShape().vellen > 0.1f)
 			{

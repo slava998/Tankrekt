@@ -101,7 +101,7 @@ void onRender(CRules@ this)
 	const string controlsTitle = Trans::Controls;
 	const string controlsInfo = " [ " + inv_key + " ] "+ Trans::GetBlocks+"\n"+
 	" [ " + action3_key + " ] "+ Trans::RotateBlocks+"\n"+
-	" [ " + action1_key + " ] "+ Trans::Punch+"\n"+
+	" [ " + action1_key + " ] "+ Trans::slash+"\n"+
 	" [ " + action2_key + " ] "+Trans::Hold+" "+ Trans::FireGun+"\n"+
 	" [ MOUSE MIDDLE ]  "+ Trans::Hold+" "+Trans::PointEmote+"\n"+
 	" [ " + zoomIn_key + " ], [ " + zoomOut_key + " ] "+ Trans::Zoom+"\n"+

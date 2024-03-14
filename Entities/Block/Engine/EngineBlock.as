@@ -125,7 +125,7 @@ void explode(CBlob@ this)
 
 const f32 getDamage(CBlob@ hitBlob)
 {
-	if (hitBlob.hasTag("engineblock"))
+	if (hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
 		return 40.0f; //chain explosion
 	if (hitBlob.hasTag("rocket"))
 		return 1.25f; 

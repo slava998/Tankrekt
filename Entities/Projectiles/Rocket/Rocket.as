@@ -219,7 +219,7 @@ f32 getDamage(CBlob@ hitBlob)
 		return 4.0f;
 	if (hitBlob.hasTag("ramengine"))
 		return 5.0f;
-	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
+	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
 		return 3.0f;
 	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon"))
 		return 2.5f;

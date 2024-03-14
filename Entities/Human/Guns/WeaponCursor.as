@@ -139,6 +139,15 @@ void onRender(CSprite@ this)
 					bullet_vertex.push_back(Vertex(DrawPos.x+BotLeft.x, DrawPos.y+BotLeft.y,1, 0, 0, Col)); //bot left
 				}
 				Render::RawQuads("GunAmmoPip.png",bullet_vertex);
+				if(blob.get_bool("limited_ammo"))
+				{
+					const string text = blob.get_u16("total_ammo");
+					GUI::SetFont("menu");
+					Vec2f textSize;
+					GUI::GetTextDimensions(text, textSize);
+					textSize *= 0.5f;
+					GUI::DrawText(text, mouse_pos + Vec2f(-2,35) - textSize, color_white);
+				}
 		}
 	}
 }

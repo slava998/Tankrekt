@@ -168,6 +168,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 				bs.write_u32(getGameTime());
 				bs.write_u8(gunBlob.get_u8("ammo"));
 				bs.write_bool(gunBlob.get_bool("currently_reloading"));
+				bs.write_u16(gunBlob.get_u16("total_ammo"));
 				gunBlob.SendCommand(gunBlob.getCommandID("SyncShootVars"), bs); //sync ammo and fire time
 			}
 		}
@@ -245,6 +246,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 				bs.write_u32(getGameTime());
 				bs.write_u8(gunBlob.get_u8("ammo"));
 				bs.write_bool(gunBlob.get_bool("currently_reloading"));
+				bs.write_u16(gunBlob.get_u16("total_ammo"));
 				gunBlob.SendCommand(gunBlob.getCommandID("SyncShootVars"), bs); //sync ammo and fire time
 			}
 		}

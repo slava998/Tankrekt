@@ -642,6 +642,7 @@ void SetUpdateBlocks(const int&in shipColor = 0)
 	CBlob@[] blocks;
 	getBlobsByTag("weapon", @blocks); //update docking info
 	getBlobsByTag("seat", @blocks);   //update controls
+	getBlobsByTag("factory", @blocks); //turn factories on/off
 	
 	UpdateBlocks(shipColor, blocks);
 

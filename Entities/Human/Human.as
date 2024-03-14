@@ -22,7 +22,7 @@ const int DECONSTRUCT_RANGE = 16;
 const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of the block will be returned after deconstructing
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 6);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 6); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 const f32 RELOAD_SLOW = 0.5f; //how much player is slowed while reloading
@@ -42,7 +42,7 @@ void onInit(CBlob@ this)
 	this.Tag("player");
 	this.addCommandID("get out");
 	this.addCommandID("construct");
-	this.addCommandID("punch");
+	this.addCommandID("slash");
 	this.addCommandID("giveBooty");
 	this.addCommandID("releaseOwnership");
 	this.addCommandID("swap tool");
@@ -60,7 +60,7 @@ void onInit(CBlob@ this)
 	this.set_string("last buy", "coupling"); //last bought block
 	this.set_string("current tool", "pistol"); //tool the player is using
 	this.set_u32("fire time", 0); //gametime when pistol or constructor was last used
-	this.set_u32("punch time", 0); //gametime at last punch
+	this.set_u32("slash time", 0); //gametime at last slash
 	this.set_f32("camera rotation", 0); //the player's camera rotation synced for all clients
 	
 	CBlob@ core = getMothership(this.getTeamNum());
@@ -185,7 +185,7 @@ void Move(CBlob@ this)
 		const bool down = this.isKeyPressed(key_down);
 		const bool left = this.isKeyPressed(key_left);
 		const bool right = this.isKeyPressed(key_right);	
-		const bool punch = this.isKeyPressed(key_action1);
+		const bool slash = this.isKeyPressed(key_action1);
 		const bool shoot = this.isKeyPressed(key_action2);
 		const bool reload = getControls().isKeyJustPressed(KEY_KEY_R) && this.isMyPlayer();
 		
@@ -280,11 +280,11 @@ void Move(CBlob@ this)
 		}
 		else if(this.get_u8("knocked") <= 0)
 		{
-			// punch
-			if (isClient() && punch && !Human::isHoldingBlocks(this) && canPunch(this))
+			// slash
+			if (isClient() && slash && !Human::isHoldingBlocks(this) && canslash(this))
 			{
 				EndConstructEffects(this, sprite);
-				Punch(this);
+				Slash(this);
 			}
 			
 			//when on our mothership
@@ -304,7 +304,7 @@ void Move(CBlob@ this)
 		}
 		
 		//tool actions
-		if (shoot && !punch)
+		if (shoot && !slash)
 		{
 			const string currentTool = this.get_string("current tool");
 			
@@ -372,9 +372,9 @@ void Move(CBlob@ this)
 				Construct(this);
 			}
 		}
-		else if(reload && !reloading && this.get_u8("ammo") < this.get_u8("clip_size")) //reload gun
+		else if(isClient() &&reload && !reloading && this.get_u8("ammo") < this.get_u8("clip_size") && (!this.get_bool("limited_ammo") || this.get_u16("total_ammo") > 0)) //reload gun
 		{
-			if(isClient()) this.SendCommand(this.getCommandID("reload"));
+			this.SendCommand(this.getCommandID("reload"));
 		}
 		//canmove check
 		if (this.get_bool("onGround") || !rules.get_bool("whirlpool"))
@@ -689,6 +689,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Armory
 		AddBlock(this, menu, "armory", "$ARMORY$", Trans::Armory, Trans::ArmoryDesc, core, 3.5f);
 	}
+	{ //Rocket Factory
+		AddBlock(this, menu, "rocketfactory", "$ROCKETFACTORY$", Trans::RocketFactory, Trans::RocketFactoryDesc, core, 3.5f);
+	}
 }
 
 // Add a block to the build menu
@@ -787,8 +790,8 @@ CGridButton@ AddTool(CBlob@ this, CGridMenu@ menu, const string&in icon, const s
 	return button;
 }
 
-// Send a command to punch nearby enemies
-void Punch(CBlob@ this)
+// Send a command to slash nearby enemies
+void Slash(CBlob@ this)
 {
 	CMap@ map = getMap();
 	const Vec2f pos = this.getPosition();
@@ -832,9 +835,9 @@ void Punch(CBlob@ this)
 					{
 						CBitStream params;
 						params.write_netid(b.getNetworkID());
-						this.SendCommand(this.getCommandID("punch"), params);
+						this.SendCommand(this.getCommandID("slash"), params);
 					}
-					this.set_u32("punch time", getGameTime());
+					this.set_u32("slash time", getGameTime());
 					return;
 				}
 			}
@@ -843,7 +846,7 @@ void Punch(CBlob@ this)
 
 	// miss
 	directionalSoundPlay("throw", pos);
-	this.set_u32("punch time", getGameTime());
+	this.set_u32("slash time", getGameTime());
 }
 
 // Send a command to construct or deconstruct
@@ -977,9 +980,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		//get out of a seat
 		this.server_DetachFromAll();
 	}
-	else if (this.getCommandID("punch") == cmd)
+	else if (this.getCommandID("slash") == cmd)
 	{
-		//hurt blob with a punch
+		//hurt blob with a slash
 		CBlob@ b = getBlobByNetworkID(params.read_netid());
 		if (b !is null)
 		{
@@ -1266,7 +1269,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		CPlayer@ hitterPlayer = hitterBlob.getDamageOwnerPlayer();
 		const u8 teamNum = this.getTeamNum();
 		const u8 hitterTeam = hitterBlob.getTeamNum();
-		//only pistol or punches
+		//only pistol or slashes
 		if ((customData == Hitters::muscles || customData == Hitters::bomb_arrow) && hitterPlayer !is null && hitterTeam != teamNum)
 		{
 			u16 reward = 15;

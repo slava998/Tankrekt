@@ -26,6 +26,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("b_count", 1);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
 		this.set_string("proj_blob", "");			//Projectile the gun shoots. Set to "" to disable.
+		this.set_u16("total_ammo_max", 0); 			//the maximum number of rounds in stock. set it to 0 to make it infinite.
 		
 		//Cosmetic
 		this.set_string("fire_sound", "rifle_fire");		//Fire sound
@@ -50,6 +51,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("b_count", 1);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
 		this.set_string("proj_blob", "");			//Projectile the gun shoots. Set to "" to disable.
+		this.set_u16("total_ammo_max", 0); 			//the maximum number of rounds in stock. set it to 0 to make it infinite.
 				
 		this.set_string("fire_sound", "smg_fire");			//Fire sound
 		this.set_u8("sounds_random_length", 0);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -72,6 +74,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("b_count", 9);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
 		this.set_string("proj_blob", "");			//Projectile the gun shoots. Set to "" to disable.
+		this.set_u16("total_ammo_max", 0); 			//the maximum number of rounds in stock. set it to 0 to make it infinite.
 				
 		this.set_string("fire_sound", "shotgun_fire");		//Fire sound
 		this.set_u8("sounds_random_length", 2);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -85,15 +88,16 @@ void ChangeGun(CBlob@ this, const string gun)
 	{
 		//Fire parameters
 		this.set_f32("bullet_damage", 0.0f); 		//Bullet damage
-		this.set_u16("fire_rate", 160); 				//Delay after shoot (in ticks)
+		this.set_u16("fire_rate", 160); 			//Delay after shoot (in ticks)
 		this.set_u8("clip_size", 1); 				//Max ammo in clip
 		this.set_u8("TTL", 3); 						//How long bullet will live (in ticks)
 		this.set_u8("speed", 3); 					//Bullet speed
 		this.set_u8("shot_spread", 0); 				//Shooting spread angle
-		this.set_u16("reloading_time", 160);			//Reloading duration (in ticks)
+		this.set_u16("reloading_time", 160);		//Reloading duration (in ticks)
 		this.set_u8("b_count", 1);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
 		this.set_string("proj_blob", "rpgrocket");	//Projectile the gun shoots. Set to "" to disable.
+		this.set_u16("total_ammo_max", 3); 			//the maximum number of rounds in stock. set it to 0 to make it infinite.
 				
 		this.set_string("fire_sound", "RPG_fire");			//Fire sound
 		this.set_u8("sounds_random_length", 3);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -115,6 +119,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u16("reloading_time", 90);			//Reloading duration (in ticks)
 		this.set_u8("b_count", 8);					//Bullets per shot count
 		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
+		this.set_u16("total_ammo_max", 0); 			//the maximum number of rounds in stock. set it to 0 to make it infinite.
 				
 		this.set_string("fire_sound", "carbine_fire");		//Fire sound
 		this.set_u8("sounds_random_length", 0);				//The number of sounds the gun can make. For it to work, all sounds must have the same name and have a number at the end (starting from 0). Set to 0 to disable
@@ -126,7 +131,10 @@ void ChangeGun(CBlob@ this, const string gun)
 	}*/
 
 	this.set_bool("shotgun", this.get_u8("b_count") > 1 ? true : false);
-	this.set_u8("ammo", this.get_u8("clip_size")); 
+	this.set_bool("limited_ammo", this.get_u16("total_ammo_max") > 0 ? true : false);
+	if(this.get_u16("total_ammo_max") == 0) this.set_u8("ammo", this.get_u8("clip_size"));
+	else this.set_u8("ammo", 0);	
+	this.set_u16("total_ammo", 0);
 
 	SyncGunVars(this);
 }
@@ -149,13 +157,30 @@ void onTick(CBlob@ this)
 
 	if(this.get_u32("fire time") + this.get_u16("reloading_time") < getGameTime())
 	{
-		this.set_u8("ammo", this.get_u8("clip_size"));
+		const bool limited_ammo = this.get_bool("limited_ammo");
+		const u16 totalammo = this.get_u16("total_ammo");
+
+		if(limited_ammo)
+		{
+			if(this.get_u8("clip_size") > totalammo)
+			{
+				this.set_u8("ammo", totalammo);
+				this.set_u16("total_ammo", 0);
+			}
+			else
+			{
+				this.set_u8("ammo", this.get_u8("clip_size"));
+				this.sub_u16("total_ammo", this.get_u8("clip_size"));
+			}
+		}
+		else this.set_u8("ammo", this.get_u8("clip_size"));
 		this.set_bool("currently_reloading", false);
 
 		CBitStream params;
 		params.write_u32(this.get_u32("fire time"));
 		params.write_u8(this.get_u8("clip_size"));
 		params.write_bool(false);
+		params.write_u16(this.get_u16("total_ammo"));
 		
 		this.SendCommand(this.getCommandID("SyncShootVars"), params);
 	}
@@ -173,12 +198,16 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			this.set_u32("fire time", params.read_u32());
 			this.set_u8("ammo", params.read_u8()); 
 			this.set_bool("currently_reloading", params.read_bool());
+			this.set_u16("total_ammo", params.read_u16()); 
 		}
 	}
 	else if (cmd == this.getCommandID("reload"))
 	{
 		printf("reloading");
-		this.set_bool("currently_reloading", true);
+		if(isServer() && (!this.get_bool("limited_ammo") || this.get_u16("total_ammo") > 0)) //anti-cheat?
+		{
+			this.set_bool("currently_reloading", true);
+		}
 		this.set_u32("fire time", getGameTime());
 
 		directionalSoundPlay(this.get_string("reload_sound"),  this.getPosition(), 2.0f);
@@ -187,6 +216,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		params.write_u32(this.get_u32("fire time"));
 		params.write_u8(this.get_u8("ammo"));
 		params.write_bool(this.get_bool("currently_reloading"));
+		params.write_u16(this.get_u16("total_ammo"));
 			
 		this.SendCommand(this.getCommandID("SyncShootVars"), params);
 	}
@@ -219,6 +249,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			this.set_string("gun_desc", params.read_string());
 			this.set_f32("human_damage_mod", params.read_f32());
 			this.set_string("proj_blob", params.read_string());
+			this.set_u16("total_ammo", params.read_u16());
+			this.set_u16("total_ammo_max", params.read_u16());
+			this.set_bool("limited_ammo", params.read_bool());
 		}
 	}
 }
@@ -246,5 +279,8 @@ void SyncGunVars(CBlob@ this)
 	params.write_string(this.get_string("gun_desc"));
 	params.write_f32(this.get_f32("human_damage_mod"));
 	params.write_string(this.get_string("proj_blob"));
+	params.write_u16(this.get_u16("total_ammo"));
+	params.write_u16(this.get_u16("total_ammo_max"));
+	params.write_bool(this.get_bool("limited_ammo"));
 	this.SendCommand(this.getCommandID("SyncGun"), params);
 }
