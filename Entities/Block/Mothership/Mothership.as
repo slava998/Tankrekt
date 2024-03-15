@@ -57,6 +57,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		const string block = params.read_string();
 		const u16 cost = params.read_u16();
 		const bool autoBlock = params.read_bool();
+		const u8 lineLength = params.read_u8();
 		
 		if (caller is null)
 			return;
@@ -77,7 +78,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		if (!isServer() || Human::isHoldingBlocks(caller) || !this.hasTag("mothership") || this.getTeamNum() != caller.getTeamNum())
 			return;
 		
-		BuyBlock(this, caller, block, cost);
+		BuyBlock(this, caller, block, cost, lineLength);
 	}
 	else if (cmd == this.getCommandID("returnBlocks"))
 	{
@@ -118,7 +119,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	}
 }
 
-void BuyBlock(CBlob@ this, CBlob@ caller, const string&in bType, const u16&in cost)
+void BuyBlock(CBlob@ this, CBlob@ caller, const string&in bType, const u16&in cost, const u8&in lineLength = 0)
 {
 	CRules@ rules = getRules();
 
@@ -145,16 +146,20 @@ void BuyBlock(CBlob@ this, CBlob@ caller, const string&in bType, const u16&in co
 				teamFlaks++;
 		}
 	}
-
+	if(lineLength > 0)
+	{
+		amount = lineLength*lineLength; //lineLength squared
+	}
+	
 	if (teamFlaks < MAX_TEAM_FLAKS)
 	{
 		if (rules.get_bool("freebuild"))
-			ProduceBlock(rules, caller, bType, amount);
+			ProduceBlock(rules, caller, bType, amount, lineLength);
 		else if (pBooty >= cost)
 		{
 			server_addPlayerBooty(pName, -cost);
 		
-			ProduceBlock(rules, caller, bType, amount);
+			ProduceBlock(rules, caller, bType, amount, lineLength);
 		}
 	}
 	else if (teamFlaks >= MAX_TEAM_FLAKS && player !is null)

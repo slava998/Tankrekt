@@ -3,13 +3,10 @@
 #include "ShiprektTranslation.as";
 #include "CustomSync.as";
 #include "ParticleSpark.as";
-#include "ExplosionEffects.as";;
-#include "Hitters.as"
 
 const u8 INTERACTION_RANGE = 20;
 const u16 PRODUCTION_RATE = 3600; //30 ticks = 1 second
 const u8 MAX_PRODUCT_STORED = 10;
-const f32 EXPLODE_RADIUS = 15.0f;
 
 void onInit(CBlob@ this)
 {
@@ -21,12 +18,12 @@ void onInit(CBlob@ this)
 	this.addCommandID("store");
 	this.getCurrentScript().tickFrequency = 60; //tick once in 2 seconds
 	
-	CSpriteLayer@ layer = this.getSprite().addSpriteLayer("factory", "RocketFactory.png", 20, 20);
+	/*CSpriteLayer@ layer = this.getSprite().addSpriteLayer("factory", "RocketFactory.png", 20, 20);
 	if (layer !is null)
     {
 		layer.SetRelativeZ(2);
 		layer.ScaleBy(Vec2f(0.6f, 0.6f));
-	}
+	}*/
 }
 
 void GetButtonsFor(CBlob@ this, CBlob@ caller)
@@ -88,8 +85,8 @@ void onTick(CBlob@ this)
 
 void DoUpdate(CBlob@ this)
 {
-	this.set_bool("updateBlock", false);
 	const int color = this.getShape().getVars().customData;
+	this.set_bool("updateBlock", false);
 	Ship@ ship = getShipSet().getShip(color);
 	if(ship is null) return;
 	
@@ -126,7 +123,7 @@ void MakeMenu(CBlob@ this, CBlob@ caller)
 
 void Shake(CBlob@ this)
 {
-	CSprite@ sprite = this.getSprite();
+	/*CSprite@ sprite = this.getSprite();
 	CSpriteLayer@ layer = sprite.getSpriteLayer("factory");
 	if (layer !is null)
     {
@@ -158,6 +155,14 @@ void Shake(CBlob@ this)
 			}
 		}
     }
+	*/
+	if(isClient() && !v_fastrender && getGameTime() % 32 == 0)
+	{
+
+		Vec2f smoke_pos = Vec2f(this.getPosition().x + (XORRandom(4) - XORRandom(2)) * 0.5, this.getPosition().y + (XORRandom(4) - XORRandom(2)) * 0.5);
+		Vec2f smoke_vel = Vec2f((XORRandom(4) - XORRandom(2)) * 0.25, (XORRandom(4) - XORRandom(2)) * 0.25);
+		smoke(smoke_pos, smoke_vel);
+	}
 }
 
 //Display the number of rockets inside
@@ -212,82 +217,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		else if(isClient() && caller.isMyPlayer())
 			directionalSoundPlay("NoAmmo.ogg",  caller.getPosition(), 4.0f);
 	}
-}
-
-void onDie(CBlob@ this)
-{
-	Vec2f pos = this.getPosition();
-
-	if (this.getShape().getVars().customData > 0 && !this.hasTag("disabled"))
-	{
-		if (isServer()) explode(this);
-			
-		if (isClient())
-		{
-			directionalSoundPlay("Bomb.ogg", pos, 2.0f);
-			const u8 particleAmount = v_fastrender ? 1 : 3;
-			for (u8 i = 0; i < particleAmount; i++)
-			{
-				makeSmallExplosionParticle(pos + getRandomVelocity(90, 12, 360));
-			}
-		}
-	}
-}
-
-void explode(CBlob@ this)
-{
-	Vec2f pos = this.getPosition();
-	CMap@ map = getMap();
-	CBlob@[] blobs;
-	map.getBlobsInRadius(pos, EXPLODE_RADIUS, @blobs);
-	
-	if (blobs.length < 2) return;
-		
-	f32 angle = XORRandom(360);
-
-	for (u8 s = 0; s < 12; s++)
-	{
-		HitInfo@[] hitInfos;
-		if (map.getHitInfosFromRay(pos, angle, EXPLODE_RADIUS, this, @hitInfos))
-		{
-			const u8 hitLength = hitInfos.length;
-			for (u8 i = 0; i < hitLength; i++)//sharpnel trail
-			{
-				CBlob@ b = hitInfos[i].blob;
-				if (b is null || b is this) continue;
-				
-				const bool sameTeam = b.getTeamNum() == this.getTeamNum();
-				if (b.hasTag("solid") || b.hasTag("door") || b.hasTag("seat") || b.hasTag("weapon") || b.hasTag("projectile") || b.hasTag("core") || b.hasTag("bomb") || (b.hasTag("player") && !b.isAttached()))
-				{
-					this.server_Hit(b, hitInfos[i].hitpos, Vec2f_zero, getDamage(b), Hitters::bomb, true);
-					break;
-				}
-			}
-		}
-		
-		angle = (angle + 30.0f) % 360;
-	}
-}
-
-const f32 getDamage(CBlob@ hitBlob)
-{
-	if (hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
-		return 40.0f; //chain explosion
-	if (hitBlob.hasTag("rocket"))
-		return 1.25f; 
-	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank"))
-		return 1.5f;
-	if (hitBlob.hasTag("ramengine"))
-		return 3.0f;
-	if (hitBlob.hasTag("door"))
-		return 1.0f;
-	if (hitBlob.getName() == "shark" || hitBlob.getName() == "human")
-		return 1.0f;
-	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("bomb"))
-		return 2.0f;
-	if (hitBlob.hasTag("core"))
-		return 0.2f;
-	return 1.0f;
 }
 
 Random _smokerandom(0x15125); //clientside

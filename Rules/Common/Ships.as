@@ -650,6 +650,8 @@ void SetUpdateBlocks(const int&in shipColor = 0)
 	getBlobsByTag("engineblock", @engines);
 	
 	RecountEngienes(shipColor, engines);
+	
+	CheckMultiblocks(shipColor);
 }
 
 // Update core rings spritelayer
@@ -691,6 +693,59 @@ void RecountEngienes(const int&in shipColor, CBlob@[] engines)
 		}
 	}
 	//print("ship.engineblockcount " + ship.engineblockcount);
+}
+
+void CheckMultiblocks(const int&in shipColor)
+{
+	Ship@ ship = getShipSet().getShip(shipColor);
+	if(ship is null) return;
+	
+	ShipBlock[] blocks = ship.blocks;
+	ShipBlock[] multiblocks;
+	
+	const u16 blocksLength = blocks.length;
+	for (u16 i = 0; i < blocksLength; i++)
+	{
+		ShipBlock@ block = blocks[i];
+		CBlob@ blob = getBlobByNetworkID(block.blobID);
+		if (blob !is null && blob.hasTag("main_block")) //destroy the structure if some of its blocks was brocken
+		{
+			const int color = blob.getShape().getVars().customData;
+			u32[] linkedIDs;
+			if (!blob.get("linkedIDs", linkedIDs))
+			{
+				blob.Tag("dead");
+				blob.Tag("no_recheck");
+				blob.server_Die();
+			}		
+			else
+			{
+				bool killed = false;
+				const u8 len = linkedIDs.length;
+				for (u8 i = 0; i < len + 1; i++)
+				{
+					CBlob@ b = getBlobByNetworkID(linkedIDs[i]);
+					if(b is null || color != b.getShape().getVars().customData)
+						killed = true;
+				}
+				if(killed)
+				{
+					for (u8 i = 0; i < len + 1; i++)
+					{
+						CBlob@ b = getBlobByNetworkID(linkedIDs[i]);
+						if(b !is null)
+						{
+							b.Tag("dead");
+							b.server_Die();
+						}
+					}
+					blob.Tag("dead");
+					blob.Tag("no_recheck");
+					blob.server_Die();
+				}
+			}
+		}
+	}
 }
 
 // For collision with tiles (rock)

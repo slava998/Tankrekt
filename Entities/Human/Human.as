@@ -516,6 +516,7 @@ void PlayerControls(CBlob@ this)
 						params.write_string(this.get_string("last buy"));
 						params.write_u16(getCost(this.get_string("last buy")));
 						params.write_bool(false);
+						params.write_u8(getLineLength(this.get_string("last buy") + "_linelength"));
 						core.SendCommand(core.getCommandID("buyBlock"), params);
 					}
 					
@@ -544,6 +545,7 @@ void PlayerControls(CBlob@ this)
 			params.write_string(this.get_string("last buy"));
 			params.write_u16(getCost(this.get_string("last buy")));
 			params.write_bool(true);
+			params.write_u8(getLineLength(this.get_string("last buy") + "_linelength"));
 			core.SendCommand(core.getCommandID("buyBlock"), params);
 		}
 	}
@@ -689,7 +691,7 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		AddBlock(this, menu, "armory", "$ARMORY$", Trans::Armory, Trans::ArmoryDesc, core, 3.5f);
 	}
 	{ //Rocket Factory
-		AddBlock(this, menu, "rocketfactory", "$ROCKETFACTORY$", Trans::RocketFactory, Trans::RocketFactoryDesc, core, 3.5f);
+		AddBlock(this, menu, "rocketfactory", "$ROCKETFACTORY$", Trans::RocketFactory, Trans::RocketFactoryDesc, core, 1.0f);
 	}
 }
 
@@ -703,6 +705,7 @@ CGridButton@ AddBlock(CBlob@ this, CGridMenu@ menu, const string&in block, const
 	params.write_string(block);
 	params.write_u16(cost);
 	params.write_bool(false);
+	params.write_u8(getLineLength(block + "_linelength"));
 	
 	CGridButton@ button = menu.AddButton(icon, bname + " $" + cost, core.getCommandID("buyBlock"), params);
 
