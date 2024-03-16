@@ -51,7 +51,7 @@ void onTick(CBlob@ this)
 	if (this.get_bool("updateBlock"))
 		DoUpdate(this); //turn it on/off when placed or ship becomes/stops being station
 		
-	if(!this.get_bool("active") || this.get_u8("product_stored") >= MAX_PRODUCT_STORED)
+	if(this.get_u8("product_stored") >= MAX_PRODUCT_STORED)
 		return;
 	
 	const bool client = isClient();
