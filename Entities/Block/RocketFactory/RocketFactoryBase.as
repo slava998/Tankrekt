@@ -5,6 +5,8 @@ void onInit(CBlob@ this)
 	if(this.hasTag("main_block"))
 	{
 		this.AddScript("RocketFactory.as");
-		this.getSprite().AddScript("RocketFactory.as");
+		CSprite@ sprite = this.getSprite();
+		if(sprite !is null)
+			this.getSprite().AddScript("RocketFactory.as");
 	}
 }

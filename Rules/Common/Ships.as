@@ -722,11 +722,14 @@ void CheckMultiblocks(const int&in shipColor)
 			{
 				bool killed = false;
 				const u8 len = linkedIDs.length;
-				for (u8 i = 0; i < len + 1; i++)
+				for (u8 i = 0; i < len; i++)
 				{
 					CBlob@ b = getBlobByNetworkID(linkedIDs[i]);
 					if(b is null || color != b.getShape().getVars().customData)
+					{
+						print("" + (b is null));
 						killed = true;
+					}
 				}
 				if(killed)
 				{
@@ -743,6 +746,7 @@ void CheckMultiblocks(const int&in shipColor)
 					blob.Tag("no_recheck");
 					blob.server_Die();
 				}
+				print("killed " + killed);
 			}
 		}
 	}
