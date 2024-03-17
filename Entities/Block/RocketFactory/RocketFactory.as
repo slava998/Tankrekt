@@ -201,7 +201,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		if(this is null) return;
 
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
-		if(caller is null) return;
+		if(caller is null && caller.get_bool("currently_reloading")) return;
 		
 		if(this.get_u8("product_stored") < MAX_PRODUCT_STORED && caller.get_u16("total_ammo") > 0)
 		{
