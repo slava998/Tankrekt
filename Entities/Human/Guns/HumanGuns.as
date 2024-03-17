@@ -194,7 +194,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	{
 		if(isClient())
 		{
-			printf("syncing shoot vars");
+			//printf("syncing shoot vars");
 			this.set_u32("fire time", params.read_u32());
 			this.set_u8("ammo", params.read_u8()); 
 			this.set_bool("currently_reloading", params.read_bool());
@@ -203,7 +203,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	}
 	else if (cmd == this.getCommandID("reload"))
 	{
-		printf("reloading");
+		//printf("reloading");
 		if(isServer() && (!this.get_bool("limited_ammo") || this.get_u16("total_ammo") > 0)) //anti-cheat?
 		{
 			this.set_bool("currently_reloading", true);
@@ -222,14 +222,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 	}
 	else if(this.getCommandID("updateGun") == cmd)
 	{
-		printf("recieved update gun command");
+		//printf("recieved update gun command");
 		ChangeGun(this, this.get_string("gunName"));
 	}
 	else if (cmd == this.getCommandID("SyncGun"))
 	{
 		if(isClient())
 		{
-			printf("syncing gun");
+			//printf("syncing gun");
 			this.set_u8("ammo",  params.read_u8());
 			this.set_string("gunName", params.read_string());
 			this.set_u8("TTL",  params.read_u8());
@@ -258,7 +258,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 void SyncGunVars(CBlob@ this)
 {
-	printf("sending gun sync");
+	//printf("sending gun sync");
 	CBitStream params;
 	params.write_u8(this.get_u8("ammo"));
 	params.write_string(this.get_string("gunName"));

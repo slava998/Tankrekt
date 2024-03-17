@@ -746,7 +746,6 @@ void CheckMultiblocks(const int&in shipColor)
 					blob.Tag("no_recheck");
 					blob.server_Die();
 				}
-				print("killed " + killed);
 			}
 		}
 	}
