@@ -3,8 +3,14 @@
 #include "DamageBooty.as";
 #include "AccurateSoundPlay.as";
 
-const f32 BOMB_RADIUS = 20.0f;
-const f32 BOMB_BASE_DAMAGE = 3.0f;
+const f32 EXPLODE_RADIUS = 28.0f;		//Raycast range
+const f32 RAYCAST_DAMAGE = 4.0f; 		//There's 20 raycasts with this damage so it is not small
+const u8  RAYCAST_NUM = 20; 			//Number of explosion rays fired in a circle
+const u8  PIERCE_NUM = 4;				//How many blocks raycast can pierce
+const f32 SPLASH_RADIUS = 12.0f;		//Splash is a damage through walls
+const f32 SPLASH_DAMAGE = 3.0f; 		//Splash is a damage through walls
+const f32 RAYCAST_DAMAGE_CORE = 1.0f; 	//Damage for cores
+const f32 SPLASH_DAMAGE_CORE = 2.0f;	//Damage for cores
 
 BootyRewards@ booty_reward;
 
@@ -30,54 +36,6 @@ void onInit(CBlob@ this)
 	//this.getCurrentScript().tickFrequency = 60;
 	
 	this.set_f32("weight", 2.0f);
-	
-	/*CSprite@ sprite = this.getSprite();
-	if (sprite !is null)
-	{
-		//default animation
-		{
-			Animation@ anim = sprite.addAnimation("default", 0, false);
-			anim.AddFrame(0);
-		}
-		//exploding "warmup" animation
-		{
-			Animation@ anim = sprite.addAnimation("exploding", 2, true);
-
-			int[] frames = {
-				1, 1,
-				2, 2,
-				0, 0,
-				0, 0,
-
-				1, 1,
-				2, 2,
-				0, 0,
-				0,
-
-				1,
-				2,
-				0, 0,
-
-				1,
-				2,
-				0, 0,
-
-				1,
-				2,
-				0, 0,
-
-				1,
-				2,
-				0, 0,
-
-				1,
-				2,
-				0, 0,
-			};
-
-			anim.AddFrames(frames);
-		}
-	}*/
 }
 
 void onTick(CBlob@ this)
@@ -123,11 +81,11 @@ const u8 findCloseBombs(CBlob@ this)
 			factor++;
 		}
 	}
-	
+	print("factor");
 	return factor;
 }
 
-void Explode(CBlob@ this, const f32&in radius = BOMB_RADIUS)
+void Explode(CBlob@ this)
 {
 	const Vec2f pos = this.getPosition();
 	const u8 stackfactor = findCloseBombs(this);
@@ -136,53 +94,98 @@ void Explode(CBlob@ this, const f32&in radius = BOMB_RADIUS)
 	{
 		directionalSoundPlay("Bomb.ogg", pos);
 		makeLargeExplosionParticle(pos);
-		ShakeScreen(4 * radius + stackfactor, 45, pos);
+		ShakeScreen(4 * EXPLODE_RADIUS + stackfactor, 45, pos);
 	}
 
-	//hit blobs
-	CBlob@[] blobs;
-	if (!getMap().getBlobsInRadius(pos, (radius-3)+ (stackfactor*3), @blobs))
-		return;
-	
-	ShipDictionary@ ShipSet = getShipSet();
-	const u8 blobsLength = blobs.length;
-	for (u8 i = 0; i < blobsLength; i++)
+	//Splash that hits through the walls. Also it pushes blocks.
+	CBlob@[] pblobs;
+	if (getMap().getBlobsInRadius(pos, SPLASH_RADIUS, @pblobs))
 	{
-		CBlob@ hit_blob = blobs[i];
-		if (hit_blob is this) continue;
 		
-		const int hitCol = hit_blob.getShape().getVars().customData;
-
-		if (isServer())
+		ShipDictionary@ ShipSet = getShipSet();
+		const u8 blobsLength = pblobs.length;
+		for (u8 i = 0; i < blobsLength; i++)
 		{
-			Vec2f hit_blob_pos = hit_blob.getPosition();  
+			CBlob@ hit_blob = pblobs[i];
+			if (hit_blob is this) continue;
+			
+			const int hitCol = hit_blob.getShape().getVars().customData;
 
-			if (hit_blob.hasTag("block"))
+			if (isServer())
 			{
-				if (hitCol <= 0) continue;
+				Vec2f hit_blob_pos = hit_blob.getPosition();  
 
-				// move the ship
-				Ship@ ship = ShipSet.getShip(hitCol);
-				if (ship !is null && ship.mass > 0.0f)
+				if (hit_blob.hasTag("block"))
 				{
-					Vec2f impact = (hit_blob_pos - pos) * 0.15f / ship.mass;
-					ship.vel += impact;
+					if (hitCol <= 0) continue;
+
+					// move the ship
+					Ship@ ship = ShipSet.getShip(hitCol);
+					if (ship !is null && ship.mass > 0.0f)
+					{
+						Vec2f impact = (hit_blob_pos - pos) * 0.3f / ship.mass;
+						ship.vel += impact;
+					}
+				}
+
+				if(hit_blob.hasTag("solid") || hit_blob.hasTag("door") || hit_blob.hasTag("seat") || hit_blob.hasTag("weapon") || hit_blob.hasTag("projectile") || hit_blob.hasTag("core") || hit_blob.hasTag("bomb") || (hit_blob.hasTag("player") && !hit_blob.isAttached()))
+				//hit the object
+				this.server_Hit(hit_blob, hit_blob_pos, Vec2f_zero, (hit_blob.hasTag("core") ? SPLASH_DAMAGE_CORE : SPLASH_DAMAGE), Hitters::bomb, true);
+			}
+		}
+	}
+	//Firing raycasts
+
+	CMap@ map = getMap();
+	CBlob@[] blobs;
+	map.getBlobsInRadius(pos, EXPLODE_RADIUS, @blobs);
+	
+	if (blobs.length < 2) return;
+
+	for (u8 s = 0; s <= RAYCAST_NUM; s++)
+	{
+		f32 angle = (360 / RAYCAST_NUM) * s; //firing in a circle
+
+		HitInfo@[] hitInfos;
+		if (map.getHitInfosFromRay(pos, angle, EXPLODE_RADIUS, this, @hitInfos))
+		{
+			u8 hitnum = 1;
+			bool absorbed = false;
+	
+			const u8 hitLength = hitInfos.length;
+			for (u8 i = 0; i < hitLength; i++)//sharpnel trail
+			{
+				CBlob@ b = hitInfos[i].blob;
+				if (b is null || b is this) continue;
+				
+				const bool sameTeam = b.getTeamNum() == this.getTeamNum();
+				if (b.hasTag("solid") || b.hasTag("door") || (!sameTeam
+					&& (b.hasTag("seat") || b.hasTag("weapon") || b.hasTag("projectile") || b.hasTag("core") || b.hasTag("bomb") || (b.hasTag("player") && !b.isAttached()))))
+				{
+				
+					//hit the object
+					if(b.hasTag("armor")) absorbed = true; //if a projectile hits armor, only armor blocks take damage
+					hitnum++;
+					f32 dmg = b.hasTag("core") ? RAYCAST_DAMAGE_CORE : RAYCAST_DAMAGE;
+					if(!absorbed || b.hasTag("armor")) this.server_Hit(b, hitInfos[i].hitpos, Vec2f_zero, (dmg / hitnum), Hitters::bomb, true);
+
+					//particles
+					if(isClient())
+					{
+						CParticle@ p = ParticleAnimated("Entities/Effects/Sprites/WhitePuff2.png",
+									pos,
+									Vec2f(1,0).RotateBy(angle),
+									1.0f, 0.5f, 
+									2, 
+									0.0f, true);
+									
+						if (p !is null)
+						p.Z = 650;
+					}
+				
+					if(hitnum > PIERCE_NUM) break;
 				}
 			}
-		
-			const f32 distanceFactor = Maths::Min(1.0f, Maths::Max(0.0f, BOMB_RADIUS - this.getDistanceTo(hit_blob) + 8.0f + (stackfactor/2)) / BOMB_RADIUS);
-			//f32 distanceFactor = 1.0f;
-			const f32 damageFactor = (hit_blob.hasTag("mothership")) ? 0.25f : 1.0f;
-
-			//hit the object
-			this.server_Hit(hit_blob, hit_blob_pos, Vec2f_zero, BOMB_BASE_DAMAGE * distanceFactor * damageFactor + (stackfactor/3), Hitters::bomb, true);
-			//print(hit_blob.getNetworkID() + " for: " + BOMB_BASE_DAMAGE * distanceFactor + " dFctr: " + distanceFactor + ", dist: " + this.getDistanceTo(hit_blob));
-		}
-		
-		CPlayer@ owner = this.getDamageOwnerPlayer();
-		if (owner !is null && hitCol > 0)
-		{
-			rewardBooty(owner, hit_blob, booty_reward, "Pinball_3");
 		}
 	}
 }
