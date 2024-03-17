@@ -143,10 +143,10 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 
 		if(gunBlob.hasTag("player"))
 		{
-			printf("recieved fire cmd");
+			//printf("recieved fire cmd");
 			if(isClient())
 			{
-				printf("making smoke & sound");
+				//printf("making smoke & sound");
 
 				Vec2f offset = Vec2f(0.5f ,0).RotateBy(angle)*6.0f;
 				if(!params.read_bool()) offset *= -1;  //for some reason offset becomes negative when standing on ship
@@ -221,10 +221,10 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 		}
 		if(gunBlob.hasTag("player"))
 		{
-			printf("recieved fire cmd");
+			//printf("recieved fire cmd");
 			if(isClient())
 			{
-				printf("making smoke & sound");
+				//printf("making smoke & sound");
 
 				Vec2f offset = Vec2f(0.5f ,0).RotateBy(angle)*6.0f;
 				if(!params.read_bool()) offset *= -1;  //for some reason offset becomes negative when standing on ship
