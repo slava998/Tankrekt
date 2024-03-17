@@ -157,7 +157,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				{
 					if(blob.getShape().getConsts().collidable && doesCollideWithDoor(this,blob)) //do not kill seat if we are colliding with door or platform
 					{
-						if (this.hasTag("seat")) Die(this);
+						if (this.hasTag("seat") && !blob.hasTag("wheel")) Die(this);
 						if (blob.hasTag("seat")) Die(blob);
 					}
 				}

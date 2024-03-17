@@ -3,7 +3,7 @@ void onInit(CBlob@ this)
 	this.Tag("propeller");
 	this.Tag("solid");
 	this.Tag("landMotor");
-	this.Tag("ramming");
+	this.Tag("wheel");
 	this.set_f32("mass_coef", 0.05f); //has an extremely strong effect on heavy tanks, high values will make them literally immovable
 	
 	this.set_f32("weight", 1.0f);
