@@ -351,7 +351,7 @@ void Move(CBlob@ this)
 					
 					if(!shotgun) rules.SendCommand(rules.getCommandID("fireGun"), params);
 					else rules.SendCommand(rules.getCommandID("fireShotgun"), params);
-					printf("sending fire cmd");
+					//printf("sending fire cmd");
 					this.set_u32("fire time", getGameTime());
 				}
 
