@@ -186,7 +186,7 @@ void Move(CBlob@ this)
 		const bool right = this.isKeyPressed(key_right);	
 		const bool slash = this.isKeyPressed(key_action1);
 		const bool shoot = this.isKeyPressed(key_action2);
-		const bool reload = getControls().isKeyJustPressed(KEY_KEY_R) && this.isMyPlayer();
+		const bool reload = getControls().isKeyJustPressed(KEY_KEY_R)&& this.isMyPlayer();
 		
 		const bool reloading = this.get_bool("currently_reloading");
 		
@@ -414,7 +414,7 @@ void PlayerControls(CBlob@ this)
 {
 	CHUD@ hud = getHUD();
 	CControls@ controls = getControls();
-	const bool toolsKey = controls.isKeyJustPressed(KEY_LSHIFT);
+	const bool toolsKey = controls.isKeyJustPressed(KEY_LSHIFT) || controls.isKeyJustPressed(KEY_KEY_Z);
 
 	if (this.isAttached())
 	{
