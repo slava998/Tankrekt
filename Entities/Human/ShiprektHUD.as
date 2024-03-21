@@ -258,7 +258,7 @@ void DrawStationStatus(const u8&in teamnum, Vec2f&in tl, CControls@ controls)
 			teamStationCount++;
 	}
 
-	GUI::DrawText(teamStationCount + "/" + totalStationCount + " (+"+teamStationCount*3+")", tl + Vec2f(246, 11), tipsColor);
+	GUI::DrawText(teamStationCount + "/" + totalStationCount + " (+"+teamStationCount*5+")", tl + Vec2f(246, 11), tipsColor);
 	
 	//GUI buttons text/function
 	if ((controls.getMouseScreenPos() - (tl + Vec2f(245, 20))).Length() < 35.0f)
