@@ -99,7 +99,6 @@ void onInit(CBlob@ this)
 
 void onTick(CBlob@ this)
 {
-	if(this.getTeamNum() == 1) print(this.getAirTime() + "");
 	Move(this);
 	
 	DoKnockedUpdate(this);

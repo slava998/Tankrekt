@@ -5,13 +5,10 @@
 #include "PlankCommon.as";
 
 const f32 SPLASH_RADIUS = 8.0f;
-const f32 SPLASH_DAMAGE = 0.5f;
-//const f32 MANUAL_DAMAGE_MODIFIER = 0.75f;
 
 const f32 ROCKET_FORCE = 86.0f;
 const int ROCKET_DELAY = 15;
 const int ROCKET_FUEL = 15;
-const f32 ROTATION_SPEED = 3.0;
 
 Random _effectspreadrandom(0x11598); //clientside
 
@@ -207,7 +204,7 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
 {
 	CPlayer@ owner = this.getDamageOwnerPlayer();
-	if (owner !is null && customData != Hitters::explosion) //no splash damage included
+	if (owner !is null)
 	{
 		rewardBooty(owner, hitBlob, booty_reward);
 	}
@@ -256,7 +253,9 @@ void onDie(CBlob@ this)
 		{
 			CBlob@ b = blobsInRadius[i];
 			if (!b.hasTag("hasSeat") && !b.hasTag("mothership") && b.hasTag("block") && b.getShape().getVars().customData > 0)
-			this.server_Hit(b, Vec2f_zero, Vec2f_zero, getDamageExpl(b) * SPLASH_DAMAGE, Hitters::explosion, false);
+			{
+				this.server_Hit(b, pos, Vec2f_zero, getDamageExpl(b), Hitters::explosion, false);
+			}
 		}
 	}
 }
@@ -269,8 +268,8 @@ const f32 getDamage(CBlob@ this, CBlob@ hitBlob)
 		return 1.6f;
 	if (hitBlob.hasTag("propeller"))
 		return 1.0f;
-	if (hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
-		return 4.0f;
+	if (hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory") || hitBlob.hasTag("bomb"))
+		return 2.0f;
 	if (hitBlob.hasTag("plank"))
 		return 0.8f;
 	if (hitBlob.hasTag("seat"))

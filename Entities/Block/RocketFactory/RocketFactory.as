@@ -5,7 +5,7 @@
 #include "ParticleSpark.as";
 
 const u8 INTERACTION_RANGE = 20;
-const u16 PRODUCTION_RATE = 3600; //30 ticks = 1 second
+const u16 PRODUCTION_RATE = 700; //30 ticks = 1 second
 const u8 MAX_PRODUCT_STORED = 10;
 
 void onInit(CBlob@ this)
