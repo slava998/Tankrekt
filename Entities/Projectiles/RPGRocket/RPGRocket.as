@@ -191,7 +191,7 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 		
 		this.set_u16("pierced count", piercedCount);
 		
-		this.server_Hit(b, point1, Vec2f_zero, getDamage(this, b), Hitters::ballista, true);
+		this.server_Hit(b, point1, Vec2f_zero, getDamage(b), Hitters::ballista, true);
 		
 		if (killed) 
 		{
@@ -260,9 +260,8 @@ void onDie(CBlob@ this)
 	}
 }
 
-const f32 getDamage(CBlob@ this, CBlob@ hitBlob)
+const f32 getDamage(CBlob@ hitBlob)
 {
-	const u16 piercedCount = this.get_u16("pierced count");
 	
 	if (hitBlob.hasTag("ramengine"))
 		return 1.6f;
