@@ -296,7 +296,7 @@ const f32 getDamageExpl(CBlob@ hitBlob)
 	if (hitBlob.hasTag("decoyCore") || hitBlob.hasTag("plank"))
 		return 1.5f;
 	if (hitBlob.hasTag("core"))
-		return 0.65f;
+		return 1.5f;
 	if (hitBlob.hasTag("player"))
 		return 6.0f;
 	if (hitBlob.hasTag("bomb"))
