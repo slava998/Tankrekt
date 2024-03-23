@@ -36,7 +36,7 @@ void onTick(CBlob@ this)
 			CBlob@ block = getBlobByNetworkID(blocks[i]);
 			if (block is null) continue;
 			
-			SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::light, -10.0f);
+			SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::normal, -10.0f);
 		}
 		return;
 	}
@@ -74,7 +74,7 @@ void onTick(CBlob@ this)
 			
 			if (overlappingShip || onRock || notReady)
 			{
-				SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::additive);
+				SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::normal);
 				continue;
 			}
 		}
@@ -154,7 +154,7 @@ void PositionBlocks(u16[] blocks, Vec2f&in pos, Vec2f&in aimPos, const f32&in bl
 		block.setPosition(cursor_pos + offset); //align to ship grid
 		block.setAngleDegrees((refBAngle + blocks_angle + (block.hasTag("engine") ? 90.0f : 0.0f)) % 360.0f); //set angle: reference angle + rotation angle
 
-		SetDisplay(block, color_white, RenderStyle::additive, 315.0f);
+		SetDisplay(block, color_white, RenderStyle::normal, 315.0f);
 	}
 }
 
