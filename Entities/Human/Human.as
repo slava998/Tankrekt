@@ -280,7 +280,7 @@ void Move(CBlob@ this)
 		else if(this.get_u8("knocked") <= 0)
 		{
 			// slash
-			if (isClient() && slash && !Human::isHoldingBlocks(this) && canslash(this))
+			if (isClient() && slash && !Human::isHoldingBlocks(this) && canslash(this) && !this.get_bool("getting block"))
 			{
 				EndConstructEffects(this, sprite);
 				Slash(this);

@@ -1,4 +1,4 @@
-
+#include "HumanCommon.as";
 
 void onTick(CSprite@ this)
 {
@@ -32,7 +32,7 @@ void onTick(CSprite@ this)
 			{
 				this.SetAnimation("repair");
 			}
-			else if (blob.isKeyPressed(key_action1))
+			else if (blob.isKeyPressed(key_action1) && !Human::isHoldingBlocks(blob) && !blob.get_bool("getting block"))
 			{
 				this.SetAnimation("slash1");
 			}
