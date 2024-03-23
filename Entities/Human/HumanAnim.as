@@ -22,7 +22,7 @@ void onTick(CSprite@ this)
 				this.SetAnimation("rpgshoot");
 		}
 		else if (this.isAnimationEnded() ||
-			!(this.isAnimation("slash1") || this.isAnimation("slash2") || this.isAnimation("shoot") || this.isAnimation("rpgshoot")))
+			!(this.isAnimation("slash1") || this.isAnimation("slash2") || this.isAnimation("shoot") || this.isAnimation("rpgshoot") || this.isAnimation("build")))
 		{
 			if (blob.isKeyPressed(key_action2) && (blob.get_string("current tool") == "deconstructor") && !blob.isKeyPressed(key_action1))
 			{

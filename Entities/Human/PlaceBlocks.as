@@ -291,6 +291,12 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			}
 		}
 	}
+	
+	CSprite@ sprite = this.getSprite(); //building animation
+	if (!sprite.isAnimation("build"))
+	{
+		sprite.SetAnimation("build");
+	}
 }
 
 void SetDisplay(CBlob@ blob, const SColor&in color, RenderStyle::Style&in style, const f32&in Z = -10000)
