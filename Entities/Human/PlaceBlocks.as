@@ -62,7 +62,7 @@ void onTick(CBlob@ this)
 		const u32 gameTime = getGameTime();
 		const bool overlappingShip = blocksOverlappingShip(blocks);
 		bool onRock = false;
-		bool notReady = (gameTime - this.get_u32("placedTime") <= (ship.isBuildStation ? station_placement_time : placement_time)); // dont show block if we are not ready to build yet
+		bool notReady = (gameTime - this.get_u32("placedTime") <= ((ship.isMothership || ship.isBuildStation) ? station_placement_time : placement_time)); // dont show block if we are not ready to build yet
 		for (u8 i = 0; i < blocksLength; ++i)
 		{
 			CBlob@ block = getBlobByNetworkID(blocks[i]);
