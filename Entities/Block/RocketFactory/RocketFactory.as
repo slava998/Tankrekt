@@ -5,7 +5,7 @@
 #include "ParticleSpark.as";
 
 const u8 INTERACTION_RANGE = 20;
-const u16 PRODUCTION_RATE = 700; //30 ticks = 1 second
+const u16 PRODUCTION_RATE = 3600; //30 ticks = 1 second
 const u8 MAX_PRODUCT_STORED = 10;
 
 void onInit(CBlob@ this)
@@ -17,6 +17,7 @@ void onInit(CBlob@ this)
 	this.addCommandID("take");
 	this.addCommandID("store");
 	this.getCurrentScript().tickFrequency = 60; //tick once in 2 seconds
+	this.set_u32("last_produce_time", getGameTime() + PRODUCTION_RATE);
 	
 	/*CSpriteLayer@ layer = this.getSprite().addSpriteLayer("factory", "RocketFactory.png", 20, 20);
 	if (layer !is null)
@@ -96,26 +97,28 @@ void DoUpdate(CBlob@ this)
 	if(active && !should_activate)
 		directionalSoundPlay("propellerStall.ogg", this.getPosition(), 6.0f);
 	this.set_bool("active", should_activate);
-	this.set_u32("last_produce_time", getGameTime());
-	SyncU32(this.getNetworkID(), "last_produce_time");
 	SyncBool(this.getNetworkID(), "active");
 }
 
 void MakeMenu(CBlob@ this, CBlob@ caller)
 {
+	if(caller is null || this is null) return;
 	CGridMenu@ menu = CreateGridMenu(this.getScreenPos(), this, Vec2f(4,2), "");
 	if (menu is null) return;
 	
 	CBitStream params;
 	params.write_netid(caller.getNetworkID());
+	params.write_u8(this.get_u8("product_stored"));
+	params.write_u16(caller.get_u16("total_ammo"));
+	params.write_u16(caller.get_u16("total_ammo_max"));
 	
 	menu.deleteAfterClick = true;
 	
-	{ //Set Spawn
+	{ //Take
 		CGridButton@ button = menu.AddButton("$HERE$", Trans::Take, this.getCommandID("take"), params);
 		button.SetHoverText(Trans::Take);
 	}
-	{ //Reset Spawn
+	{ //Store
 		CGridButton@ button = menu.AddButton("$UP$", Trans::Store, this.getCommandID("store"), params);
 		button.SetHoverText(Trans::Store);
 	}
@@ -186,10 +189,35 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
 		if(caller is null) return;
 		
-		if(this.get_u8("product_stored") > 0 && caller.get_u16("total_ammo") < caller.get_u16("total_ammo_max"))
+		const u8 product = params.read_u8();
+		const u16 ammo = params.read_u16();
+		const u16 ammo_max = params.read_u16();
+		
+		/*if(isServer())
 		{
-			this.sub_u8("product_stored", 1);
-			caller.add_u16("total_ammo", 1);
+			print("--------server---------");
+			print("product_stored" + this.get_u8("product_stored"));
+			print("total_ammo" + caller.get_u16("total_ammo"));
+			print("total_ammo_max" + caller.get_u16("total_ammo_max"));
+		}
+		if(isClient())
+		{
+			print("--------client---------");
+			print("product_stored" + this.get_u8("product_stored"));
+			print("total_ammo" + caller.get_u16("total_ammo"));
+			print("total_ammo_max" + caller.get_u16("total_ammo_max"));
+		}*/
+		
+		if(product > 0 && ammo < ammo_max)
+		{
+			if(isServer())
+			{
+				this.sub_u8("product_stored", 1);
+				caller.add_u16("total_ammo", 1);
+
+				SyncU8(this.getNetworkID(), "product_stored");
+				SyncU16(caller.getNetworkID(), "total_ammo");
+			}
 			if(isClient() && caller.isMyPlayer())
 				directionalSoundPlay("Pickup_standard.ogg",  caller.getPosition(), 4.0f);
 		}
@@ -203,14 +231,23 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
 		if(caller is null && caller.get_bool("currently_reloading")) return;
 		
-		if(this.get_u8("product_stored") < MAX_PRODUCT_STORED && caller.get_u16("total_ammo") > 0)
+		const u8 product = params.read_u8();
+		const u16 ammo = params.read_u16();
+		
+		if(product < MAX_PRODUCT_STORED && ammo > 0)
 		{
-			caller.sub_u16("total_ammo", 1);
-			this.add_u8("product_stored", 1);
+			if(isServer())
+			{
+				caller.sub_u16("total_ammo", 1);
+				this.add_u8("product_stored", 1);
+			
+				SyncU8(this.getNetworkID(), "product_stored");
+				SyncU16(caller.getNetworkID(), "total_ammo");
+			}
 			if(isClient() && caller.isMyPlayer())
 			{
 				directionalSoundPlay("Pickup_standard.ogg",  caller.getPosition(), 4.0f);
-				if(this.get_u8("product_stored") >= MAX_PRODUCT_STORED) 
+				if(product + 1 >= MAX_PRODUCT_STORED) 
 					directionalSoundPlay("propellerStall.ogg", this.getPosition(), 6.0f);
 			}
 		}
