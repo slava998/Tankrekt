@@ -493,7 +493,7 @@ void PlayerControls(CBlob@ this)
 						const s32 overlappingShipID = this.get_s32("shipID");
 						Ship@ pShip = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
 						if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-							|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
+							|| ((pShip.isBuildStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
 						{
 							buildMenuOpen = true;
 							this.set_bool("justMenuClicked", true);
