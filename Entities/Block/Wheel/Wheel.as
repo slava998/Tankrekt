@@ -32,7 +32,7 @@ void onInit(CBlob@ this)
 		propeller.SetAnimation("go");
 	}
 
-	sprite.SetEmitSound("TankMovement");
+	sprite.SetEmitSound("Wheel_Loop");
 	sprite.SetEmitSoundVolume(0.5f);
 	sprite.SetEmitSoundPaused(true);
 }
