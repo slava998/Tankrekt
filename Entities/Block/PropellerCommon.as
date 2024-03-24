@@ -70,8 +70,9 @@ void onTick(CBlob@ this)
 	}
 	
 	if (on)
-	{			
-		if (!isTouchingLand(this.getPosition()) && !this.hasTag("landMotor") || isTouchingLand(this.getPosition()) && this.hasTag("landMotor")) //turn off if we are on ground if it is propeller or if we are in water and it is tank tracks
+	{		
+		const bool touching_land = isTouchingLand(this.getPosition());
+		if (!touching_land || this.hasTag("landMotor")) //turn off if we are on ground if it is propeller or if we are in water and it is tank tracks
 		{
 			//auto turn off after a while
 			if (isServer() && gameTime - this.get_u32("onTime") > 750)
@@ -93,6 +94,11 @@ void onTick(CBlob@ this)
 				const f32 mass = ship.mass + ship.carryMass + 0.01f;
 				moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
 				angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+				if(this.hasTag("landMotor") && !touching_land)
+				{
+					moveVel *= 0.01f;
+					angleVel *= 0.01f;
+				}
 				
 				ship.vel += moveVel;
 				ship.angle_vel += angleVel;
