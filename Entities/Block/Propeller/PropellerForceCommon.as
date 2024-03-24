@@ -3,12 +3,12 @@
 #include "ShipsCommon.as";
 
 const f32 PROPELLER_SPEED = 0.9f; //0.9f
-const f32 ENGINE_BOOST = 0.3f;
+const f32 ENGINE_BOOST = 0.075f; //for forceFactor equal to 4 (tank tkrack) it gives velocity boost equal to 0.3
 
 shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&out moveVel, Vec2f&out moveNorm, f32&out angleVel)
 {
 
-	moveVel = Vec2f(0.0f, (PROPELLER_SPEED + ENGINE_BOOST * ship.engineblockcount) * power).RotateBy(this.getAngleDegrees());
+	moveVel = Vec2f(0.0f, (PROPELLER_SPEED + (PROPELLER_SPEED * ENGINE_BOOST) * ship.engineblockcount) * power).RotateBy(this.getAngleDegrees());
 	moveNorm = moveVel;
 	const f32 moveSpeed = moveNorm.Normalize();
 
