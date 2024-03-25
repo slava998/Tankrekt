@@ -155,7 +155,6 @@ void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
 	params.write_netid(netid);
 	params.write_f32(_lifetime);
 	this.SendCommand(this.getCommandID("fire"), params);
-	this.set_u32("fire time", getGameTime());
 }
 
 void Rotate(CBlob@ this, Vec2f&in aimVector)
@@ -258,6 +257,8 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 {
     if (cmd == this.getCommandID("fire"))
     {
+		this.set_u32("fire time", getGameTime());
+
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
 		Vec2f pos = this.getPosition();
 
