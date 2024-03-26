@@ -157,7 +157,7 @@ void onRender(CRules@ this)
 		+ "  * Major changes:\n"
 		+ "  * New weapon - fortress howitzer\n"
 		+ "  * Rebalanced stone cost\n"
-		+ "  * Tank tracks now crush kill people\n"
+		+ "  * Tank tracks now can crush people\n"
 		+ "  * Bugfixes\n";
 		
 		GUI::SetFont("menu");
