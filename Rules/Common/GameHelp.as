@@ -153,11 +153,12 @@ void onRender(CRules@ this)
 		//PAGE 1
 		const string shiprektVersion = "Tankrekt "+Trans::Version+" "+this.get_string("version")+"\n";
 		const string lastChangesInfo = Trans::LastChanges+":\n"
-		+ "- 07-02-2024\n"
+		+ "- 26-03-2024\n"
 		+ "  * Major changes:\n"
-		+ "  * Added more firearms for players!\n"
-		+ "  * Artillery improvement and rebalance\n"
-		+ "  * Increased platform durability\n";
+		+ "  * New weapon - fortress howitzer\n"
+		+ "  * Rebalanced stone cost\n"
+		+ "  * Tank tracks now crush kill people\n"
+		+ "  * Bugfixes\n";
 		
 		GUI::SetFont("menu");
 		Vec2f lastChangesSize;
