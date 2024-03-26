@@ -257,6 +257,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 {
     if (cmd == this.getCommandID("fire"))
     {
+		if(!canShootManual(this)) return;
 		this.set_u32("fire time", getGameTime());
 
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());

@@ -88,7 +88,7 @@ void onInit(CRules@ this)
 	AddIconToken("$ARTILLERY$", "Artillery_icon.png", Vec2f(32,16), 0);
 	AddIconToken("$SPONSON$", "SponsonIcon.png", Vec2f(16,8), 0);
 	AddIconToken("$WHEEL$", "Wheel_icon.png", Vec2f(8,8), 0);
-	AddIconToken("$TANKCANNON$", "TankCannon.png", Vec2f(26,12), 0);
+	AddIconToken("$TANKCANNON$", "TankCannon.png", Vec2f(29,12), 0);
 	AddIconToken("$PLANKCORNER$", "PlankCorner.png", Vec2f(8,8), 0);
 	AddIconToken("$HERE$", "MenuItems.png", Vec2f(32,32), 5);
 	AddIconToken("$CROSS$", "MenuItems.png", Vec2f(32,32), 13);
@@ -100,6 +100,7 @@ void onInit(CRules@ this)
 	AddIconToken("$ARMORY$", "armory.png", Vec2f(8,8), 0);
 	AddIconToken("$RPG$", "RPG.png", Vec2f(32,32), 0);
 	AddIconToken("$ROCKETFACTORY$", "RocketFactory.png", Vec2f(16,16), 0);
+	AddIconToken("$FORTRESSHOWITZER$", "FortressHowitzer_icon.png", Vec2f(35,17), 0);
 	
 	//spectator stuff
 	this.addCommandID("pick teams");

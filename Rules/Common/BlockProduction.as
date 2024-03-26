@@ -37,6 +37,7 @@ shared void ProduceBlock(CRules@ this, CBlob@ blob, const string&in type, const 
 				b.setPosition(Vec2f(-s8(i % lineLength - lineLength / 2), s8(column - lineLength / 2)) * 8);
 				b.set_Vec2f("offset",Vec2f(-s8(i % lineLength - lineLength / 2), s8(column - lineLength / 2)) * 8);
 				b.set_netid("ownerID", blobID);
+				b.set_u8("number", i - 1);
 				
 				if(square && i % lineLength == 0) column++; //we have finished this column of blocks and are starting to build a new one
 				if(i == amount)

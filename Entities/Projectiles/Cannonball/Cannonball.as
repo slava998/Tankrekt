@@ -126,6 +126,8 @@ const f32 getDamage(CBlob@ this, CBlob@ hitBlob)
 	else if (piercedCount > 1)
 		damageFactor = 0.35f;
 	
+	if(hitBlob.hasTag("strong")) return 0.55f *damageFactor;
+	
 	if (hitBlob.hasTag("ramengine"))
 		return 2.0f * damageFactor;
 	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))

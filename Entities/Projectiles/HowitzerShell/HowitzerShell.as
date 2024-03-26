@@ -6,12 +6,12 @@
 #include "PlankCommon.as";
 #include "TileCommon.as";
 
-const f32 EXPLODE_RADIUS = 50.0f;		//Raycast range
-const f32 RAYCAST_DAMAGE = 4.0f; 		//There's 32 raycasts with this damage so it is not small
+const f32 EXPLODE_RADIUS = 30.0f;		//Raycast range
+const f32 RAYCAST_DAMAGE = 2.0f; 		//There's 32 raycasts with this damage so it is not small
 const u8  RAYCAST_NUM = 32; 			//Number of explosion rays fired in a circle
-const u8  PIERCE_NUM = 5;				//How many blocks raycast can pierce
+const u8  PIERCE_NUM = 3;				//How many blocks raycast can pierce
 const f32 SPLASH_RADIUS = 12.0f;		//Splash is a damage through walls
-const f32 SPLASH_DAMAGE = 3.0f; 		//Splash is a damage through walls
+const f32 SPLASH_DAMAGE = 2.0f; 		//Splash is a damage through walls
 const f32 RAYCAST_DAMAGE_CORE = 1.0f; 	//Damage for cores
 const f32 SPLASH_DAMAGE_CORE = 2.0f;	//Damage for cores
 
@@ -62,9 +62,8 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 		return;
 	
 	//blow up inside the target
-	const bool sameTeam = this.getTeamNum() == b.getTeamNum();
 	if ((b.hasTag("solid")) || b.hasTag("door") || 
-		(!sameTeam && ((b.hasTag("core") || b.hasTag("weapon") || b.hasTag("projectile") || b.hasTag("bomb")) || (b.hasTag("player") && !b.isAttached()))))
+		((b.hasTag("core") || b.hasTag("weapon") || b.hasTag("projectile") || b.hasTag("bomb")) || (b.hasTag("player") && !b.isAttached())))
 		this.server_Die();
 }
 

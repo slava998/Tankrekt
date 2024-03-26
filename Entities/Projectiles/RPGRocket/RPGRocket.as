@@ -262,6 +262,7 @@ void onDie(CBlob@ this)
 
 const f32 getDamage(CBlob@ hitBlob)
 {
+	if (hitBlob.hasTag("strong")) return 0.5f;
 	
 	if (hitBlob.hasTag("ramengine"))
 		return 1.6f;
@@ -285,6 +286,8 @@ const f32 getDamage(CBlob@ hitBlob)
 
 const f32 getDamageExpl(CBlob@ hitBlob)
 {
+	if (hitBlob.hasTag("strong")) return 3.4f;
+	
 	if (hitBlob.hasTag("rocket"))
 		return 4.0f;
 	if (hitBlob.hasTag("ramengine"))

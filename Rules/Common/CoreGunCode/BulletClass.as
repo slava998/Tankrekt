@@ -241,7 +241,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 
 	if(gunBlob.getName() == "human")
 	{
-		if (hitBlob.hasTag("sponson"))
+		if (hitBlob.hasTag("sponson") || hitBlob.hasTag("strong"))
 			return damage; //sponsons get same damage as hulls
 		if (hitBlob.getName() == "shark")
 			damage *= 1.6f;
@@ -264,7 +264,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 	{
 		if (hitBlob.hasTag("stone"))
 			return 0.022f;
-		if (hitBlob.hasTag("sponson"))
+		if (hitBlob.hasTag("sponson") || hitBlob.hasTag("strong"))
 			return damage; //sponsons get same damage as hulls
 		if (hitBlob.hasTag("ramengine"))
 			damage *= 8;
@@ -287,7 +287,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 	}
 	else //machinegun
 	
-	if (hitBlob.hasTag("sponson"))
+	if (hitBlob.hasTag("sponson") || hitBlob.hasTag("strong"))
 		return damage; //sponsons get same damage as hulls
 	if (hitBlob.hasTag("ramengine"))
 		damage *= 25;

@@ -215,6 +215,8 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 
 f32 getDamage(CBlob@ hitBlob)
 {
+	if(hitBlob.hasTag("strong")) 1.4f;
+
 	if (hitBlob.hasTag("rocket"))
 		return 4.0f;
 	if (hitBlob.hasTag("ramengine"))

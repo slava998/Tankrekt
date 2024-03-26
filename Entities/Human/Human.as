@@ -683,6 +683,10 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::TankCannonDesc+"\n"+Trans::AmmoCap+": 8";
 		AddBlock(this, menu, "tankcannon", "$TANKCANNON$", Trans::TankCannon, description, core, 7.0f);
 	}
+	{ //Fortress howitzer
+		description = Trans::FortressHowitzerDesc+"\n"+Trans::AmmoCap+": 6"; 
+		AddBlock(this, menu, "fortresshowitzer", "$FORTRESSHOWITZER$", Trans::FortressHowitzer, description, core, 100.0f, true);
+	}
 	{ //Artillery
 		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 6"; 
 		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 40.0f, true);
