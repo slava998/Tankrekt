@@ -5,7 +5,7 @@
 #include "ParticleSpark.as";
 
 const u8 INTERACTION_RANGE = 20;
-const u16 PRODUCTION_RATE = 3600; //30 ticks = 1 second
+const u16 PRODUCTION_RATE = 600; //30 ticks = 1 second
 const u8 MAX_PRODUCT_STORED = 10;
 
 void onInit(CBlob@ this)
@@ -212,7 +212,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		{
 			if(isServer())
 			{
-				this.sub_u8("product_stored", 1);
+				this.set_u8("product_stored", Maths::Max(0,this.get_u8("product_stored") - 1));
 				caller.add_u16("total_ammo", 1);
 
 				SyncU8(this.getNetworkID(), "product_stored");
@@ -229,7 +229,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		if(this is null) return;
 
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
-		if(caller is null && caller.get_bool("currently_reloading")) return;
+		if(caller is null || caller.get_bool("currently_reloading")) return;
 		
 		const u8 product = params.read_u8();
 		const u16 ammo = params.read_u16();
@@ -238,7 +238,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		{
 			if(isServer())
 			{
-				caller.sub_u16("total_ammo", 1);
+				caller.set_u16("total_ammo", Maths::Max(0, caller.get_u16("total_ammo") - 1));
 				this.add_u8("product_stored", 1);
 			
 				SyncU8(this.getNetworkID(), "product_stored");
