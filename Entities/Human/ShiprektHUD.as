@@ -208,6 +208,9 @@ void DrawShipStatus(CBlob@ this, const string&in name, Vec2f&in tl, CControls@ c
 		//Speed
 		const u16 speed = ship.vel.Length() * 30;
 		GUI::DrawText(Trans::Speed+" : " + speed + " kilorekts/h", Vec2f(24, getScreenHeight() - 24), tipsColor);
+
+		const u16 mass = ship.mass * 100;
+		GUI::DrawText("Ship mass : " + mass + " rkt", Vec2f(24, getScreenHeight() - 32), tipsColor); // too lazy to add translation
 	}
 	else
 		GUI::DrawIconByName("$SEA$", tl + Vec2f(67, -12));
