@@ -648,6 +648,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Bomb
 		AddBlock(this, menu, "bomb", "$BOMB$", Trans::Bomb, Trans::BombDesc, core, 2.0f);
 	}
+	{ //Timed Bomb
+		AddBlock(this, menu, "timedbomb", "$TIMEDBOMB$", Trans::TimedBomb, Trans::TimedBombDesc, core, 2.0f);
+	}	 
 	{ //Ram Hull
 		AddBlock(this, menu, "ram", "$RAM$", Trans::Ram, Trans::RamDesc, core, 1.0f);
 	}

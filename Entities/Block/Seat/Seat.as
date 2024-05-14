@@ -173,7 +173,25 @@ void onTick(CBlob@ this)
 						}
 					}
 				}
-			}
+
+				CBlob@[] timedbombs;	
+					getBlobsByTag("timedbomb", @timedbombs);
+					const u16 timedBombsLength = timedbombs.length;
+					for (u16 i = 0; i < timedBombsLength; ++i)
+					{
+						CBlob@ r = timedbombs[i];
+						const int color = r.getShape().getVars().customData;
+						if (color > 0 && r.isOnScreen() && !r.hasTag("activated") && seatColor == color)
+						{
+							CButton@ button = occupier.CreateGenericButton(8, Vec2f_zero, r, r.getCommandID("chainReaction"), "Activate");
+							if (button !is null)
+							{
+								button.enableRadius = 999.0f;
+								button.radius = 1.0f;
+							}
+						}
+					}
+				}
 			
 			//hax: update can't-decouplers
 			if (space)
