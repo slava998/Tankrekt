@@ -11,6 +11,8 @@ namespace CMap
 	color_sand(255, 236, 213, 144),
 	color_grass(255, 100, 155, 13),
 	color_rock(255, 161, 161, 161),
+	color_road(255, 128, 128, 128),
+	color_mud(255, 150, 75, 10),
 	color_shoal(255, 100, 170, 180);
 	
 	// objects
@@ -1215,6 +1217,18 @@ namespace CMap
 			else
 				map.SetTile(offset, CMap::shoal_inland + map_random.NextRanged(5));	
 			
+			map.AddTileFlag(offset, Tile::BACKGROUND);
+			map.AddTileFlag(offset, Tile::LIGHT_PASSES);
+		}
+		else if (pixel == color_road)
+		{
+			map.SetTile(offset, CMap::road_inland);
+			map.AddTileFlag(offset, Tile::BACKGROUND);
+			map.AddTileFlag(offset, Tile::LIGHT_PASSES);
+		}
+		else if (pixel == color_mud)
+		{
+			map.SetTile(offset, CMap::mud_inland);
 			map.AddTileFlag(offset, Tile::BACKGROUND);
 			map.AddTileFlag(offset, Tile::LIGHT_PASSES);
 		}
