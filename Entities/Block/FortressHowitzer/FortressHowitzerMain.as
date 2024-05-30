@@ -199,7 +199,7 @@ const bool isClear(CBlob@ this)
 	const f32 angle = -aimVector.Angle();
 
 	HitInfo@[] hitInfos;
-	if (getMap().getHitInfosFromRay(this.getPosition() + Vec2f(-4, -3) + Vec2f(35,0).RotateBy(angle), angle, 60.0f, this, @hitInfos))
+	if (getMap().getHitInfosFromRay(this.getPosition() - Vec2f(-4, -3) + Vec2f(35,0).RotateBy(angle), angle, 40.0f, this, @hitInfos))
 	{
 		const u8 hitLength = hitInfos.length;
 		for (u8 i = 0; i < hitLength; i++)
@@ -251,7 +251,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 		const Vec2f velocity = Vec2f((PROJECTILE_SPEED), 0).RotateBy(angle, Vec2f());
 		
-		Vec2f bullet_offset = pos + Vec2f(4, -3) + Vec2f(40, 0).RotateBy(angle, Vec2f(-4, 3));
+		Vec2f bullet_offset = pos + Vec2f(4, -3) + Vec2f(38, 0).RotateBy(angle, Vec2f(-4, 3));
 
 		if (isServer())
 		{
