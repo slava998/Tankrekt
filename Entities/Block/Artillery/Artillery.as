@@ -303,6 +303,11 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			shotParticles(bullet_offset, -angle);
 			directionalSoundPlay("Artillery_fire.ogg", bullet_offset, 5.5f);
 		}
+		
+		if(!v_fastrender)
+		{
+			ShakeScreen(90, 40, this.getPosition());
+		}
     }
 }
 

@@ -213,7 +213,6 @@ const bool isClear(CBlob@ this)
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -286,6 +285,11 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			p.Z = 640.0f;
 			
 			directionalSoundPlay("Howitzer_Shoot.ogg", bullet_offset, 5.5f);
+
+			if(!v_fastrender)
+			{
+				ShakeScreen(60, 30, this.getPosition());
+			}
 		}
     }
 }

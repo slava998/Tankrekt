@@ -159,7 +159,7 @@ void onDie(CBlob@ this)
 	{
 		directionalSoundPlay("ArtilleryShellExplode" + XORRandom(6), pos, 10.0f);
 		makeHugeExplosionParticle(pos);
-		ShakeScreen(4 * EXPLODE_RADIUS, 45, pos);
+		ShakeScreen(250, 90, pos);
 		const u8 particleAmount = v_fastrender ? 8 : 16;
 
 		for (u8 i = 0; i < particleAmount; i++)
