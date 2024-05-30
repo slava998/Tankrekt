@@ -6,7 +6,7 @@ const f32 PROJECTILE_SPEED = 10.0f;
 const f32 FIRE_RATE = 400;
 const f32 PROJECTILE_RANGE = 500.0f;
 const f32 TURN_SPEED = 1;
-const f32 MAX_ANGLE = 60.0f;
+const f32 MAX_ANGLE = 85.0f;
 
 const u8 MAX_AMMO = 6;
 const u8 REFILL_AMOUNT = 1;
