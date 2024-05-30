@@ -33,7 +33,7 @@ void onInit(CBlob@ this)
 	}
 
 	CSprite@ sprite = this.getSprite();
-    CSpriteLayer@ layer = sprite.addSpriteLayer("weapon", "FortressHowitzer_Base.png", 28, 18);
+    CSpriteLayer@ layer = sprite.addSpriteLayer("weapon", "FortressHowitzer_Base.png", 42, 18);
     if (layer !is null)
     {
     	layer.SetRelativeZ(3);
@@ -49,13 +49,13 @@ void onInit(CBlob@ this)
 		layer2.SetOffset(Vec2f(4.5, -4));
 		layer2.RotateBy(-90, -Vec2f(4.5, -4));
     }
-	CSpriteLayer@ layer3 = sprite.addSpriteLayer("barrel", "FortressHowitzer_Barrel.png", 12, 4);
+	CSpriteLayer@ layer3 = sprite.addSpriteLayer("barrel", "FortressHowitzer_Barrel.png", 15, 4);
     if (layer2 !is null)
     {
     	layer3.SetRelativeZ(2);
     	layer3.SetLighting(false);
-		layer3.SetOffset(Vec2f(-26, 0));
-		layer3.RotateBy(-90, -Vec2f(-26, -4));
+		layer3.SetOffset(Vec2f(-35.5, 0));
+		layer3.RotateBy(-90, -Vec2f(-35.5, -4));
     }
 
 	sprite.SetEmitSound("Howitzer_rotation.ogg");
@@ -107,10 +107,10 @@ void onTick(CBlob@ this)
 		Vec2f barrel_offset;
 		if(difference <= 6)
 		{
-			const f32 cos = Maths::Cos(0.261 * difference); // 0.314 is pi/10
-			barrel_offset = Vec2f(-19, 0) + Vec2f(6.3, 0) * cos * cos; //cos * cos is cos squared
+			const f32 cos = Maths::Cos(0.224 * difference); // 0.224 is pi/14
+			barrel_offset = Vec2f(-28.5, 0) + Vec2f(14.25, 0) * cos * cos; //cos * cos is cos squared
 		}
-		else barrel_offset = Vec2f(-19, 0);
+		else barrel_offset = Vec2f(-28.5, 0);
 		if (breech !is null)
 		{
 			breech.ResetTransform();
@@ -199,7 +199,7 @@ const bool isClear(CBlob@ this)
 	const f32 angle = -aimVector.Angle();
 
 	HitInfo@[] hitInfos;
-	if (getMap().getHitInfosFromRay(this.getPosition() + Vec2f(-4, -3) + Vec2f(25,0).RotateBy(angle), angle, 60.0f, this, @hitInfos))
+	if (getMap().getHitInfosFromRay(this.getPosition() + Vec2f(-4, -3) + Vec2f(35,0).RotateBy(angle), angle, 60.0f, this, @hitInfos))
 	{
 		const u8 hitLength = hitInfos.length;
 		for (u8 i = 0; i < hitLength; i++)
@@ -251,7 +251,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 		const Vec2f velocity = Vec2f((PROJECTILE_SPEED), 0).RotateBy(angle, Vec2f());
 		
-		Vec2f bullet_offset = pos + Vec2f(4, -3) + Vec2f(25, 0).RotateBy(angle, Vec2f(-4, 3));
+		Vec2f bullet_offset = pos + Vec2f(4, -3) + Vec2f(40, 0).RotateBy(angle, Vec2f(-4, 3));
 
 		if (isServer())
 		{
