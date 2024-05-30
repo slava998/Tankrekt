@@ -4,14 +4,13 @@
 #include "Hitters.as";
 #include "PlankCommon.as";
 
-const f32 SPLASH_RADIUS = 8.0f;
-const f32 SPLASH_DAMAGE = 0.5f;
+const f32 SPLASH_RADIUS = 10.0f;
+const f32 SPLASH_DAMAGE = 2.0f;
 //const f32 MANUAL_DAMAGE_MODIFIER = 0.75f;
 
 const f32 ROCKET_FORCE = 7.5f;
 const int ROCKET_DELAY = 15;
 const f32 ROTATION_SPEED = 3.0;
-const f32 GUIDANCE_RANGE = 225.0f;
 
 Random _effectspreadrandom(0x11598); //clientside
 
@@ -108,10 +107,6 @@ void onTick(CBlob@ this)
 			const f32 targetDistance = (aimPos - ownerPos).getLength();
 			//f32 rocketDistance = (pos - ownerPos).getLength();
 			
-			if (targetDistance > GUIDANCE_RANGE) //must be done to preven desync issues
-			{	
-				aimPos = ownerPos + Vec2f(GUIDANCE_RANGE, 0).RotateBy(-(aimPos - ownerPos).getAngleDegrees());
-			}
 		
 			const f32 angleOffset = 270.0f;		
 			const f32 targetAngle = (aimPos - pos).getAngle();

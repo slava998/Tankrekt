@@ -68,6 +68,7 @@ void onInit(CRules@ this)
 	AddIconToken("$RAMENGINE$", "PropellerIcons.png", Vec2f(16,16), 1);
 	AddIconToken("$SEAT$", "Seat.png", Vec2f(8,8), 0);
 	AddIconToken("$BOMB$", "Bomb.png", Vec2f(8,8), 0);
+	AddIconToken("$TIMEDBOMB$", "TimedBomb.png", Vec2f(8,8), 0);
 	AddIconToken("$HARVESTER$", "Harvester.png", Vec2f(16,16), 0);
 	AddIconToken("$PATCHER$", "Patcher.png", Vec2f(8,8), 0);
 	AddIconToken("$HARPOON$", "HarpoonBlock.png", Vec2f(16,16), 0); 
