@@ -63,7 +63,7 @@ void CalculateMinimapColour(CMap@ this, u32 offset, TileType type, SColor &out c
 
 		return;
 	}
-	else if (type >= CMap::sand_inland && type <= CMap::grass_inland)
+	else if (type >= CMap::sand_inland && type <= CMap::sand_shore_diagonal_L1)
 	{
 		//col = SColor(255, 236, 213, 144);
 		col = sand;
