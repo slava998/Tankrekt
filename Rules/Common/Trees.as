@@ -99,8 +99,8 @@ shared class TreesPool
 			//checking if tree is on screen
 			Vec2f pos = positions[i];
 			const Vec2f scrpos = getDriver().getScreenPosFromWorldPos(pos);
-			if(scrpos.x + 14 * scale >= 0 && scrpos.x - 14 * scale <= screenWidth &&
-			   scrpos.y + 13 * scale >= 0 && scrpos.y - 13 * scale <= screenHeight)
+			if(scrpos.x + 28 * scale >= 0 && scrpos.x - 28 * scale <= screenWidth &&
+			   scrpos.y + 26 * scale >= 0 && scrpos.y - 26 * scale <= screenHeight)
 			{
 				const f32 angle = angles[i];
 				
