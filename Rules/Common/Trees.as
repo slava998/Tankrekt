@@ -90,8 +90,7 @@ shared class TreesPool
 		
 		const f32 screenHeight = getScreenHeight();
 		const f32 screenWidth = getScreenWidth();
-		const f32 scale = getDriver().getResolutionScaleFactor();
-		
+		const f32 scale = getDriver().getResolutionScaleFactor() * getCamera().targetDistance;
 		for(int i = 0; i < positions.size(); i++)
 		{
 			Verts.clear();
@@ -99,8 +98,8 @@ shared class TreesPool
 			//checking if tree is on screen
 			Vec2f pos = positions[i];
 			const Vec2f scrpos = getDriver().getScreenPosFromWorldPos(pos);
-			if(scrpos.x + 28 * scale >= 0 && scrpos.x - 28 * scale <= screenWidth &&
-			   scrpos.y + 26 * scale >= 0 && scrpos.y - 26 * scale <= screenHeight)
+			if(scrpos.x + 38 * scale >= 0 && scrpos.x - 38 * scale <= screenWidth &&
+			   scrpos.y + 38 * scale >= 0 && scrpos.y - 38 * scale <= screenHeight)
 			{
 				const f32 angle = angles[i];
 				
