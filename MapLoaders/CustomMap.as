@@ -2,6 +2,7 @@ Random map_random(1569815698);
 
 #include "LoadMapUtils.as";
 #include "CustomTiles.as";
+#include "Trees.as";
 
 namespace CMap
 {
@@ -33,6 +34,7 @@ namespace CMap
 			map.CreateSky(SColor(255, 41, 100, 176)); //water color
 		#endif
 		map.topBorder = map.bottomBorder = map.rightBorder = map.leftBorder = true;
+		//InitializeTrees(getRules());
 	}
 	
 	SColor
@@ -82,8 +84,19 @@ namespace CMap
 			}
 			case color_palmtree:
 			{
-				CBlob@ palmtreeBlob = spawnBlob(map, "palmtree", offset, 255, false);	
-			
+				CRules@ rules = getRules();
+				TreesPool@ trees;
+				rules.get("trees", @trees);
+
+				if(trees is null)
+				{
+					InitializeTrees(getRules());
+					rules.get("trees", @trees);
+				}
+				if(trees !is null) trees.AddTree(getSpawnPosition(map, offset));
+
+				//CBlob@ palmtreeBlob = spawnBlob(map, "palmtree", offset, 255, false);	
+
 				map.SetTile(offset, CMap::grass_inland + map_random.NextRanged(5));
 				map.AddTileFlag(offset, Tile::BACKGROUND);
 				map.AddTileFlag(offset, Tile::LIGHT_PASSES);
