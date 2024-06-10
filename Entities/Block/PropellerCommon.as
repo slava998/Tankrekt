@@ -137,10 +137,11 @@ void onTick(CBlob@ this)
 				if (isClient())
 				{
 					const u8 tickStep = v_fastrender ? 20 : 4;
-					if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1 && !isTouchingLand(pos))
+					if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1)
 					{
 						const Vec2f rpos = Vec2f(_r.NextFloat() * -4 + 4, _r.NextFloat() * -4 + 4);
-						MakeWaterParticle(pos + moveNorm * -6 + rpos, moveNorm * (-0.8f + _r.NextFloat() * -0.3f));
+						if(isTouchingLand(pos)) Dust(pos + moveNorm * -6 + rpos, moveNorm * (-0.4f + _r.NextFloat() * -0.15f));
+						else MakeWaterParticle(pos + moveNorm * -6 + rpos, -moveVel * (-0.8f + _r.NextFloat() * -0.3f));
 					}
 					
 					// limit sounds
@@ -205,4 +206,17 @@ void smoke(const Vec2f&in pos)
 											  true); //selflit
 	if (p !is null)
 		p.Z = 640.0f;
+}
+
+void Dust(const Vec2f&in pos, const Vec2f&in vel)
+{
+	CParticle@ p = ParticleAnimated("DustSmall.png",
+											  pos, vel,
+											  _waterparticlerandom.NextFloat() * 360.0f, //angle
+											  0.25f +_waterparticlerandom.NextFloat() * 0.25f, //scale
+											  5, //animtime
+											  0.0f, //gravity
+											  true); //selflit
+	if (p !is null)
+		p.Z = 2.0f;
 }
