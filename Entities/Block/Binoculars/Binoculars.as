@@ -116,28 +116,30 @@ void onRender(CSprite@ this)
 	//visual
 	Vec2f p1 = blob.get_Vec2f("point1");
 	Vec2f p2 = blob.get_Vec2f("point2");
+	Vec2f p1scr = getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point1"));
+	Vec2f p2scr = getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point2"));
 	GUI::DrawLine2D(getDriver().getScreenPosFromWorldPos(p1), getDriver().getScreenPosFromWorldPos(p2), SColor(255,255,0,0)); //line between the points
 	GUI::DrawIconByName("$BINO_CROSS$", getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point1")) - Vec2f(29, 29)); //aim icon
 	GUI::DrawIconByName("$BINO_CROSS$", getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point2")) - Vec2f(29, 29)); //aim icon
 
 	Vec2f v = p2 - p1;
 	const string text = (v.Length() / 8) + " Blocks";
-	GUI::DrawTextCentered(text,getDriver().getScreenPosFromWorldPos((p1 + p2) / 2), SColor(255,255,0,0)); //length text
+	GUI::DrawTextCentered(text, (p1scr + p2scr) / 2, SColor(255,255,0,0)); //length text
 	
 	f32 angle = v.Angle();
-	GUI::DrawText(angle + "°\n" + text,getDriver().getScreenPosFromWorldPos(p1) - Vec2f(50, 0).RotateBy(-angle), SColor(255,255,0,0)); //angle for p1
+	GUI::DrawText(angle + "°\n" + text, p1scr - Vec2f(50, 0).RotateBy(-angle), SColor(255,255,0,0)); //angle for p1
 	const f32 camRot = getCamera().getRotation();
 	//an ark that shows the angle
-	for(int i = 0; i < (v.Angle() / 5.625f); i++)
+	for(int i = 0; i < (angle / 5.625f); i++)
 	{
-		GUI::DrawIconByName("$REDDOT$", getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point1")) + Vec2f(30, 0).RotateBy(-i * 5.625f - camRot));
+		GUI::DrawIconByName("$REDDOT$", p1scr + Vec2f(30, 0).RotateBy(-i * 5.625f - camRot));
 	}
 
 	angle = (-v).Angle();
-	GUI::DrawTextCentered(angle + "°\n" + text, getDriver().getScreenPosFromWorldPos(p2) - Vec2f(50, 0).RotateBy(-angle), SColor(255,255,0,0)); //angle for p2
+	GUI::DrawTextCentered(angle + "°\n" + text, p2scr - Vec2f(50, 0).RotateBy(-angle), SColor(255,255,0,0)); //angle for p2
 	//an ark that shows the angle
-	for(int i = 0; i < (v.Angle() / 5.625f); i++)
+	for(int i = 0; i < (angle / 5.625f); i++)
 	{
-		GUI::DrawIconByName("$REDDOT$", getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point2")) - Vec2f(30, 0).RotateBy(-i * 5.625f - camRot));
+		GUI::DrawIconByName("$REDDOT$", p2scr + Vec2f(30, 0).RotateBy(-i * 5.625f - camRot));
 	}
 }
