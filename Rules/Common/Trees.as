@@ -1,5 +1,7 @@
 #include "TileCommon.as"
 
+//Some important code is also located in WaterPNGMap.as
+
 void onInit(CRules@ this)
 {
 	this.addCommandID("sync_treesPool");
@@ -39,15 +41,6 @@ shared void SyncTrees(CRules@ this, CPlayer@ player)
 	}
 
 	this.SendCommand(this.getCommandID("sync_treesPool"), params, player);
-}
-
-void onRestart(CRules@ this)
-{
-	TreesPool@ trees;
-	if(!this.get("trees", @trees)) return;
-	
-	trees.positions.clear();
-	trees.angles.clear();
 }
 
 void InitializeTrees(CRules@ this)

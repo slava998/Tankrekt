@@ -700,6 +700,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Rocket Factory
 		AddBlock(this, menu, "rocketfactory", "$ROCKETFACTORY$", Trans::RocketFactory, Trans::RocketFactoryDesc, core, 1.0f);
 	}
+	{ //Stationary Binoculars
+		AddBlock(this, menu, "binoculars", "$BINOCULARS$", Trans::Binoculars, Trans::BinocularsDesc, core, 2.5f);
+	}
 }
 
 // Add a block to the build menu

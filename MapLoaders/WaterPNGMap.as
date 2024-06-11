@@ -37,6 +37,15 @@ class PNGLoader
 		{
 			CMap::SetupMap(map, image.getWidth(), image.getHeight());
 
+			//clear trees
+			CRules@ rules = getRules();
+			TreesPool@ trees;
+			if(rules.get("trees", @trees))
+			{
+				trees.positions.clear();
+				trees.angles.clear();
+			}
+
 			while (image.nextPixel())
 			{
 				SColor pixel = image.readPixel();
@@ -47,7 +56,6 @@ class PNGLoader
 			}
 			
 			//sync trees for players
-			CRules@ rules = getRules();
 			CPlayer@[] players;
 			const u8 plyCount = getPlayerCount();
 			for (u8 i = 0; i < plyCount; i++)
