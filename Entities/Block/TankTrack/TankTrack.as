@@ -3,6 +3,7 @@ void onInit(CBlob@ this)
 	this.Tag("propeller");
 	this.Tag("solid");
 	this.Tag("landMotor");
+	this.Tag("crush people");
 	
 	this.set_f32("weight", 1.0f);
 	

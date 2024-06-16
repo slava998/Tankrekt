@@ -208,6 +208,9 @@ void DrawShipStatus(CBlob@ this, const string&in name, Vec2f&in tl, CControls@ c
 		//Speed
 		const u16 speed = ship.vel.Length() * 30;
 		GUI::DrawText(Trans::Speed+" : " + speed + " kilorekts/h", Vec2f(24, getScreenHeight() - 24), tipsColor);
+
+		const u16 mass = ship.mass * 100;
+		GUI::DrawText("Ship mass : " + mass + " rkt", Vec2f(24, getScreenHeight() - 32), tipsColor); // too lazy to add translation
 	}
 	else
 		GUI::DrawIconByName("$SEA$", tl + Vec2f(67, -12));
@@ -245,7 +248,7 @@ void DrawCoreStatus(CBlob@ core, Vec2f&in tl, CControls@ controls)
 
 void DrawStationStatus(const u8&in teamnum, Vec2f&in tl, CControls@ controls)
 {
-	GUI::DrawIcon("BootyStation.png", 0, Vec2f(16,16), tl + Vec2f(210, 4), 1.0f, teamnum);
+	GUI::DrawIcon("BootyStation_Icon.png", 0, Vec2f(16,16), tl + Vec2f(210, 4), 1.0f, teamnum);
 	
 	CBlob@[] stations;
 	getBlobsByTag("booty_station", @stations);
@@ -258,7 +261,7 @@ void DrawStationStatus(const u8&in teamnum, Vec2f&in tl, CControls@ controls)
 			teamStationCount++;
 	}
 
-	GUI::DrawText(teamStationCount + "/" + totalStationCount + " (+"+teamStationCount*3+")", tl + Vec2f(246, 11), tipsColor);
+	GUI::DrawText(teamStationCount + "/" + totalStationCount + " (+"+teamStationCount*5+")", tl + Vec2f(246, 11), tipsColor);
 	
 	//GUI buttons text/function
 	if ((controls.getMouseScreenPos() - (tl + Vec2f(245, 20))).Length() < 35.0f)

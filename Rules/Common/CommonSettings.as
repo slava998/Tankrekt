@@ -5,7 +5,7 @@ const u8 BUTTON_SIZE = 4;
 void onInit(CRules@ this)
 {
 	//mod version
-	this.set_string("version", "1.1");
+	this.set_string("version", "1.3");
 	
 	//dedicated server name
 	const string server_name = "[EU] Tankrekt "+this.get_string("version");
@@ -57,7 +57,7 @@ void onInit(CRules@ this)
 	AddIconToken("$FREEMAN$", "InteractionIconsBig.png", Vec2f(32,32), 14);
 	AddIconToken("$SEA$", "InteractionIconsBig.png", Vec2f(32,32), 9);
 	AddIconToken("$ASSAIL$", "InteractionIconsBig.png", Vec2f(32,32), 10);
-	AddIconToken("$PISTOL$", "Tools.png", Vec2f(32,32), 0);
+	AddIconToken("$RIFLE$", "Rifle.png", Vec2f(32,32), 0);
 	AddIconToken("$DECONSTRUCTOR$", "Tools.png", Vec2f(32,32), 1);
 	AddIconToken("$RECONSTRUCTOR$", "Tools.png", Vec2f(32,32), 2);
 	AddIconToken("$WOOD$", "platform.png", Vec2f(8,8), 0);
@@ -68,6 +68,7 @@ void onInit(CRules@ this)
 	AddIconToken("$RAMENGINE$", "PropellerIcons.png", Vec2f(16,16), 1);
 	AddIconToken("$SEAT$", "Seat.png", Vec2f(8,8), 0);
 	AddIconToken("$BOMB$", "Bomb.png", Vec2f(8,8), 0);
+	AddIconToken("$TIMEDBOMB$", "TimedBomb.png", Vec2f(8,8), 0);
 	AddIconToken("$HARVESTER$", "Harvester.png", Vec2f(16,16), 0);
 	AddIconToken("$PATCHER$", "Patcher.png", Vec2f(8,8), 0);
 	AddIconToken("$HARPOON$", "HarpoonBlock.png", Vec2f(16,16), 0); 
@@ -88,11 +89,22 @@ void onInit(CRules@ this)
 	AddIconToken("$ARTILLERY$", "Artillery_icon.png", Vec2f(32,16), 0);
 	AddIconToken("$SPONSON$", "SponsonIcon.png", Vec2f(16,8), 0);
 	AddIconToken("$WHEEL$", "Wheel_icon.png", Vec2f(8,8), 0);
-	AddIconToken("$TANKCANNON$", "TankCannon.png", Vec2f(26,12), 0);
+	AddIconToken("$TANKCANNON$", "TankCannon.png", Vec2f(29,12), 0);
 	AddIconToken("$PLANKCORNER$", "PlankCorner.png", Vec2f(8,8), 0);
 	AddIconToken("$HERE$", "MenuItems.png", Vec2f(32,32), 5);
 	AddIconToken("$CROSS$", "MenuItems.png", Vec2f(32,32), 13);
+	AddIconToken("$UP$", "MenuItems.png", Vec2f(32,32), 6);
 	AddIconToken("$GATE$", "Gate.png", Vec2f(8,8), 0);
+	AddIconToken("$SMG$", "SMG.png", Vec2f(32,32), 0);
+	AddIconToken("$SHOTGUN$", "shotgun.png", Vec2f(32,32), 0);
+	//AddIconToken("$CARBINE$", "carbine.png", Vec2f(32,32), 0);
+	AddIconToken("$ARMORY$", "armory.png", Vec2f(8,8), 0);
+	AddIconToken("$RPG$", "RPG.png", Vec2f(32,32), 0);
+	AddIconToken("$ROCKETFACTORY$", "RocketFactory.png", Vec2f(16,16), 0);
+	AddIconToken("$FORTRESSHOWITZER$", "FortressHowitzer_icon.png", Vec2f(35,17), 0);
+	AddIconToken("$BINOCULARS$", "Binoculars.png", Vec2f(16,16), 0);
+	AddIconToken("$BINO_CROSS$", "AimCross.png", Vec2f(32,32), 0);
+	AddIconToken("$REDDOT$", "RedDot.png", Vec2f(3,3), 0);
 	
 	//spectator stuff
 	this.addCommandID("pick teams");

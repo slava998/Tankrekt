@@ -15,17 +15,17 @@
 #include "DamageBooty.as";
 #include "BlockProduction.as";
 #include "Ships.as";
-#include "Knocked.as"
+#include "Knocked.as";
 
 const int CONSTRUCT_RANGE = 48;
 const int DECONSTRUCT_RANGE = 16;
 const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of the block will be returned after deconstructing
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
-const f32 BULLET_SPREAD = 0.0f;
 const Vec2f BUILD_MENU_SIZE = Vec2f(8, 6);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 6); //for testing, only activates when sv_test is on
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
+const f32 RELOAD_SLOW = 0.5f; //how much player is slowed while reloading
 u32 HEAL_TICKS = 15 * 30;
 //global is fine since only used with isMyPlayer
 int useClickTime = 0;
@@ -35,26 +35,18 @@ u8 stayCount = 0;
 
 BootyRewards@ booty_reward;
 
-Random _shotspreadrandom(0x11598);
-
 void onInit(CBlob@ this)
 {
 	this.sendonlyvisible = false; //clients always know this blob's position
 
 	this.Tag("player");
 	this.addCommandID("get out");
-	this.addCommandID("shoot");
 	this.addCommandID("construct");
-	this.addCommandID("punch");
+	this.addCommandID("slash");
 	this.addCommandID("giveBooty");
 	this.addCommandID("releaseOwnership");
 	this.addCommandID("swap tool");
 	this.addCommandID("run over");
-	this.addCommandID("fire");
-	this.addCommandID("makeBlockWithNoBase");
-
-	this.set_u8("TTL", 15); //bullet params
-	this.set_u8("speed", 31);
 
 	this.chatBubbleOffset = Vec2f(0.0f, 10.0f);
 	this.getShape().getVars().onground = true;
@@ -67,7 +59,7 @@ void onInit(CBlob@ this)
 	this.set_string("last buy", "coupling"); //last bought block
 	this.set_string("current tool", "pistol"); //tool the player is using
 	this.set_u32("fire time", 0); //gametime when pistol or constructor was last used
-	this.set_u32("punch time", 0); //gametime at last punch
+	this.set_u32("slash time", 0); //gametime at last slash
 	this.set_f32("camera rotation", 0); //the player's camera rotation synced for all clients
 	
 	CBlob@ core = getMothership(this.getTeamNum());
@@ -192,8 +184,11 @@ void Move(CBlob@ this)
 		const bool down = this.isKeyPressed(key_down);
 		const bool left = this.isKeyPressed(key_left);
 		const bool right = this.isKeyPressed(key_right);	
-		const bool punch = this.isKeyPressed(key_action1);
+		const bool slash = this.isKeyPressed(key_action1);
 		const bool shoot = this.isKeyPressed(key_action2);
+		const bool reload = getControls().isKeyJustPressed(KEY_KEY_R)&& this.isMyPlayer();
+		
+		const bool reloading = this.get_bool("currently_reloading");
 		
 		shape.getVars().onground = ship !is null || isTouchingLand(pos);
 		
@@ -260,6 +255,8 @@ void Move(CBlob@ this)
 			{
 				moveVel.x += Human::walkSpeed;
 			}
+			
+			if(reloading) moveVel *= RELOAD_SLOW; //slowing during reloading
 		}
 
 		if (!this.get_bool("onGround"))
@@ -282,11 +279,11 @@ void Move(CBlob@ this)
 		}
 		else if(this.get_u8("knocked") <= 0)
 		{
-			// punch
-			if (isClient() && punch && !Human::isHoldingBlocks(this) && canPunch(this))
+			// slash
+			if (isClient() && slash && !Human::isHoldingBlocks(this) && canslash(this) && !this.get_bool("getting block"))
 			{
 				EndConstructEffects(this, sprite);
-				Punch(this);
+				Slash(this);
 			}
 			
 			//when on our mothership
@@ -306,22 +303,78 @@ void Move(CBlob@ this)
 		}
 		
 		//tool actions
-		if (shoot && !punch)
+		if (shoot && !slash)
 		{
 			const string currentTool = this.get_string("current tool");
 			
 			if (currentTool == "pistol" && canShootPistol(this)) // shoot
 			{
-				ShootPistol(this);
-				if (!sprite.isAnimation("shoot"))
-					sprite.SetAnimation("shoot");
+				if(isServer())
+				{
+					const bool shotgun = this.get_bool("shotgun");
+					CBitStream params;
+					params.write_netid(this.getNetworkID());
+
+					Vec2f bullet_pos = pos;
+					Vec2f aimVector = this.getAimPos() - bullet_pos;
+					aimVector.Normalize();
+
+					Vec2f velocity = aimVector;
+
+					bool relative;
+
+					const s32 overlappingShipID = this.get_s32("shipID");
+					Ship@ ship = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
+					if (ship !is null) //relative positioning
+					{
+						relative = true;
+						Vec2f rPos = (bullet_pos + aimVector*3) - ship.origin_pos;
+						bullet_pos = rPos + ship.origin_pos;
+					}
+					else //absolute positioning
+					{
+						relative = false;
+						const Vec2f aPos = bullet_pos + aimVector*9;
+						bullet_pos = aPos;
+					}
+					
+					if(!shotgun)
+					{
+						const u8 spr = this.get_u8("shot_spread");
+						params.write_f32(-velocity.Angle() + XORRandom(spr) - XORRandom(spr));
+					}
+					else params.write_f32(-velocity.Angle());
+
+					params.write_Vec2f(bullet_pos);
+					params.write_u32(getGameTime());
+					params.write_bool(relative);
+					
+					if(!shotgun) rules.SendCommand(rules.getCommandID("fireGun"), params);
+					else rules.SendCommand(rules.getCommandID("fireShotgun"), params);
+					//printf("sending fire cmd");
+					this.set_u32("fire time", getGameTime());
+				}
+
+				if(sprite !is null)
+				{
+					if(this.get_string("gunName") != "rpg")
+					{
+						if (!sprite.isAnimation("shoot"))
+							sprite.SetAnimation("shoot");
+					}
+					else if (!sprite.isAnimation("rpgshoot"))
+						sprite.SetAnimation("rpgshoot");
+				}
 			}
 			else if (currentTool == "deconstructor" || currentTool == "reconstructor") //reclaim, repair
 			{
 				Construct(this);
 			}
 		}
-
+		else if(isClient() &&reload && !reloading && this.get_u8("ammo") < this.get_u8("clip_size") && (!this.get_bool("limited_ammo") || this.get_u16("total_ammo") > 0)) //reload gun
+		{
+			this.SendCommand(this.getCommandID("reload"));
+		}
 		//canmove check
 		if (this.get_bool("onGround") || !rules.get_bool("whirlpool"))
 		{
@@ -361,7 +414,7 @@ void PlayerControls(CBlob@ this)
 {
 	CHUD@ hud = getHUD();
 	CControls@ controls = getControls();
-	const bool toolsKey = controls.isKeyJustPressed(controls.getActionKeyKey(AK_PARTY));
+	const bool toolsKey = controls.isKeyJustPressed(KEY_LSHIFT) || controls.isKeyJustPressed(KEY_KEY_Z);
 
 	if (this.isAttached())
 	{
@@ -440,7 +493,7 @@ void PlayerControls(CBlob@ this)
 						const s32 overlappingShipID = this.get_s32("shipID");
 						Ship@ pShip = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
 						if (pShip !is null && pShip.centerBlock !is null && ((pShip.id == core.getShape().getVars().customData) 
-							|| ((pShip.isStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
+							|| ((pShip.isBuildStation || pShip.isSecondaryCore) && pShip.centerBlock.getTeamNum() == this.getTeamNum())))
 						{
 							buildMenuOpen = true;
 							this.set_bool("justMenuClicked", true);
@@ -463,6 +516,7 @@ void PlayerControls(CBlob@ this)
 						params.write_string(this.get_string("last buy"));
 						params.write_u16(getCost(this.get_string("last buy")));
 						params.write_bool(false);
+						params.write_u8(getLineLength(this.get_string("last buy") + "_linelength"));
 						core.SendCommand(core.getCommandID("buyBlock"), params);
 					}
 					
@@ -491,6 +545,7 @@ void PlayerControls(CBlob@ this)
 			params.write_string(this.get_string("last buy"));
 			params.write_u16(getCost(this.get_string("last buy")));
 			params.write_bool(true);
+			params.write_u8(getLineLength(this.get_string("last buy") + "_linelength"));
 			core.SendCommand(core.getCommandID("buyBlock"), params);
 		}
 	}
@@ -593,6 +648,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Bomb
 		AddBlock(this, menu, "bomb", "$BOMB$", Trans::Bomb, Trans::BombDesc, core, 2.0f);
 	}
+	{ //Timed Bomb
+		AddBlock(this, menu, "timedbomb", "$TIMEDBOMB$", Trans::TimedBomb, Trans::TimedBombDesc, core, 2.0f);
+	}	 
 	{ //Ram Hull
 		AddBlock(this, menu, "ram", "$RAM$", Trans::Ram, Trans::RamDesc, core, 1.0f);
 	}
@@ -628,9 +686,22 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::TankCannonDesc+"\n"+Trans::AmmoCap+": 8";
 		AddBlock(this, menu, "tankcannon", "$TANKCANNON$", Trans::TankCannon, description, core, 7.0f);
 	}
+	{ //Fortress howitzer
+		description = Trans::FortressHowitzerDesc+"\n"+Trans::AmmoCap+": 6"; 
+		AddBlock(this, menu, "fortresshowitzer", "$FORTRESSHOWITZER$", Trans::FortressHowitzer, description, core, 100.0f, true);
+	}
 	{ //Artillery
 		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 6"; 
 		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 40.0f, true);
+	}
+	{ //Stationary Binoculars
+		AddBlock(this, menu, "binoculars", "$BINOCULARS$", Trans::Binoculars, Trans::BinocularsDesc, core, 2.5f);
+	}
+	{ //Armory
+		AddBlock(this, menu, "armory", "$ARMORY$", Trans::Armory, Trans::ArmoryDesc, core, 3.5f);
+	}
+	{ //Rocket Factory
+		AddBlock(this, menu, "rocketfactory", "$ROCKETFACTORY$", Trans::RocketFactory, Trans::RocketFactoryDesc, core, 1.0f);
 	}
 }
 
@@ -644,6 +715,7 @@ CGridButton@ AddBlock(CBlob@ this, CGridMenu@ menu, const string&in block, const
 	params.write_string(block);
 	params.write_u16(cost);
 	params.write_bool(false);
+	params.write_u8(getLineLength(block + "_linelength"));
 	
 	CGridButton@ button = menu.AddButton(icon, bname + " $" + cost, core.getCommandID("buyBlock"), params);
 
@@ -680,38 +752,13 @@ void BuildToolsMenu(CBlob@ this, const string&in description, const Vec2f&in off
 	menu.deleteAfterClick = true;
 	
 	{ //Pistol
-		AddTool(this, menu, "$PISTOL$", Trans::Pistol, Trans::PistolDesc, "pistol");
+		AddTool(this, menu, "$" + this.get_string("gun_icon") + "$", this.get_string("gun_menu_name"), this.get_string("gun_desc"), "pistol");
 	}
 	{ //Deconstructor
 		AddTool(this, menu, "$DECONSTRUCTOR$", Trans::Deconstructor, Trans::DeconstDesc, "deconstructor");
 	}
 	{ //Reconstructor
 		AddTool(this, menu, "$RECONSTRUCTOR$", Trans::Reconstructor, Trans::ReconstDesc, "reconstructor");
-	}
-	
-	Vec2f MENU_POS;
-
-	MENU_POS = menu.getUpperLeftPosition() + Vec2f(-36, 46);
-	CGridMenu@ tool = CreateGridMenu(MENU_POS, this, Vec2f(1, 1), "Make Block");
-
-	if (tool !is null)
-	{
-		tool.SetCaptionEnabled(false);
-
-		CGridButton@ button = tool.AddButton("$WOOD$", "", this.getCommandID("makeBlockWithNoBase"), Vec2f(1, 1));
-		if (button !is null)
-		{
-			if(this.get_s32("shipID") == 0 && this.get_bool("onGround"))
-			{
-				button.SetHoverText(Trans::IndependentBlock);
-			}
-			else
-			{
-				button.SetEnabled(false);
-				button.SetSelected(1);
-				button.SetHoverText(Trans::IndBlNotOnGr);
-			}
-		}
 	}
 }
 
@@ -730,8 +777,8 @@ CGridButton@ AddTool(CBlob@ this, CGridMenu@ menu, const string&in icon, const s
 	return button;
 }
 
-// Send a command to punch nearby enemies
-void Punch(CBlob@ this)
+// Send a command to slash nearby enemies
+void Slash(CBlob@ this)
 {
 	CMap@ map = getMap();
 	const Vec2f pos = this.getPosition();
@@ -775,9 +822,9 @@ void Punch(CBlob@ this)
 					{
 						CBitStream params;
 						params.write_netid(b.getNetworkID());
-						this.SendCommand(this.getCommandID("punch"), params);
+						this.SendCommand(this.getCommandID("slash"), params);
 					}
-					this.set_u32("punch time", getGameTime());
+					this.set_u32("slash time", getGameTime());
 					return;
 				}
 			}
@@ -786,45 +833,7 @@ void Punch(CBlob@ this)
 
 	// miss
 	directionalSoundPlay("throw", pos);
-	this.set_u32("punch time", getGameTime());
-}
-
-// Send a command to shoot the pistol
-void ShootPistol(CBlob@ this)
-{
-	this.set_u32("fire time", getGameTime());
-	
-	if (!this.isMyPlayer()) return;
-
-	Vec2f pos = this.getPosition();
-	Vec2f aimVector = this.getAimPos() - pos;
-	aimVector.Normalize();
-
-	Vec2f offset(_shotspreadrandom.NextFloat() * BULLET_SPREAD,0);
-	offset.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
-	
-	const Vec2f vel = aimVector + offset;
-
-	CBitStream params;
-	params.write_Vec2f(vel);
-
-	const s32 overlappingShipID = this.get_s32("shipID");
-	Ship@ ship = overlappingShipID > 0 ? getShipSet().getShip(overlappingShipID) : null;
-	if (ship !is null) //relative positioning
-	{
-		params.write_bool(true);
-		const Vec2f rPos = (pos + aimVector*3) - ship.origin_pos;
-		params.write_Vec2f(rPos);
-		params.write_u32(ship.id);
-	}
-	else //absolute positioning
-	{
-		params.write_bool(false);
-		const Vec2f aPos = pos + aimVector*9;
-		params.write_Vec2f(aPos);
-	}
-	
-	this.SendCommand(this.getCommandID("shoot"), params);
+	this.set_u32("slash time", getGameTime());
 }
 
 // Send a command to construct or deconstruct
@@ -958,9 +967,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		//get out of a seat
 		this.server_DetachFromAll();
 	}
-	else if (this.getCommandID("punch") == cmd)
+	else if (this.getCommandID("slash") == cmd)
 	{
-		//hurt blob with a punch
+		//hurt blob with a slash
 		CBlob@ b = getBlobByNetworkID(params.read_netid());
 		if (b !is null)
 		{
@@ -969,47 +978,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				directionalSoundPlay("Kick.ogg", pos);
 			if (isServer())
 				this.server_Hit(b, pos, Vec2f_zero, 0.25f, Hitters::muscles, false);
-		}
-	}
-	else if (this.getCommandID("shoot") == cmd)
-	{
-		//shoot pistol
-		Vec2f velocity = params.read_Vec2f();
-		Vec2f pos = this.getPosition();
-		
-		if (params.read_bool()) //relative positioning
-		{
-			Vec2f rPos = params.read_Vec2f();
-			const int shipColor = params.read_u32();
-			Ship@ ship = getShipSet().getShip(shipColor);
-			if (ship !is null)
-			{
-				pos = rPos + ship.origin_pos;
-			}
-		}
-		else
-			pos = params.read_Vec2f();
-		
-		if (isServer())
-		{
-			/*CBlob@ bullet = server_CreateBlob("bullet", this.getTeamNum(), pos);
-			if (bullet !is null)
-			{
-				if (this.getPlayer() !is null)
-				{
-					bullet.SetDamageOwnerPlayer(this.getPlayer());
-				}
-				bullet.setVelocity(velocity);
-				bullet.setAngleDegrees(-velocity.Angle());
-				bullet.server_SetTimeToDie(lifetime); 
-			}*/
-			shootGun(this.getNetworkID(), -velocity.Angle() + XORRandom(BULLET_SPREAD) - XORRandom(BULLET_SPREAD * 2), pos);
-		}
-		
-		if (isClient())
-		{
-			shotParticles(pos + Vec2f(0.1f ,0).RotateBy(-velocity.Angle())*6.0f, velocity.Angle(), true, 0.02f , 0.6f);
-			directionalSoundPlay("rifle_fire" + XORRandom(2) + ".ogg", pos, 2.0f);
 		}
 	}
 	else if (this.getCommandID("construct") == cmd)
@@ -1152,41 +1120,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		
 		this.set_string("current tool", tool);
 	}
-	else if (this.getCommandID("makeBlockWithNoBase") == cmd)
-	{
-		if(this.get_bool("onGround") && this.get_s32("shipID") == 0 && (server_getPlayerBooty(this.getPlayer().getUsername()) >= 7 || getRules().get_bool("freebuild")))
-		{
-			CBlob@ b = makeBlock(this.getPosition(), 0.0f, "platform", this.getTeamNum());
-			if (b !is null)
-			{
-				b.set_u32("placedTime", getGameTime());
-				CRules@ rules = getRules();
-				
-				ShipDictionary@ ShipSet = getShipSet(rules);
-				Ship@ ship = CreateShip(rules, ShipSet);
-				CBlob@[] blob_blocks;
-				if (b !is null) blob_blocks.push_back(b);
-				rules.push("dirtyBlocks", blob_blocks);
-				
-				b.set_netid("ownerID", 0);
-				const f32 z = b.hasTag("platform") ? 309.0f : (b.hasTag("weapon") ? 311.0f : 310.0f);
-				SetDisplay(b, color_white, RenderStyle::normal, z);
-				
-				if (!isServer()) //add it locally till a sync
-				{
-					ShipBlock ship_block;
-					ship_block.blobID = b.getNetworkID();
-					ship_block.offset = b.getPosition();
-					ship_block.angle_offset = b.getAngleDegrees();
-					b.getShape().getVars().customData = ship.id;
-					ship.blocks.push_back(ship_block);
-				}
-				else b.getShape().getVars().customData = 0; // push on ship
-				
-				server_addPlayerBooty(this.getPlayer().getUsername(), -7);
-			}
-		}
-	}
 	else if (this.getCommandID("run over") == cmd)
 	{
 		CBlob@ block = getBlobByNetworkID(params.read_netid());
@@ -1288,7 +1221,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		CPlayer@ hitterPlayer = hitterBlob.getDamageOwnerPlayer();
 		const u8 teamNum = this.getTeamNum();
 		const u8 hitterTeam = hitterBlob.getTeamNum();
-		//only pistol or punches
+		//only pistol or slashes
 		if ((customData == Hitters::muscles || customData == Hitters::bomb_arrow) && hitterPlayer !is null && hitterTeam != teamNum)
 		{
 			u16 reward = 15;

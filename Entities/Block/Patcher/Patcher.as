@@ -6,30 +6,20 @@
 #include "ParticleSpark.as";
 #include "BlockCosts.as";
  
-const f32 CONSTRUCT_RATE = 500.0f; //lower values = lower recover
+const u16 CONSTRUCT_RATE = 500.0f; //higher values = lower recover
 const int CONSTRUCT_VALUE = 5;
 const int NUM_HEALS = 5;
 
 void onInit(CBlob@ this)
 {
-	this.getCurrentScript().tickFrequency = 2;
-
-	this.Tag("weapon");
-	this.Tag("machinegun");
-	this.Tag("fixed_gun");
+	this.getCurrentScript().tickFrequency = CONSTRUCT_RATE;
 	
 	this.set_f32("weight", 3.0f);
-	
-	this.addCommandID("fire");
-	
-	
-	this.set_u32("fire time", 0);
+
 }
  
 void onTick(CBlob@ this)
 {
-	if (getGameTime() % CONSTRUCT_RATE != 0) return;
-
 	if (this.getShape().getVars().customData <= 0) //not placed yet
 		return;
 	ShipDictionary@ ShipSet = getShipSet();

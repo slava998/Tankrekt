@@ -2,6 +2,7 @@ Random map_random(1569815698);
 
 #include "LoadMapUtils.as";
 #include "CustomTiles.as";
+#include "Trees.as";
 
 namespace CMap
 {
@@ -11,6 +12,8 @@ namespace CMap
 	color_sand(255, 236, 213, 144),
 	color_grass(255, 100, 155, 13),
 	color_rock(255, 161, 161, 161),
+	color_road(255, 128, 128, 128),
+	color_mud(255, 150, 75, 10),
 	color_shoal(255, 100, 170, 180);
 	
 	// objects
@@ -31,6 +34,7 @@ namespace CMap
 			map.CreateSky(SColor(255, 41, 100, 176)); //water color
 		#endif
 		map.topBorder = map.bottomBorder = map.rightBorder = map.leftBorder = true;
+		//InitializeTrees(getRules());
 	}
 	
 	SColor
@@ -80,8 +84,19 @@ namespace CMap
 			}
 			case color_palmtree:
 			{
-				CBlob@ palmtreeBlob = spawnBlob(map, "palmtree", offset, 255, false);	
-			
+				CRules@ rules = getRules();
+				TreesPool@ trees;
+				rules.get("trees", @trees);
+
+				if(trees is null)
+				{
+					InitializeTrees(getRules());
+					rules.get("trees", @trees);
+				}
+				if(trees !is null) trees.AddTree(getSpawnPosition(map, offset));
+
+				//CBlob@ palmtreeBlob = spawnBlob(map, "palmtree", offset, 255, false);	
+
 				map.SetTile(offset, CMap::grass_inland + map_random.NextRanged(5));
 				map.AddTileFlag(offset, Tile::BACKGROUND);
 				map.AddTileFlag(offset, Tile::LIGHT_PASSES);
@@ -1215,6 +1230,18 @@ namespace CMap
 			else
 				map.SetTile(offset, CMap::shoal_inland + map_random.NextRanged(5));	
 			
+			map.AddTileFlag(offset, Tile::BACKGROUND);
+			map.AddTileFlag(offset, Tile::LIGHT_PASSES);
+		}
+		else if (pixel == color_road)
+		{
+			map.SetTile(offset, CMap::road_inland);
+			map.AddTileFlag(offset, Tile::BACKGROUND);
+			map.AddTileFlag(offset, Tile::LIGHT_PASSES);
+		}
+		else if (pixel == color_mud)
+		{
+			map.SetTile(offset, CMap::mud_inland);
 			map.AddTileFlag(offset, Tile::BACKGROUND);
 			map.AddTileFlag(offset, Tile::LIGHT_PASSES);
 		}

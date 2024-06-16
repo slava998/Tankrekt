@@ -12,6 +12,7 @@ bool LoadMap(CMap@ map, const string&in fileName)
 #include "MapBanner.as";
 #include "CustomMap.as";
 #include "Booty.as"
+#include "Trees.as"
 
 class PNGLoader
 {
@@ -36,6 +37,15 @@ class PNGLoader
 		{
 			CMap::SetupMap(map, image.getWidth(), image.getHeight());
 
+			//clear trees
+			CRules@ rules = getRules();
+			TreesPool@ trees;
+			if(rules.get("trees", @trees))
+			{
+				trees.positions.clear();
+				trees.angles.clear();
+			}
+
 			while (image.nextPixel())
 			{
 				SColor pixel = image.readPixel();
@@ -44,7 +54,16 @@ class PNGLoader
 				CMap::handlePixel(map, image, pixel, offset, pixelPos);
 				getNet().server_KeepConnectionsAlive();
 			}
-
+			
+			//sync trees for players
+			CPlayer@[] players;
+			const u8 plyCount = getPlayerCount();
+			for (u8 i = 0; i < plyCount; i++)
+			{
+				CPlayer@ player = getPlayer(i);
+				if(player !is null) SyncTrees(rules, player);
+			}
+			
 			return true;
 		}
 		return false;

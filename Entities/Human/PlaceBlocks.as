@@ -36,7 +36,7 @@ void onTick(CBlob@ this)
 			CBlob@ block = getBlobByNetworkID(blocks[i]);
 			if (block is null) continue;
 			
-			SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::light, -10.0f);
+			SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::normal, -10.0f);
 		}
 		return;
 	}
@@ -62,7 +62,7 @@ void onTick(CBlob@ this)
 		const u32 gameTime = getGameTime();
 		const bool overlappingShip = blocksOverlappingShip(blocks);
 		bool onRock = false;
-		bool notReady = (gameTime - this.get_u32("placedTime") <= (ship.isBuildStation ? station_placement_time : placement_time)); // dont show block if we are not ready to build yet
+		bool notReady = (gameTime - this.get_u32("placedTime") <= ((ship.isMothership || ship.isBuildStation) ? station_placement_time : placement_time)); // dont show block if we are not ready to build yet
 		for (u8 i = 0; i < blocksLength; ++i)
 		{
 			CBlob@ block = getBlobByNetworkID(blocks[i]);
@@ -74,7 +74,7 @@ void onTick(CBlob@ this)
 			
 			if (overlappingShip || onRock || notReady)
 			{
-				SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::additive);
+				SetDisplay(block, SColor(255, 255, 0, 0), RenderStyle::normal);
 				continue;
 			}
 		}
@@ -154,7 +154,7 @@ void PositionBlocks(u16[] blocks, Vec2f&in pos, Vec2f&in aimPos, const f32&in bl
 		block.setPosition(cursor_pos + offset); //align to ship grid
 		block.setAngleDegrees((refBAngle + blocks_angle + (block.hasTag("engine") ? 90.0f : 0.0f)) % 360.0f); //set angle: reference angle + rotation angle
 
-		SetDisplay(block, color_white, RenderStyle::additive, 315.0f);
+		SetDisplay(block, color_white, RenderStyle::normal, 315.0f);
 	}
 }
 
@@ -290,6 +290,12 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				this.Sync("getting block", false);
 			}
 		}
+	}
+	
+	CSprite@ sprite = this.getSprite(); //building animation
+	if (!sprite.isAnimation("build"))
+	{
+		sprite.SetAnimation("build");
 	}
 }
 

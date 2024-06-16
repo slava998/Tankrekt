@@ -157,7 +157,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				{
 					if(blob.getShape().getConsts().collidable && doesCollideWithDoor(this,blob)) //do not kill seat if we are colliding with door or platform
 					{
-						if (this.hasTag("seat")) Die(this);
+						if (this.hasTag("seat") && !blob.hasTag("wheel")) Die(this);
 						if (blob.hasTag("seat")) Die(blob);
 					}
 				}
@@ -166,7 +166,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				{
 					if (blob.hasTag("core"))
 						this.server_Hit(blob, point1, ship.vel, 0.5f, 0, true);
-					else if (blob.hasTag("propeller") || blob.hasTag("engineblock"))
+					else if (blob.hasTag("propeller") || blob.hasTag("engineblock") || blob.hasTag("factory"))
 						this.server_Hit(blob, point1, ship.vel, 2.1f, 0, true);
 					else if (blob.hasTag("platform") || blob.hasTag("ramengine"))
 						Die(blob);
@@ -177,7 +177,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				}
 				else if (this.hasTag("ram"))
 				{
-					if (blob.hasTag("propeller") || blob.hasTag("plank") || blob.hasTag("engineblock"))
+					if (blob.hasTag("propeller") || blob.hasTag("plank") || blob.hasTag("engineblock") || blob.hasTag("factory"))
 					{
 						this.server_Hit(this, point1, ship.vel, 2.2f, 0, true);
 						Die(blob);
@@ -213,10 +213,8 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 			}
 		}
 	}
-	else if (isClient() && blob.getName() == "human" && this.getShape().getConsts().collidable) // block vs player
+	else if (isClient() && blob.getName() == "human" && this.getShape().getConsts().collidable && this.getTeamNum() != blob.getTeamNum() && this.hasTag("crush people")) // block vs player
 	{
-		if (blob.getAirTime() > 4) //air time is time spent on water
-		{
 			//kill player by impact
 			Ship@ ship = getShipSet().getShip(color);
 			if (ship !is null && (ship.vel.LengthSquared() > 5.0f || Maths::Abs(ship.angle_vel) > 1.75f || blob.getOldVelocity().LengthSquared() > 9.0f))
@@ -225,18 +223,19 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				blockSide.RotateBy(-ship.vel.Angle());
 				const bool noSideHits = ((this.getPosition() + blockSide) - point1).Length() < 4.15f; //dont die if we arent in block's path
 				
+
 				if (!noSideHits)
 					directionalSoundPlay("Scrape1", point1);
 				
 				if ((blob.isMyPlayer() || (blob.getPlayer() !is null && blob.getPlayer().isBot())) && 
 					noSideHits && blob.getTeamNum() != this.getTeamNum())
 				{
+		
 					CBitStream params;
 					params.write_netid(this.getNetworkID());
 					blob.SendCommand(blob.getCommandID("run over"), params);
 				}
 			}
-		}
 	}
 }
 

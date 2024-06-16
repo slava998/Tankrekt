@@ -341,6 +341,10 @@ namespace CMap
 		sand_shoal_border_panhandleR_L1 = 1560,
 		sand_shoal_border_panhandleR_D1 = 1564,
 		sand_shoal_border_diagonal_R1 = 1568,
-		sand_shoal_border_diagonal_L1 = 1572
+		sand_shoal_border_diagonal_L1 = 1572,
+
+		road_inland = 394,
+		
+		mud_inland = 395
 	};
 }

@@ -59,9 +59,9 @@ void onTick(CBlob@ this)
 			{
 				smoke(smoke_pos, smoke_vel);
 			}
-			sprite.SetEmitSoundVolume(2 * Maths::Clamp(vel, 1, 2.0f));
-			sprite.SetEmitSoundSpeed(Maths::Clamp(vel * 0.3, 1, 1.5f));
 		}
+		sprite.SetEmitSoundVolume(2 * Maths::Clamp(vel, 1, 2.0f));
+		sprite.SetEmitSoundSpeed(Maths::Clamp(vel * 0.3, 1, 1.5f));
     }
 }
 
@@ -125,7 +125,9 @@ void explode(CBlob@ this)
 
 const f32 getDamage(CBlob@ hitBlob)
 {
-	if (hitBlob.hasTag("engineblock"))
+	if(hitBlob.hasTag("strong")) return 1.0f;
+
+	if (hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
 		return 40.0f; //chain explosion
 	if (hitBlob.hasTag("rocket"))
 		return 1.25f; 

@@ -70,8 +70,9 @@ void onTick(CBlob@ this)
 	}
 	
 	if (on)
-	{			
-		if (!isTouchingLand(this.getPosition()) && !this.hasTag("landMotor") || isTouchingLand(this.getPosition()) && this.hasTag("landMotor")) //turn off if we are on ground if it is propeller or if we are in water and it is tank tracks
+	{		
+		const bool touching_land = isTouchingLand(this.getPosition());
+		if (!touching_land || this.hasTag("landMotor")) //turn off if we are on ground if it is propeller or if we are in water and it is tank tracks
 		{
 			//auto turn off after a while
 			if (isServer() && gameTime - this.get_u32("onTime") > 750)
@@ -93,6 +94,11 @@ void onTick(CBlob@ this)
 				const f32 mass = ship.mass + ship.carryMass + 0.01f;
 				moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
 				angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+				if(this.hasTag("landMotor") && !touching_land)
+				{
+					moveVel *= 0.01f;
+					angleVel *= 0.01f;
+				}
 				
 				ship.vel += moveVel;
 				ship.angle_vel += angleVel;
@@ -131,10 +137,11 @@ void onTick(CBlob@ this)
 				if (isClient())
 				{
 					const u8 tickStep = v_fastrender ? 20 : 4;
-					if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1 && !isTouchingLand(pos))
+					if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1)
 					{
 						const Vec2f rpos = Vec2f(_r.NextFloat() * -4 + 4, _r.NextFloat() * -4 + 4);
-						MakeWaterParticle(pos + moveNorm * -6 + rpos, moveNorm * (-0.8f + _r.NextFloat() * -0.3f));
+						if(isTouchingLand(pos)) Dust(pos + moveNorm * -6 + rpos, moveNorm * (-0.4f + _r.NextFloat() * -0.15f));
+						else MakeWaterParticle(pos + moveNorm * -6 + rpos, -moveVel * (-0.8f + _r.NextFloat() * -0.3f));
 					}
 					
 					// limit sounds
@@ -199,4 +206,17 @@ void smoke(const Vec2f&in pos)
 											  true); //selflit
 	if (p !is null)
 		p.Z = 640.0f;
+}
+
+void Dust(const Vec2f&in pos, const Vec2f&in vel)
+{
+	CParticle@ p = ParticleAnimated("DustSmall.png",
+											  pos, vel,
+											  _waterparticlerandom.NextFloat() * 360.0f, //angle
+											  0.25f +_waterparticlerandom.NextFloat() * 0.25f, //scale
+											  5, //animtime
+											  0.0f, //gravity
+											  true); //selflit
+	if (p !is null)
+		p.Z = 2.0f;
 }

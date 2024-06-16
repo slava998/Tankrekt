@@ -4,7 +4,7 @@
 #include "MakeBlock.as";
 #include "SoftBans.as";
 
-const u8 STATION_BOOTY = 3;
+const u8 STATION_BOOTY = 5;
 
 void onInit(CRules@ this)
 {

@@ -4,14 +4,13 @@
 #include "Hitters.as";
 #include "PlankCommon.as";
 
-const f32 SPLASH_RADIUS = 8.0f;
-const f32 SPLASH_DAMAGE = 0.5f;
+const f32 SPLASH_RADIUS = 10.0f;
+const f32 SPLASH_DAMAGE = 2.0f;
 //const f32 MANUAL_DAMAGE_MODIFIER = 0.75f;
 
 const f32 ROCKET_FORCE = 7.5f;
 const int ROCKET_DELAY = 15;
 const f32 ROTATION_SPEED = 3.0;
-const f32 GUIDANCE_RANGE = 225.0f;
 
 Random _effectspreadrandom(0x11598); //clientside
 
@@ -108,10 +107,6 @@ void onTick(CBlob@ this)
 			const f32 targetDistance = (aimPos - ownerPos).getLength();
 			//f32 rocketDistance = (pos - ownerPos).getLength();
 			
-			if (targetDistance > GUIDANCE_RANGE) //must be done to preven desync issues
-			{	
-				aimPos = ownerPos + Vec2f(GUIDANCE_RANGE, 0).RotateBy(-(aimPos - ownerPos).getAngleDegrees());
-			}
 		
 			const f32 angleOffset = 270.0f;		
 			const f32 targetAngle = (aimPos - pos).getAngle();
@@ -215,11 +210,13 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 
 f32 getDamage(CBlob@ hitBlob)
 {
+	if(hitBlob.hasTag("strong")) 1.4f;
+
 	if (hitBlob.hasTag("rocket"))
 		return 4.0f;
 	if (hitBlob.hasTag("ramengine"))
 		return 5.0f;
-	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock"))
+	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
 		return 3.0f;
 	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon"))
 		return 2.5f;

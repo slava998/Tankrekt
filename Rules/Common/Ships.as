@@ -477,7 +477,13 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			//check for beached or slowed ships
 			
 			u16 beachedBlocks = 0;
-			u16 slowedBlocks = 0;
+			u16 tiles = 0;
+			u16 multiplier = 0;
+			u16 shoalBlocks = 0;
+			u16 roadBlocks = 0;
+			u16 mudBlocks = 0;
+
+			f32 maxVel = 0;
 			
 			for (u16 q = 0; q < blocksLength; ++q)
 			{
@@ -486,28 +492,46 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 				
 				Vec2f bPos = b.getPosition();	
 				Tile bTile = map.getTile(bPos);
+				const u16 tileType = map.getTile(bPos).type;
+				// print("tiletype: " + tileType);
 				
 				if (map.isTileSolid(bTile) && bPos.Length() > 15.0f) //are we on rock
 				{
 					TileCollision(ship, bPos);
 					if (!b.hasTag("mothership") || this.get_bool("whirlpool"))
 						b.server_Hit(b, bPos, Vec2f_zero, 1.0f, 0, true);
+					continue;
 				}
-				else if (isTouchingLand(bPos))  beachedBlocks++;
-				else if (isTouchingShoal(bPos)) slowedBlocks++;
-			}
-			
-			if (beachedBlocks > 0)
-			{
-				const f32 velocity = Maths::Clamp(beachedBlocks / ship.mass, 0.0f, 0.3f);
+
+				if (isTouchingShoal(bPos)) // shoal (slow for tracks and wheels)
+				{
+					multiplier = 2;
+
+					tiles = ++shoalBlocks;
+					maxVel = 0.02f;
+				}
+				else if (tileType == 394 && b.hasTag("wheel")) // road (good for wheels)
+				{
+					multiplier = 0.1;
+
+					maxVel = 0.05f;
+					tiles = 0;
+				}	
+				else if (tileType == 395 && b.hasTag("wheel")) // mud (slow for wheels)
+				{
+					tiles = ++mudBlocks;
+					maxVel = 1.0f;
+				}
+				else if (isTouchingLand(bPos)) // any land
+				{
+					tiles = ++beachedBlocks;
+					maxVel = 0.1f;
+				}
+				
+				const f32 velocity = Maths::Clamp(tiles / (ship.mass * multiplier), 0.0f, maxVel);
 				ship.vel *= 1.0f - velocity;
 				ship.angle_vel *= 1.0f - velocity;
-			}
-			else if (slowedBlocks > 0)
-			{
-				const f32 velocity = Maths::Clamp(slowedBlocks / (ship.mass * 2), 0.0f, 0.02f);
-				ship.vel *= 1.0f - velocity;
-				ship.angle_vel *= 1.0f - velocity;
+				multiplier = 1;
 			}
 		}
 		
@@ -642,6 +666,7 @@ void SetUpdateBlocks(const int&in shipColor = 0)
 	CBlob@[] blocks;
 	getBlobsByTag("weapon", @blocks); //update docking info
 	getBlobsByTag("seat", @blocks);   //update controls
+	getBlobsByTag("factory", @blocks); //turn factories on/off
 	
 	UpdateBlocks(shipColor, blocks);
 
@@ -649,6 +674,8 @@ void SetUpdateBlocks(const int&in shipColor = 0)
 	getBlobsByTag("engineblock", @engines);
 	
 	RecountEngienes(shipColor, engines);
+	
+	CheckMultiblocks(shipColor);
 }
 
 // Update core rings spritelayer
@@ -690,6 +717,62 @@ void RecountEngienes(const int&in shipColor, CBlob@[] engines)
 		}
 	}
 	//print("ship.engineblockcount " + ship.engineblockcount);
+}
+
+void CheckMultiblocks(const int&in shipColor)
+{
+	Ship@ ship = getShipSet().getShip(shipColor);
+	if(ship is null) return;
+	
+	ShipBlock[] blocks = ship.blocks;
+	ShipBlock[] multiblocks;
+	
+	const u16 blocksLength = blocks.length;
+	for (u16 i = 0; i < blocksLength; i++)
+	{
+		ShipBlock@ block = blocks[i];
+		CBlob@ blob = getBlobByNetworkID(block.blobID);
+		if (blob !is null && blob.hasTag("main_block")) //destroy the structure if some of its blocks was brocken
+		{
+			const int color = blob.getShape().getVars().customData;
+			u32[] linkedIDs;
+			if (!blob.get("linkedIDs", linkedIDs))
+			{
+				blob.Tag("dead");
+				blob.Tag("no_recheck");
+				blob.server_Die();
+			}		
+			else
+			{
+				bool killed = false;
+				const u8 len = linkedIDs.length;
+				for (u8 i = 0; i < len; i++)
+				{
+					CBlob@ b = getBlobByNetworkID(linkedIDs[i]);
+					if(b is null || color != b.getShape().getVars().customData)
+					{
+						print("" + (b is null));
+						killed = true;
+					}
+				}
+				if(killed)
+				{
+					for (u8 i = 0; i < len + 1; i++)
+					{
+						CBlob@ b = getBlobByNetworkID(linkedIDs[i]);
+						if(b !is null)
+						{
+							b.Tag("dead");
+							b.server_Die();
+						}
+					}
+					blob.Tag("dead");
+					blob.Tag("no_recheck");
+					blob.server_Die();
+				}
+			}
+		}
+	}
 }
 
 // For collision with tiles (rock)

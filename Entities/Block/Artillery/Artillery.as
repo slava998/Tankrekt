@@ -7,8 +7,6 @@
 
 const f32 PROJECTILE_SPEED = 10.0f;
 const f32 FIRE_RATE = 800;
-const f32 PROJECTILE_RANGE = 1000.0f;
-const int ENGINE_COEF = 9; //how much engines decrease reloading time, in ticks
 const f32 TURN_SPEED = 2.0f;
 
 const u8 MAX_AMMO = 6;
@@ -25,6 +23,7 @@ void onInit(CBlob@ this)
 {
 	this.Tag("weapon");
 	this.Tag("usesAmmo");
+	this.set_f32("range", 143);
 	
 	this.Tag("noEnemyEntry");
 	this.set_string("seat label", "Operate Artillery");
@@ -32,9 +31,8 @@ void onInit(CBlob@ this)
 	
 	this.set_f32("weight", 40.0f);
 	
-	this.set_f32("gives_zoom", 0.3f);
-	
 	this.addCommandID("fire");
+	this.addCommandID("setParams");
 
 	if (isServer())
 	{
@@ -58,6 +56,10 @@ void onInit(CBlob@ this)
     	layer2.SetLighting(false);
 		layer2.SetOffset(Vec2f(-5, 0));
     }
+	
+	sprite.SetEmitSound("artillery_rotation.ogg");
+	sprite.SetEmitSoundVolume(1.8f);
+	sprite.SetEmitSoundPaused(true);
 }
 
 void onTick(CBlob@ this)
@@ -65,10 +67,11 @@ void onTick(CBlob@ this)
 	const int col = this.getShape().getVars().customData;
 	if (col <= 0) return; //not placed yet
 
-	const u32 gameTime = getGameTime();
+	Rotate(this);
+
 	AttachmentPoint@ seat = this.getAttachmentPoint(0);
 	CBlob@ occupier = seat.getOccupied();
-	if (occupier !is null) Manual(this, occupier);
+	if (occupier !is null) RotateControlelr(this, occupier);
 	
 	if (isServer())
 	{
@@ -87,8 +90,8 @@ void onTick(CBlob@ this)
 		CSpriteLayer@ base = this.getSprite().getSpriteLayer("weapon");
 		CSpriteLayer@ barrel = this.getSprite().getSpriteLayer("movable");
 
-		f32 difference = gameTime - this.get_u32("fire time");
-		Vec2f barrel_offset = Vec2f(3, 0) - Vec2f(8, 0) * Maths::Min(difference / getAcceleratedFireRate(this), 1);
+		f32 difference = getGameTime() - this.get_u32("fire time");
+		Vec2f barrel_offset = Vec2f(3, 0) - Vec2f(8, 0) * Maths::Min(difference / FIRE_RATE, 1);
 
 		if (barrel !is null)
 		{
@@ -102,74 +105,43 @@ void onTick(CBlob@ this)
 			base.ResetTransform();
 			base.RotateBy(angle, Vec2f_zero);
 		}
-		if(getAcceleratedFireRate(this) - difference == 18) directionalSoundPlay("Artillery_loaded", this.getPosition(), 1.8f);
+		if(FIRE_RATE - difference == 18) directionalSoundPlay("Artillery_loaded", this.getPosition(), 1.8f);
 	}
 }
 
-void Manual(CBlob@ this, CBlob@ controller)
+void RotateControlelr(CBlob@ this, CBlob@ controller)
 {
-	Vec2f aimpos = controller.getAimPos();
-	Vec2f pos = this.getPosition();
-	Vec2f aimVec = aimpos - pos;
-
-	// fire
-	if (controller.isMyPlayer() && controller.isKeyPressed(key_action1) && canShootManual(this))
-	{
-		Fire(this, aimVec, controller.getNetworkID());
-	}
-
-	// rotate turret
-	Rotate(this, aimVec);
 	CSprite@ sprite = controller.getSprite();
 	sprite.ResetTransform();
 	sprite.RotateBy(this.getAngleDegrees() - this.get_f32("rot_angle") - controller.getAngleDegrees(), Vec2f_zero); //Rotate player sprite without rotating blob because otherwise rotation would be continious
 }
 
-f32 getAcceleratedFireRate(CBlob@ this)
+bool canShoot(CBlob@ this)
 {
-	if(this is null) return FIRE_RATE;
-
-	const int col = this.getShape().getVars().customData;
-	if (col <= 0) return FIRE_RATE;
-
-	Ship@ ship = getShipSet().getShip(col);
-	if (ship is null) return FIRE_RATE;
-	
-	f32 firerate = Maths::Max(FIRE_RATE - ship.engineblockcount * ENGINE_COEF, 8);
-	return firerate;
+	return this.get_u32("fire time") + FIRE_RATE < getGameTime();
 }
 
-bool canShootManual(CBlob@ this)
+void Rotate(CBlob@ this)
 {
-	return this.get_u32("fire time") + getAcceleratedFireRate(this) < getGameTime();
-}
-
-void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
-{
-	const f32 aimdist = Maths::Min(aimVector.Normalize(), PROJECTILE_RANGE);
-
-	const Vec2f _vel = (aimVector * PROJECTILE_SPEED);
-	const f32 _lifetime = Maths::Max(0.05f + aimdist/PROJECTILE_SPEED/32.0f, 0.25f);
-
-	CBitStream params;
-	params.write_netid(netid);
-	params.write_f32(_lifetime);
-	this.SendCommand(this.getCommandID("fire"), params);
-	this.set_u32("fire time", getGameTime());
-}
-
-void Rotate(CBlob@ this, Vec2f&in aimVector)
-{
-	f32 degrees = loopAngle(aimVector.getAngleDegrees() + this.getAngleDegrees());
+	f32 degrees = this.get_f32("target_angle");
 	f32 curr_angle = this.get_f32("rot_angle");
+	if(curr_angle == degrees) return;
+
 	f32 diff = curr_angle - degrees;
 	if(diff < 180 && diff > -180) diff = curr_angle - degrees;
 	else diff = degrees - curr_angle;
 	f32 new_angle = loopAngle((curr_angle - Maths::Clamp(diff, -TURN_SPEED, TURN_SPEED)));
 	
+	if(new_angle == degrees)
+	{
+		this.getSprite().SetEmitSoundPaused(true);
+		directionalSoundPlay("artillery_rotation_end", this.getPosition(), 1.8f);
+	}
+	else this.getSprite().SetEmitSoundPaused(false);
+	
 	this.set_f32("rot_angle", new_angle);
 }
-
+	
 // Keeps an angle within the engine's boundaries (-740 to 740)
 const f32 loopAngle(f32 angle)
 {
@@ -256,10 +228,23 @@ void Explode(CBlob@ this, const f32&in radius = BOMB_RADIUS)
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 {
-    if (cmd == this.getCommandID("fire"))
+	if (cmd == this.getCommandID("setParams"))
     {
+		const f32 range = params.read_f32();
+		const f32 angle = loopAngle(params.read_f32() - 270);
+		if(angle != this.get_f32("target_angle"))
+			directionalSoundPlay("Artillery_rotation_start", this.getPosition(), 1.8f);
+		this.set_f32("range", range);
+		this.set_f32("target_angle", angle);
+	}
+    else if (cmd == this.getCommandID("fire"))
+    {
+		if(!canShoot(this)) return;
+		this.set_u32("fire time", getGameTime());
+
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
 		Vec2f pos = this.getPosition();
+		
 
 		//ammo
 		u16 ammo = this.get_u16("ammo");
@@ -291,7 +276,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				}
 
                 bullet.setVelocity(velocity);
-                bullet.server_SetTimeToDie(params.read_f32());
+                bullet.server_SetTimeToDie(Maths::Max(0.05f + (this.get_f32("range") * 8)/PROJECTILE_SPEED/32.0f, 0.25f));
 				bullet.setAngleDegrees(angle);
             }
     	}
@@ -300,6 +285,11 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		{
 			shotParticles(bullet_offset, -angle);
 			directionalSoundPlay("Artillery_fire.ogg", bullet_offset, 5.5f);
+		}
+		
+		if(!v_fastrender)
+		{
+			ShakeScreen(90, 40, this.getPosition());
 		}
     }
 }

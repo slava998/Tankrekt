@@ -14,10 +14,11 @@ void CalculateMinimapColour(CMap@ this, u32 offset, TileType type, SColor &out c
 	f32 noise_value = 0.7f+(noise.Sample(pos/10)*noise.Fractal(pos/10))*0.3f;
 	SColor interpolation_col = SColor(0xFF87623B);
 	
-	SColor water = SColor(0xFFEAD6BB).getInterpolated(interpolation_col, noise_value);
-	SColor shoal = SColor(0xFFD2BA9C);//.getInterpolated(interpolation_col, noise_value);
-	SColor sand = SColor(0xFFC6A075);//.getInterpolated(interpolation_col, noise_value);
-	SColor rock = SColor(0xFF999186);//.getInterpolated(interpolation_col, noise_value);
+	SColor water = SColor(255,41,100,176).getInterpolated(interpolation_col, noise_value);
+	SColor shoal = SColor(255,94,158,214);//.getInterpolated(interpolation_col, noise_value);
+	SColor sand = SColor(255,237,184,113);//.getInterpolated(interpolation_col, noise_value);
+	SColor rock = SColor(255,125,139,120);//.getInterpolated(interpolation_col, noise_value);
+	SColor grass = SColor(255,71,123,13);
 
 	SColor water_shoal = shoal.getInterpolated(color_black, 0.9f);
 	SColor water_sand = sand.getInterpolated(color_black, 0.9f);
@@ -61,6 +62,11 @@ void CalculateMinimapColour(CMap@ this, u32 offset, TileType type, SColor &out c
 		}
 
 		return;
+	} //this has to be before sand because of dumb tile numbers: grass tiles and sand tiles are mixed in numbers
+	else if (type >= CMap::grass_inland && type <= CMap::grass_inland + 5)
+	{
+		col = grass;
+		return;
 	}
 	else if (type >= CMap::sand_inland && type <= CMap::grass_sand_border_diagonal_L1)
 	{
@@ -80,6 +86,7 @@ void CalculateMinimapColour(CMap@ this, u32 offset, TileType type, SColor &out c
 		col = shoal;
 		return;
 	}
+	
 	
 	/*map_image.setPixelOffset(offset);
 	SColor col_temp = map_image.readPixel();
