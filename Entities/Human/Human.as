@@ -694,14 +694,14 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::ArtilleryDesc+"\n"+Trans::AmmoCap+": 6"; 
 		AddBlock(this, menu, "artillery", "$ARTILLERY$", Trans::Artillery, description, core, 40.0f, true);
 	}
+	{ //Stationary Binoculars
+		AddBlock(this, menu, "binoculars", "$BINOCULARS$", Trans::Binoculars, Trans::BinocularsDesc, core, 2.5f);
+	}
 	{ //Armory
 		AddBlock(this, menu, "armory", "$ARMORY$", Trans::Armory, Trans::ArmoryDesc, core, 3.5f);
 	}
 	{ //Rocket Factory
 		AddBlock(this, menu, "rocketfactory", "$ROCKETFACTORY$", Trans::RocketFactory, Trans::RocketFactoryDesc, core, 1.0f);
-	}
-	{ //Stationary Binoculars
-		AddBlock(this, menu, "binoculars", "$BINOCULARS$", Trans::Binoculars, Trans::BinocularsDesc, core, 2.5f);
 	}
 }
 

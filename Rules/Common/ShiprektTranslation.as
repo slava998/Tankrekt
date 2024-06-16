@@ -72,9 +72,14 @@ namespace Trans
 	RespawnSoon   = Translate("Respawning soon...\\Скоро возрождение...\\Renascendo em breve...\\Odrodzenie wkrótce...\\Résurrection proche...\\Reapareciendo pronto..."),
 	FortOnly      = Translate("You can build this only on station or mothership.\\Это можно построить только на станции или на главном корабле.\\You can build this only on station or mothership.\\You can build this only on station or mothership.\\You can build this only on station or mothership.\\You can build this only on station or mothership."),
 	SetSpawn      = Translate("Set Spawnpoint Here\\Установить Точку Возрождения\\Set Spawnpoint Here\\Set Spawnpoint Here\\Set Spawnpoint Here\\Set Spawnpoint Here"),
-	ResetSpawn      = Translate("Reset Spawnpoint\\Сбросить Точку Возрождения\\Reset Spawnpoint\\Reset Spawnpoint\\Reset Spawnpoint\\Reset Spawnpoint"),
+	ResetSpawn    = Translate("Reset Spawnpoint\\Сбросить Точку Возрождения\\Reset Spawnpoint\\Reset Spawnpoint\\Reset Spawnpoint\\Reset Spawnpoint"),
 	Take          = Translate("Take\\Взять\\Take\\Take\\Take\\Take"),
 	Store		  = Translate("Store\\Убрать на хранение\\Store\\Store\\Store\\Store"),
+	Fire          = Translate("Fire\\Огонь\\Fire\\Fire\\Fire\\Fire"),
+	SetArtilleryParams = Translate("Set angle\n& firing range\\Установить\nугол\nи дальность\nвыстрела\\Set angle\n& firing range\\Set angle\n& firing range\\Set angle & firing range\\Set angle\n& firing range"),
+	Arty_help     = Translate("The upper slider controls the firing range.\n\nThe lower one controls the angle of the cannon.\n\nTo set the angle and range, press the lower button.\n\nTo get the angle and range, place binoculars.\n\nDon't be afraid, it's very simple!\\Верхний ползунок управляет дальностью стрельбы.\nНижний управляет углом орудия.\nЧтобы установить угол и дальность, нажмите на нижнюю кнопку.\nДля получения угла и дальности, поставьте бинокль.\nНе бойтесь, это очень просто!\\The upper slider controls the firing range.\n\nThe lower one controls the angle of the cannon.\n\nTo set the angle and range, press the lower button.\n\nTo get the angle and range, place binoculars.\n\nDon't be afraid, it's very simple!\\The upper slider controls the firing range.\n\nThe lower one controls the angle of the cannon.\n\nTo set the angle and range, press the lower button.\n\nTo get the angle and range, place binoculars.\n\nDon't be afraid, it's very simple!\\The upper slider controls the firing range.\n\nThe lower one controls the angle of the cannon.\n\nTo set the angle and range, press the lower button.\n\nTo get the angle and range, place binoculars.\n\nDon't be afraid, it's very simple!\\The upper slider controls the firing range.\n\nThe lower one controls the angle of the cannon.\n\nTo set the angle and range, press the lower button.\n\nTo get the angle and range, place binoculars.\n\nDon't be afraid, it's very simple!"),
+	Firing_range  = Translate("Firing range\\Дальность\nвыстрела\\Firing range\\Firing range\\Firing range\\Firing range"),
+	Angle		  = Translate("Angle\\Угол\\Angle\\Angle\\Angle\\Angle"),
 	
 	//Votes
 	Vote          = Translate("Vote\\Голосование\\Vote\\Głosować\\Vote\\Votar"),

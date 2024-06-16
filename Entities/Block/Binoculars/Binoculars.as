@@ -106,6 +106,15 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 	detached.getSprite().ResetTransform();
 }
 
+
+// Keeps an angle within the engine's boundaries (-740 to 740)
+const f32 loopAngle(f32 angle)
+{
+	while (angle < 0.0f)	angle += 360.0f;
+	while (angle > 360.0f)	angle -= 360.0f;
+	return angle;
+}
+
 void onRender(CSprite@ this)
 {
 	CBlob@ blob = this.getBlob();
@@ -114,32 +123,36 @@ void onRender(CSprite@ this)
 	if (occupier is null) return;
 
 	//visual
+	GUI::SetFont("menu");
+	const float zoom = getCamera().targetDistance;
+	Vec2f offset = Vec2f(-6/zoom,-6/zoom) * zoom; //for some reason images are not located exactly where they must be
 	Vec2f p1 = blob.get_Vec2f("point1");
 	Vec2f p2 = blob.get_Vec2f("point2");
-	Vec2f p1scr = getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point1"));
-	Vec2f p2scr = getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point2"));
-	GUI::DrawLine2D(getDriver().getScreenPosFromWorldPos(p1), getDriver().getScreenPosFromWorldPos(p2), SColor(255,255,0,0)); //line between the points
-	GUI::DrawIconByName("$BINO_CROSS$", getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point1")) - Vec2f(29, 29)); //aim icon
-	GUI::DrawIconByName("$BINO_CROSS$", getDriver().getScreenPosFromWorldPos(blob.get_Vec2f("point2")) - Vec2f(29, 29)); //aim icon
+	Vec2f p1scr = getDriver().getScreenPosFromWorldPos(p1) + offset;
+	Vec2f p2scr = getDriver().getScreenPosFromWorldPos(p2) + offset;
+	GUI::DrawLine2D(p1scr, p2scr, SColor(255,255,0,0)); //line between the points
+	GUI::DrawIconByName("$BINO_CROSS$", p1scr - Vec2f(29, 29)); //aim icon
+	GUI::DrawIconByName("$BINO_CROSS$", p2scr - Vec2f(29, 29)); //aim icon
 
 	Vec2f v = p2 - p1;
-	const string text = (v.Length() / 8) + " Blocks";
+	const string text = Maths::Round((v.Length() / 8)) + " Blocks";
 	GUI::DrawTextCentered(text, (p1scr + p2scr) / 2, SColor(255,255,0,0)); //length text
 	
-	f32 angle = v.Angle();
-	GUI::DrawText(angle + "°\n" + text, p1scr - Vec2f(50, 0).RotateBy(-angle), SColor(255,255,0,0)); //angle for p1
+	f32 angle = loopAngle(-(v.Angle()) - 90);
+	GUI::DrawText(Maths::Round(angle) + "°\n" + text, p1scr + Vec2f(0, 60).RotateBy(angle + 90), SColor(255,255,0,0)); //angle for p1
 	const f32 camRot = getCamera().getRotation();
 	//an ark that shows the angle
 	for(int i = 0; i < (angle / 5.625f); i++)
 	{
-		GUI::DrawIconByName("$REDDOT$", p1scr + Vec2f(30, 0).RotateBy(-i * 5.625f - camRot));
+		GUI::DrawIconByName("$REDDOT$", p1scr + Vec2f(0, 30).RotateBy(i * 5.625f - camRot));
 	}
 
-	angle = (-v).Angle();
-	GUI::DrawTextCentered(angle + "°\n" + text, p2scr - Vec2f(50, 0).RotateBy(-angle), SColor(255,255,0,0)); //angle for p2
+	angle = loopAngle(-((-v).Angle()) - 90);
+	GUI::DrawTextCentered(Maths::Round(angle) + "°\n" + text, p2scr + Vec2f(0, 60).RotateBy(angle + 90), SColor(255,255,0,0)); //angle for p2
 	//an ark that shows the angle
 	for(int i = 0; i < (angle / 5.625f); i++)
 	{
-		GUI::DrawIconByName("$REDDOT$", p2scr + Vec2f(30, 0).RotateBy(-i * 5.625f - camRot));
+		GUI::DrawIconByName("$REDDOT$", p2scr + Vec2f(0, 30).RotateBy(i * 5.625f - camRot));
 	}
+	GUI::SetFont("normal");
 }
