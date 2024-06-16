@@ -674,6 +674,10 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 		description = Trans::SponsonCannonDesc+"\n"+Trans::AmmoCap+": 15";
 		AddBlock(this, menu, "sponson", "$SPONSON$", Trans::Sponson, description, core, 3.5f);
 	}
+	{ //Autocannon
+		description = Trans::SponsonCannonDesc+"\n"+Trans::AmmoCap+": 15";
+		AddBlock(this, menu, "autocannon", "$AUTOCANNON$", Trans::Sponson, description, core, 3.5f);
+	}
 	{ //Cannon
 		description = Trans::CannonDesc+"\n"+Trans::AmmoCap+": 10";
 		AddBlock(this, menu, "cannon", "$CANNON$", Trans::Cannon, description, core, 3.25f);
