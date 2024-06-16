@@ -8,6 +8,7 @@ const u16 CREW_COUPLINGS_LEASE = 10 * 30;//time till the captain can control cre
 const u16 UNUSED_RESET = 2 * 60 * 30;
 const u8 CANNON_FIRE_CYCLE = 13;
 const u8 SPONSON_FIRE_CYCLE = 5;
+const u8 AUTOCANNON_FIRE_CYCLE = 0.1;
 
 void onInit(CBlob@ this)
 {
@@ -15,7 +16,7 @@ void onInit(CBlob@ this)
 
 	if (isServer())
 	{
-		u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons;					
+		u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons, autocannons;					
 		this.set("left_propellers", left_propellers);
 		this.set("strafe_left_propellers", strafe_left_propellers);
 		this.set("strafe_right_propellers", strafe_right_propellers);
@@ -25,6 +26,7 @@ void onInit(CBlob@ this)
 		this.set("machineguns", machineguns);
 		this.set("cannons", cannons);
 		this.set("sponsons", sponsons);
+		this.set("autocannons", autocannons);
 		
 		this.set_bool("kUD", false);
 		this.set_bool("kLR", false);
@@ -268,7 +270,7 @@ void onTick(CBlob@ this)
 		//ship controlling
 
 			// gather propellers, couplings, machineguns, cannons and sponsons
-			u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons;					
+			u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons, autocannons;					
 			this.get("left_propellers", left_propellers);
 			this.get("strafe_left_propellers", strafe_left_propellers);
 			this.get("strafe_right_propellers", strafe_right_propellers);
@@ -278,6 +280,7 @@ void onTick(CBlob@ this)
 			this.get("machineguns", machineguns);
 			this.get("cannons", cannons);
 			this.get("sponsons", sponsons);
+			this.get("autocannons", autocannons);
 
 			//propellers
 			const bool teamInsensitive = ship.owner != "*"; //combined ships, every side controls their own props
@@ -493,6 +496,58 @@ void onTick(CBlob@ this)
 						}
 						this.set_u8("sponsonFireIndex", index + 1);
 					}		
+				}
+
+				const u16 autocannonsLength = autocannons.length;
+				for (u16 i = 0; i < autocannonsLength; ++i)
+				{
+					CBlob@ autocannon = getBlobByNetworkID(autocannons[i]);;
+					if(autocannon !is null)
+					{
+						pos = autocannon.getPosition();
+						AimVec = aimpos - pos;
+						//rotate
+						CBitStream bs;
+						bs.write_Vec2f(AimVec);
+						autocannon.SendCommand(autocannon.getCommandID("rotate"), bs);
+					}
+				}
+				//fire
+				if (left_click && autocannonsLength > 0 && this.get_u32("lastAutocannonFIre") + AUTOCANNON_FIRE_CYCLE < gameTime)
+				{
+					CBlob@[] fireAutocannons;
+					for (u16 i = 0; i < autocannonsLength; ++i)
+					{
+						CBlob@ weap = getBlobByNetworkID(autocannons[i]);
+						if(weap !is null)
+						{
+							pos = weap.getPosition();
+							AimVec = aimpos - pos;
+							if (weap is null || !weap.get_bool("fire ready")) continue;
+										
+							Vec2f dirFacing = Vec2f(1, 0).RotateBy(weap.getAngleDegrees());
+							//if (Maths::Abs(dirFacing.AngleWith(aimpos)) < 40)
+								fireAutocannons.push_back(weap);
+						}
+					}
+							
+					if (fireAutocannons.length > 0)
+					{
+						const u8 index = this.get_u8("autocannonFireIndex");
+						CBlob@ weap = fireAutocannons[index % fireAutocannons.length];
+						pos = weap.getPosition();
+						AimVec = aimpos - pos;
+						if(isClearShot(weap, AimVec))
+						{
+							CBitStream bs;
+							bs.write_Vec2f(AimVec);
+							bs.write_netid(occupier.getNetworkID());
+							
+							weap.SendCommand(weap.getCommandID("RecieveFireCMD"), bs);
+							this.set_u32("lastAutocannonFire", gameTime);
+						}
+						this.set_u8("autocannonFireIndex", index + 1);
+					}		
 				
 				}
 
@@ -635,7 +690,7 @@ void updateArrays(CBlob@ this, Ship@ ship)
 {
 	this.set_bool("updateBlock", false);
 
-	u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons;	
+	u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons, autocannons;	
 	const u16 blocksLength = ship.blocks.length;
 	for (u16 i = 0; i < blocksLength; ++i)
 	{
@@ -654,6 +709,8 @@ void updateArrays(CBlob@ this, Ship@ ship)
 			cannons.push_back(netID);
 		else if (block.hasTag("sponson"))
 			sponsons.push_back(netID);
+		else if (block.hasTag("autocannon"))
+			autocannons.push_back(netID);
 		
 		//propellers
 		if (block.hasTag("engine"))
@@ -696,6 +753,7 @@ void updateArrays(CBlob@ this, Ship@ ship)
 	this.set("machineguns", machineguns);
 	this.set("cannons", cannons);
 	this.set("sponsons", sponsons);
+	this.set("autocannons", autocannons);
 }
 
 void server_setOwner(CBlob@ this, const string&in owner)
