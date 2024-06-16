@@ -6,8 +6,7 @@
 #include "ExplosionEffects.as";
 
 const f32 PROJECTILE_SPEED = 10.0f;
-const f32 FIRE_RATE = 800;	
-const int ENGINE_COEF = 9; //how much engines decrease reloading time, in ticks
+const f32 FIRE_RATE = 800;
 const f32 TURN_SPEED = 2.0f;
 
 const u8 MAX_AMMO = 6;
@@ -299,14 +298,4 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 {
 	if(detached is null) return;
 	detached.getSprite().ResetTransform();
-}
-
-void onRender(CSprite@ this)
-{
-	CBlob@ blob = this.getBlob();
-	AttachmentPoint@ seat = blob.getAttachmentPoint(0);
-	CBlob@ occupier = seat.getOccupied();
-	if (occupier is null) return;
-
-	
 }
