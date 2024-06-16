@@ -1,3 +1,5 @@
+#include "HumanCommon.as";
+
 //code from territory control
 
 void onRender(CSprite@ this)
@@ -8,7 +10,7 @@ void onRender(CSprite@ this)
 	CBlob@ blob = this.getBlob();
 	if (blob !is null && blob.isMyPlayer())
 	{
-		if(blob.get_string("current tool") == "pistol")
+		if(blob.get_string("current tool") == "pistol" && !Human::isHoldingBlocks(blob) && !blob.get_bool("getting block") && !blob.isAttached())
 		{
 				if(!hud.hasMenus())hud.HideCursor();
 				
