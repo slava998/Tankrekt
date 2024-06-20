@@ -20,6 +20,12 @@ void onTick(CBlob@ this)
 		}
 	}
     if(ui is null || !this.get_bool("running")) return;
+	CBlob@ blob = this; //FIXTHIS
+	if(blob is null || !blob.get_bool("running") || ui is null) return;
+	CPlayer@ localPly = getLocalPlayer();
+	AttachmentPoint@ seat = blob.getAttachmentPoint(0);
+	CPlayer@ occupier = seat.getOccupied().getPlayer();
+	if(localPly is null || occupier is null || localPly !is occupier) return;
 	ui.Update();
 }
 
@@ -106,6 +112,10 @@ void onRender(CSprite@ this)
 {
 	CBlob@ blob = this.getBlob();
 	if(blob is null || !blob.get_bool("running") || ui is null) return;
+	CPlayer@ localPly = getLocalPlayer();
+	AttachmentPoint@ seat = blob.getAttachmentPoint(0);
+	CPlayer@ occupier = seat.getOccupied().getPlayer();
+	if(localPly is null || occupier is null || localPly !is occupier) return;
 
 	Component@[] comps = stack.getComponents();
 	Slider@ range = cast<Slider@>(comps[2]);
