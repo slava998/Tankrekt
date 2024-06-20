@@ -33,6 +33,17 @@ void onInit(CBlob@ this)
 	
 }
 
+
+f32 dota(const Vec2f&in vec)
+{
+	return vec.x * vec.x + vec.y * vec.y;
+}
+
+f32 dotb(const f32&in a, const f32&in b)
+{
+	return a * a + b * b;
+}
+
 void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 {
 	
@@ -41,12 +52,41 @@ void onCollision(CBlob@ this, CBlob@ b, bool solid, Vec2f normal, Vec2f point1)
 	if ((b.hasTag("plank") && !CollidesWithPlank(b, this.getVelocity())) || b.hasTag("non-solid") || !b.getShape().getConsts().collidable)
 		return;
 	
-	//blow up inside the target (big damage)
 	const bool sameTeam = this.getTeamNum() == b.getTeamNum();
 
 	if (!sameTeam)
 	{
-		this.server_Hit(b, point1, Vec2f_zero, getDamage(b) * 7, Hitters::bomb, true);
+		
+		f32 ratio = 180 / 3.141592654;
+		CSprite@ sigma = this.getSprite();
+
+
+		Vec2f vel = this.getVelocity();
+		float dot = vel.x * normal.x + vel.y * normal.y;
+		Vec2f reflect = Vec2f(vel.x - 2.0f * dot * normal.x, vel.y - 2.0f * dot * normal.y);
+		f32 reflectAngle = reflect.Angle();
+
+		float dot123 = vel.x * reflect.x + vel.y * reflect.y;
+
+		float denominator = Maths::Sqrt(dota(vel) * dota(reflect));
+		float dot2 = Maths::Clamp(dot123 / denominator, -1.0f, 1.0f);
+		float anglebetween = Maths::ACos(dot2) * ratio;
+		
+
+		if (anglebetween > 100)
+		{
+			this.server_Hit(b, point1, Vec2f_zero, getDamage(b) * 7, Hitters::bomb, true);
+			this.server_Die();
+		}
+		else
+		{
+			sigma.RotateBy(reflectAngle - sigma.getWorldRotation(), Vec2f(0, 0));
+			this.setVelocity(reflect);
+			
+		}
+			
+		print("Angle:  " + anglebetween);
+		print("bibizyana:  " + sigma.getWorldRotation());
 	}
 }
 			
