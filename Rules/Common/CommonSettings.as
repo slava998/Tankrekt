@@ -40,7 +40,7 @@ void onInit(CRules@ this)
 	sv_visiblity_scale = 2.0f;
 	
 	//gameplay settings
-	this.set_u16("starting_booty", 325);         //booty given to players on map restart
+	this.set_u16("starting_booty", 1200);         //booty given to players on map restart
 	this.set_u16("warmup_time", 150 * 30);       //no weapons warmup time
 	this.set_u16("booty_x_max", 200);            //X maximum booty
 	this.set_u16("booty_x_min", 100);            //X minimum booty
