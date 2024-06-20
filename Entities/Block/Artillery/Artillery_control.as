@@ -20,12 +20,13 @@ void onTick(CBlob@ this)
 		}
 	}
     if(ui is null || !this.get_bool("running")) return;
-	CBlob@ blob = this; //FIXTHIS
-	if(blob is null || !blob.get_bool("running") || ui is null) return;
+	if(!this.get_bool("running") || ui is null) return;
 	CPlayer@ localPly = getLocalPlayer();
-	AttachmentPoint@ seat = blob.getAttachmentPoint(0);
-	CPlayer@ occupier = seat.getOccupied().getPlayer();
-	if(localPly is null || occupier is null || localPly !is occupier) return;
+	AttachmentPoint@ seat = this.getAttachmentPoint(0);
+	CBlob@ occupier = seat.getOccupied();
+	if(occupier is null) return;
+	CPlayer@ occupier_ply = occupier.getPlayer();
+	if(localPly is null || occupier_ply is null || localPly !is occupier_ply) return;
 	ui.Update();
 }
 
@@ -114,8 +115,11 @@ void onRender(CSprite@ this)
 	if(blob is null || !blob.get_bool("running") || ui is null) return;
 	CPlayer@ localPly = getLocalPlayer();
 	AttachmentPoint@ seat = blob.getAttachmentPoint(0);
-	CPlayer@ occupier = seat.getOccupied().getPlayer();
-	if(localPly is null || occupier is null || localPly !is occupier) return;
+	if(seat is null) return;
+	CBlob@ occupier = seat.getOccupied();
+	if(occupier is null) return;
+	CPlayer@ occupier_ply = occupier.getPlayer();
+	if(localPly is null || occupier_ply is null || localPly !is occupier_ply) return;
 
 	Component@[] comps = stack.getComponents();
 	Slider@ range = cast<Slider@>(comps[2]);
@@ -209,6 +213,12 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 {
 	if(detached !is null && detached.hasTag("player"))
 	{
+		if(this is null) return;
+		CPlayer@ localPly = getLocalPlayer();
+		AttachmentPoint@ seat = this.getAttachmentPoint(0);
+		CPlayer@ occupier = seat.getOccupied().getPlayer();
+		if(localPly is null || occupier is null || localPly !is occupier) return;
+		
 		this.set_bool("running", false);
 		if(ui !is null) ui.RemoveComponent(stack);
 	}
@@ -218,6 +228,12 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 {
 	if(attached !is null && attached.hasTag("player"))
 	{
+		if(this is null) return;
+		CPlayer@ localPly = getLocalPlayer();
+		AttachmentPoint@ seat = this.getAttachmentPoint(0);
+		CPlayer@ occupier = seat.getOccupied().getPlayer();
+		if(localPly is null || occupier is null || localPly !is occupier) return;
+		
 		this.set_bool("running", true);
 		Init(this);
 		Component@[] comps = stack.getComponents();

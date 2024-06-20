@@ -35,7 +35,7 @@ shared void setStartingBooty(CRules@ this)
 	const u8 plyCount = getPlayersCount();
 	for (u8 p = 0; p < plyCount; ++p)
 	{
-		server_setPlayerBooty(getPlayer(p).getUsername(), sv_test ? 9999 : initBooty);
+		server_setPlayerBooty(getPlayer(p).getUsername(), initBooty);
 	}
 }
 

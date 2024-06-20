@@ -32,11 +32,13 @@ void onTick(CBlob@ this)
 
 	AttachmentPoint@ seat = this.getAttachmentPoint(0);
 	CBlob@ occupier = seat.getOccupied();
-	if (occupier !is null)
-	{
-		this.set_u16("parentID", 0);
-		Manual(this, occupier);
-	}
+	if (occupier is null) return;
+	CPlayer@ localPly = getLocalPlayer();
+	CPlayer@ occupier_ply = seat.getOccupied().getPlayer();
+	if(localPly is null || occupier_ply is null || localPly !is occupier_ply) return;
+	
+	this.set_u16("parentID", 0);
+	Manual(this, occupier);
 }
 
 void Manual(CBlob@ this, CBlob@ controller)
@@ -121,6 +123,9 @@ void onRender(CSprite@ this)
 	AttachmentPoint@ seat = blob.getAttachmentPoint(0);
 	CBlob@ occupier = seat.getOccupied();
 	if (occupier is null) return;
+	CPlayer@ localPly = getLocalPlayer();
+	CPlayer@ occupier_ply = seat.getOccupied().getPlayer();
+	if(localPly is null || occupier_ply is null || localPly !is occupier_ply) return;
 
 	//visual
 	GUI::SetFont("menu");
