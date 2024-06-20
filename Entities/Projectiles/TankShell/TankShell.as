@@ -7,13 +7,13 @@
 #include "TileCommon.as";
 
 const f32 EXPLODE_RADIUS = 28.0f;		//Raycast range
-const f32 RAYCAST_DAMAGE = 4.0f; 		//There's 20 raycasts with this damage so it is not small
+const f32 RAYCAST_DAMAGE = 2.0f; 		//There's 20 raycasts with this damage so it is not small
 const u8  RAYCAST_NUM = 20; 			//Number of explosion rays fired in a circle
 const u8  PIERCE_NUM = 4;				//How many blocks raycast can pierce
 const f32 SPLASH_RADIUS = 12.0f;		//Splash is a damage through walls
-const f32 SPLASH_DAMAGE = 3.0f; 		//Splash is a damage through walls
-const f32 RAYCAST_DAMAGE_CORE = 1.0f; 	//Damage for cores
-const f32 SPLASH_DAMAGE_CORE = 2.0f;	//Damage for cores
+const f32 SPLASH_DAMAGE = 1.0f; 		//Splash is a damage through walls
+const f32 RAYCAST_DAMAGE_CORE = 0.5f; 	//Damage for cores
+const f32 SPLASH_DAMAGE_CORE = 0.5f;	//Damage for cores
 
 BootyRewards@ booty_reward;
 
