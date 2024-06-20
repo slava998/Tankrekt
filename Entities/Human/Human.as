@@ -24,7 +24,7 @@ const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
 const Vec2f BUILD_MENU_SIZE = Vec2f(8, 6);
 const Vec2f BUILD_MENU_TEST = Vec2f(8, 6); //for testing, only activates when sv_test is on
-const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
+const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 5);
 const f32 RELOAD_SLOW = 0.5f; //how much player is slowed while reloading
 u32 HEAL_TICKS = 15 * 30;
 //global is fine since only used with isMyPlayer

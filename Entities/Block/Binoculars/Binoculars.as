@@ -144,7 +144,7 @@ void onRender(CSprite@ this)
 	GUI::DrawTextCentered(text, (p1scr + p2scr) / 2, SColor(255,255,0,0)); //length text
 	
 	f32 angle = loopAngle(-(v.Angle()) - 90);
-	GUI::DrawText(Maths::Round(angle) + "°\n" + text, p1scr + Vec2f(0, 60).RotateBy(angle + 90), SColor(255,255,0,0)); //angle for p1
+	GUI::DrawText(Maths::Round(angle) + "°\n" + text, p1scr + Vec2f(0, 70).RotateBy(angle - 90), SColor(255,255,0,0)); //angle for p1
 	const f32 camRot = getCamera().getRotation();
 	//an ark that shows the angle
 	for(int i = 0; i < (angle / 5.625f); i++)
@@ -153,7 +153,7 @@ void onRender(CSprite@ this)
 	}
 
 	angle = loopAngle(-((-v).Angle()) - 90);
-	GUI::DrawTextCentered(Maths::Round(angle) + "°\n" + text, p2scr + Vec2f(0, 60).RotateBy(angle + 90), SColor(255,255,0,0)); //angle for p2
+	GUI::DrawTextCentered(Maths::Round(angle) + "°\n" + text, p2scr + Vec2f(0, 70).RotateBy(angle - 90), SColor(255,255,0,0)); //angle for p2
 	//an ark that shows the angle
 	for(int i = 0; i < (angle / 5.625f); i++)
 	{
