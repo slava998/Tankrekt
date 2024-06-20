@@ -5,7 +5,7 @@
 #include "PlankCommon.as";
 
 const f32 SPLASH_RADIUS = 10.0f;
-const f32 SPLASH_DAMAGE = 2.0f;
+const f32 SPLASH_DAMAGE = 0.5f;
 //const f32 MANUAL_DAMAGE_MODIFIER = 0.75f;
 
 const f32 ROCKET_FORCE = 7.5f;
