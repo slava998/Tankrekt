@@ -7,7 +7,7 @@ const f32 PROJECTILE_SPEED = 11.0f;
 const f32 PROJECTILE_SPREAD = 1.15;
 const int AUTOCANNON_FIRE_RATE = 10; //this also has to be copied to Seat.as!
 const f32 PROJECTILE_RANGE = 400.0f;
-const f32 RECOIL_POWER = 10.0f;
+const f32 RECOIL_POWER = 30.0f;
 
 const u8 MAX_AMMO = 50;
 const u8 REFILL_AMOUNT = 10;
@@ -158,14 +158,8 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 		Ship@ ship = getShipSet().getShip(this.getShape().getVars().customData);
 
-		Vec2f moveVel; 
-		Vec2f moveNorm;
-		float angleVel;
-
 		//Recoil
-		RecoilForcesAim(this, aimVector, ship, RECOIL_POWER, moveVel, moveNorm, angleVel);
-		ship.vel += moveVel/ship.mass;
-		ship.angle_vel += angleVel/ship.mass;
+		RecoilForces(this, aimVector, ship, RECOIL_POWER);
 
 		if (isClient())
 		{
