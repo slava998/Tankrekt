@@ -3,8 +3,8 @@ shared void RecoilForces(CBlob@ this, Vec2f aim, Ship@ ship, const f32&in power)
 	aim.Normalize();
 	print(aim.x + "|" + aim.y);
 	Vec2f moveVel = -(aim * power);
-	f32 moveSpeed = moveVel;
-	moveSpeed.Normalize()
+	Vec2f moveNorm = moveVel;
+	const f32 moveSpeed = moveNorm.Normalize();
 
 	// calculate "proper" force
 
