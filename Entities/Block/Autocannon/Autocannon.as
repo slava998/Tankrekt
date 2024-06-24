@@ -1,7 +1,7 @@
 #include "WeaponCommon.as";
 #include "AccurateSoundPlay.as";
 #include "ParticleSpark.as";
-#include "PropellerForceCommon.as";
+#include "RecoilCommon.as";
 
 const f32 PROJECTILE_SPEED = 11.0f;
 const f32 PROJECTILE_SPREAD = 1.15;
@@ -162,6 +162,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		Vec2f moveNorm;
 		float angleVel;
 
+		//Recoil
 		RecoilForcesAim(this, aimVector, ship, RECOIL_POWER, moveVel, moveNorm, angleVel);
 		ship.vel += moveVel/ship.mass;
 		ship.angle_vel += angleVel/ship.mass;
