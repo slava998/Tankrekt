@@ -216,8 +216,10 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 		if(this is null) return;
 		CPlayer@ localPly = getLocalPlayer();
 		AttachmentPoint@ seat = this.getAttachmentPoint(0);
-		CPlayer@ occupier = seat.getOccupied().getPlayer();
-		if(localPly is null || occupier is null || localPly !is occupier) return;
+		CBlob@ occupier = seat.getOccupied();
+		if(occupier is null) return;
+		CPlayer@ occupier_ply = occupier.getPlayer();
+		if(localPly is null || occupier_ply is null || localPly !is occupier_ply) return;
 		
 		this.set_bool("running", false);
 		if(ui !is null) ui.RemoveComponent(stack);
@@ -231,8 +233,10 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 		if(this is null) return;
 		CPlayer@ localPly = getLocalPlayer();
 		AttachmentPoint@ seat = this.getAttachmentPoint(0);
-		CPlayer@ occupier = seat.getOccupied().getPlayer();
-		if(localPly is null || occupier is null || localPly !is occupier) return;
+		CBlob@ occupier = seat.getOccupied();
+		if(occupier is null) return;
+		CPlayer@ occupier_ply = occupier.getPlayer();
+		if(localPly is null || occupier_ply is null || localPly !is occupier_ply) return;
 		
 		this.set_bool("running", true);
 		Init(this);

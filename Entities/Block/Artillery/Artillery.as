@@ -4,10 +4,12 @@
 #include "ShipsCommon.as";
 #include "Hitters.as";
 #include "ExplosionEffects.as";
+#include "RecoilCommon.as";
 
 const f32 PROJECTILE_SPEED = 10.0f;
 const f32 FIRE_RATE = 800;
 const f32 TURN_SPEED = 2.0f;
+const f32 RECOIL_POWER = 300.0f;
 
 const u8 MAX_AMMO = 6;
 const u8 REFILL_AMOUNT = 1;
@@ -280,6 +282,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				bullet.setAngleDegrees(angle);
             }
     	}
+		
+		Ship@ ship = getShipSet().getShip(this.getShape().getVars().customData);
+		//Recoil
+		RecoilForces(this, velocity, ship, RECOIL_POWER);
 
 		if (isClient())
 		{

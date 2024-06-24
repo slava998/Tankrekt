@@ -7,7 +7,7 @@ const f32 PROJECTILE_SPEED = 11.0f;
 const f32 PROJECTILE_SPREAD = 1.15;
 const int AUTOCANNON_FIRE_RATE = 10; //this also has to be copied to Seat.as!
 const f32 PROJECTILE_RANGE = 400.0f;
-const f32 RECOIL_POWER = 30.0f;
+const f32 RECOIL_POWER = 40.0f;
 
 const u8 MAX_AMMO = 50;
 const u8 REFILL_AMOUNT = 10;

@@ -1,10 +1,13 @@
 #include "WeaponCommon.as";
 #include "AccurateSoundPlay.as";
 #include "ParticleSpark.as";
+#include "ParticleSpark.as";
+#include "RecoilCommon.as";
 
 const f32 PROJECTILE_RANGE = 375.0F;
 const f32 PROJECTILE_SPEED = 15.0f;;
 const u16 FIRE_RATE = 500; //max wait between shots
+const f32 RECOIL_POWER = 1500.0f;
 
 const u8 MAX_AMMO = 8;
 const u8 REFILL_AMOUNT = 1;
@@ -152,6 +155,10 @@ void Fire(CBlob@ this, CBlob@ shooter)
 			}
 		}
 	}
+	
+	Ship@ ship = getShipSet().getShip(this.getShape().getVars().customData);
+	//Recoil
+	RecoilForces(this, aimVector, ship, RECOIL_POWER);
 
 	if (isClient())
 	{

@@ -1,11 +1,13 @@
 #include "WeaponCommon.as";
 #include "AccurateSoundPlay.as";
 #include "ParticleSpark.as";
+#include "RecoilCommon.as";
 
 const f32 PROJECTILE_SPEED = 9.0f;
 const f32 PROJECTILE_SPREAD = 1.15;
 const int SPONSON_FIRE_RATE = 60; //this also has to be copied to Seat.as!
 const f32 PROJECTILE_RANGE = 340.0f;
+const f32 RECOIL_POWER = 30.0f;
 
 const u8 MAX_AMMO = 15;
 const u8 REFILL_AMOUNT = 1;
@@ -203,6 +205,11 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				bullet.setAngleDegrees(-angle);
             }
     	}
+
+		Ship@ ship = getShipSet().getShip(this.getShape().getVars().customData);
+
+		//Recoil
+		RecoilForces(this, aimVector, ship, RECOIL_POWER);
 
 		if (isClient())
 		{
