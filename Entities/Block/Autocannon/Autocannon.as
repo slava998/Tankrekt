@@ -82,56 +82,6 @@ bool canShoot(CBlob@ this)
 	return this.get_u32("fire time") + FIRE_RATE < getGameTime();
 }
 
-const bool isClearShot(CBlob@ this, Vec2f&in aimVec, const bool&in targetMerged = false)
-{
-	Vec2f pos = this.getPosition();
-	const f32 distanceToTarget = Maths::Max(aimVec.Length(), 80.0f);
-	CMap@ map = getMap();
-
-	Vec2f offset = aimVec;
-	offset.Normalize();
-	offset *= 7.0f;
-
-	HitInfo@[] hitInfos;
-	map.getHitInfosFromRay(pos + offset.RotateBy(30), -aimVec.Angle(), distanceToTarget, this, @hitInfos);
-	map.getHitInfosFromRay(pos + offset.RotateBy(-60), -aimVec.Angle(), distanceToTarget, this, @hitInfos);
-	
-	const u8 hitLength = hitInfos.length;
-	if (hitLength > 0)
-	{
-		//HitInfo objects are sorted, first come closest hits
-		for (u8 i = 0; i < hitLength; i++)
-		{
-			HitInfo@ hi = hitInfos[i];
-			CBlob@ b = hi.blob;
-			if (b is null || b is this) continue;
-
-			const int thisColor = this.getShape().getVars().customData;
-			const int bColor = b.getShape().getVars().customData;
-			
-			const bool sameShip = bColor != 0 && thisColor == bColor;
-			const bool canShootSelf = targetMerged && hi.distance > distanceToTarget * 0.7f;
-
-			if (b.hasTag("block") && b.getShape().getVars().customData > 0 && !b.hasTag("non-solid") && b.getShape().getConsts().collidable && ((b.hasTag("solid") && !b.hasTag("plank")) || b.hasTag("weapon")) && sameShip && !canShootSelf)
-			{
-				return false;
-			}
-		}
-	}
-	
-	//check to make sure we aren't shooting through rock
-	Vec2f solidPos;
-	if (map.rayCastSolid(pos, pos + aimVec, solidPos))
-	{
-		AttachmentPoint@ seat = this.getAttachmentPoint(0);
-		CBlob@ occupier = seat.getOccupied();
-
-		if (occupier is null) return false;
-	}
-
-	return true;
-}
-
 void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
 {
 	const f32 aimdist = Maths::Min(aimVector.Normalize(), PROJECTILE_RANGE);
@@ -147,10 +97,7 @@ void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)
 	params.write_Vec2f(_vel);
 	params.write_f32(_lifetime);
 	this.SendCommand(this.getCommandID("fire"), params);
-	this.set_u32("fire time", getGameTime());
-
-
-	
+	this.set_u32("fire time", getGameTime());	
 }
 
 void Rotate(CBlob@ this, Vec2f&in aimVector)

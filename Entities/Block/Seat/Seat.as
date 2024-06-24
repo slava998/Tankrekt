@@ -537,7 +537,7 @@ void onTick(CBlob@ this)
 						CBlob@ weap = fireAutocannons[index % fireAutocannons.length];
 						pos = weap.getPosition();
 						AimVec = aimpos - pos;
-						if(isClearShot(weap, AimVec))
+						if(isClearShot(weap, AimVec, false, true))
 						{
 							CBitStream bs;
 							bs.write_Vec2f(AimVec);
@@ -608,7 +608,7 @@ void onTick(CBlob@ this)
 	}
 }
 
-const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged = false)
+const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged = false, const bool&in ignoreRocks = false)
 {
 	Vec2f pos = blob.getPosition();
 	const f32 distanceToTarget = Maths::Max(aimVec.Length(), 80.0f);
@@ -646,15 +646,17 @@ const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged 
 			}
 		}
 	}
-	
-	//check to make sure we aren't shooting through rock
-	Vec2f solidPos;
-	if (map.rayCastSolid(pos, pos + aimVec, solidPos))
+	if(!ignoreRocks)
 	{
-		AttachmentPoint@ seat = blob.getAttachmentPoint(0);
-		CBlob@ occupier = seat.getOccupied();
+		//check to make sure we aren't shooting through rock
+		Vec2f solidPos;
+		if (map.rayCastSolid(pos, pos + aimVec, solidPos))
+		{
+			AttachmentPoint@ seat = blob.getAttachmentPoint(0);
+			CBlob@ occupier = seat.getOccupied();
 
-		if (occupier is null) return false;
+			if (occupier is null) return false;
+		}
 	}
 
 	return true;
