@@ -9,7 +9,7 @@
 const f32 PROJECTILE_SPEED = 10.0f;
 const f32 FIRE_RATE = 800;
 const f32 TURN_SPEED = 2.0f;
-const f32 RECOIL_POWER = 300.0f;
+const f32 RECOIL_POWER = 1000.0f;
 
 const u8 MAX_AMMO = 6;
 const u8 REFILL_AMOUNT = 1;
