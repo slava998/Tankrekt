@@ -5,15 +5,15 @@
 
 const f32 PROJECTILE_SPEED = 11.0f;
 const f32 PROJECTILE_SPREAD = 1.15;
-const int FIRE_RATE = 10;
+const int AUTOCANNON_FIRE_RATE = 10; //this also has to be copied to Seat.as!
 const f32 PROJECTILE_RANGE = 400.0f;
 const f32 RECOIL_POWER = 10.0f;
 
-const u8 MAX_AMMO = 100;
-const u8 REFILL_AMOUNT = 5;
-const u8 REFILL_SECONDS = 3;
-const u8 REFILL_SECONDARY_CORE_SECONDS = 2;
-const u8 REFILL_SECONDARY_CORE_AMOUNT = 3;
+const u8 MAX_AMMO = 50;
+const u8 REFILL_AMOUNT = 10;
+const u8 REFILL_SECONDS = 15;
+const u8 REFILL_SECONDARY_CORE_SECONDS = 10;
+const u8 REFILL_SECONDARY_CORE_AMOUNT = 10;
 
 Random _shotspreadrandom(0x11598); //clientside
 
@@ -67,7 +67,7 @@ void onTick(CBlob@ this)
 	
 	//fire ready
 	const u32 fireTime = this.get_u32("fire time");
-	this.set_bool("fire ready", (gameTime > fireTime + FIRE_RATE));
+	this.set_bool("fire ready", (gameTime > fireTime + AUTOCANNON_FIRE_RATE));
 
 	if (isServer())
 	{
@@ -79,7 +79,7 @@ void onTick(CBlob@ this)
 
 bool canShoot(CBlob@ this)
 {
-	return this.get_u32("fire time") + FIRE_RATE < getGameTime();
+	return this.get_u32("fire time") + AUTOCANNON_FIRE_RATE < getGameTime();
 }
 
 void Fire(CBlob@ this, Vec2f&in aimVector, const u16&in netid)

@@ -22,9 +22,8 @@ const int DECONSTRUCT_RANGE = 16;
 const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of the block will be returned after deconstructing
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 6);
-const Vec2f BUILD_MENU_TEST = Vec2f(8, 6); //for testing, only activates when sv_test is on
-const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 5);
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
+const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 const f32 RELOAD_SLOW = 0.5f; //how much player is slowed while reloading
 u32 HEAL_TICKS = 15 * 30;
 //global is fine since only used with isMyPlayer
@@ -577,7 +576,7 @@ void PlayerControls(CBlob@ this)
 // Open the build menu
 void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&in offset, const bool&in isStation = false)
 {
-	CGridMenu@ menu = CreateGridMenu(this.getScreenPos() + offset, core, sv_test ? BUILD_MENU_TEST : BUILD_MENU_SIZE, desc);
+	CGridMenu@ menu = CreateGridMenu(this.getScreenPos() + offset, core,  BUILD_MENU_SIZE, desc);
 	if (menu is null) return;
 	
 	const bool warmup = getRules().isWarmup();

@@ -6,6 +6,7 @@
 #include "PlankCommon.as";
 
 const f32 FLAK_REACH = 70.0f;
+const f32 BASE_DAMAGE = 0.05f;
 
 BootyRewards@ booty_reward;
 
@@ -126,21 +127,21 @@ void onDie(CBlob@ this)
 
 const f32 getDamage(CBlob@ hitBlob)
 {
-	if (hitBlob.hasTag("strong")) return 0.2f;
+	if (hitBlob.hasTag("strong")) return BASE_DAMAGE;
 
 	if (hitBlob.hasTag("rocket"))
-		return 0.55f; 
+		return BASE_DAMAGE * 5.5f; 
 	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
-		return 0.3f;
+		return BASE_DAMAGE * 3; 
 	if (hitBlob.hasTag("ramengine"))
-		return 0.2f;
+		return BASE_DAMAGE * 2; 
 	if (hitBlob.hasTag("door"))
-		return 0.13f;
+		return BASE_DAMAGE * 1.3f; 
 	if (hitBlob.getName() == "shark" || hitBlob.getName() == "human")
-		return 0.5f;
+		return BASE_DAMAGE * 5; 
 	if (hitBlob.hasTag("seat") || hitBlob.hasTag("weapon") || hitBlob.hasTag("bomb") || hitBlob.hasTag("core"))
-		return 0.3f;
-	return 0.1f;
+		return BASE_DAMAGE * 3; 
+	return BASE_DAMAGE;
 }
 
 void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)

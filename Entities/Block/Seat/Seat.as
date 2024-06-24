@@ -8,7 +8,9 @@ const u16 CREW_COUPLINGS_LEASE = 10 * 30;//time till the captain can control cre
 const u16 UNUSED_RESET = 2 * 60 * 30;
 const u8 CANNON_FIRE_CYCLE = 13;
 const u8 SPONSON_FIRE_CYCLE = 5;
-const u8 AUTOCANNON_FIRE_CYCLE = 0.1;
+const int SPONSON_FIRE_RATE = 60; //this also has to be copied to Sponson.as!
+const int AUTOCANNON_FIRE_RATE = 10; //this also has to be copied to Sponson.as!
+const u8 AUTOCANNON_FIRE_CYCLE = 5;
 
 void onInit(CBlob@ this)
 {
@@ -460,7 +462,7 @@ void onTick(CBlob@ this)
 						sponson.SendCommand(sponson.getCommandID("rotate"), bs);
 					}
 				}
-				//fire
+				//fire sponsons
 				if (left_click && sponsonsLength > 0 && this.get_u32("lastSponsonFire") + SPONSON_FIRE_CYCLE < gameTime)
 				{
 					CBlob@[] fireSponsons;
@@ -485,7 +487,7 @@ void onTick(CBlob@ this)
 						CBlob@ weap = fireSponsons[index % fireSponsons.length];
 						pos = weap.getPosition();
 						AimVec = aimpos - pos;
-						if(isClearShot(weap, AimVec))
+						if(weap.get_u32("fire time") + SPONSON_FIRE_RATE < getGameTime() && isClearShot(weap, AimVec))
 						{
 							CBitStream bs;
 							bs.write_Vec2f(AimVec);
@@ -512,8 +514,8 @@ void onTick(CBlob@ this)
 						autocannon.SendCommand(autocannon.getCommandID("rotate"), bs);
 					}
 				}
-				//fire
-				if (left_click && autocannonsLength > 0 && this.get_u32("lastAutocannonFIre") + AUTOCANNON_FIRE_CYCLE < gameTime)
+				//fire autocannons
+				if (left_click && autocannonsLength > 0 && this.get_u32("lastAutocannonFire") + AUTOCANNON_FIRE_CYCLE < gameTime)
 				{
 					CBlob@[] fireAutocannons;
 					for (u16 i = 0; i < autocannonsLength; ++i)
@@ -537,7 +539,7 @@ void onTick(CBlob@ this)
 						CBlob@ weap = fireAutocannons[index % fireAutocannons.length];
 						pos = weap.getPosition();
 						AimVec = aimpos - pos;
-						if(isClearShot(weap, AimVec, false, true))
+						if(weap.get_u32("fire time") + AUTOCANNON_FIRE_RATE < getGameTime() && isClearShot(weap, AimVec, false, true))
 						{
 							CBitStream bs;
 							bs.write_Vec2f(AimVec);
