@@ -31,6 +31,5 @@ void onInit(CBlob@ this)
 	}
 
 	sprite.SetEmitSound("TankMovement");
-	sprite.SetEmitSoundVolume(0.5f);
 	sprite.SetEmitSoundPaused(true);
 }
