@@ -493,7 +493,7 @@ void onTick(CBlob@ this)
 							bs.write_Vec2f(AimVec);
 							bs.write_netid(occupier.getNetworkID());
 							
-							weap.SendCommand(weap.getCommandID("RecieveFireCMD"), bs);
+							weap.SendCommand(weap.getCommandID("fire"), bs);
 							this.set_u32("lastSponsonFire", gameTime);
 						}
 						this.set_u8("sponsonFireIndex", index + 1);
@@ -545,7 +545,7 @@ void onTick(CBlob@ this)
 							bs.write_Vec2f(AimVec);
 							bs.write_netid(occupier.getNetworkID());
 							
-							weap.SendCommand(weap.getCommandID("RecieveFireCMD"), bs);
+							weap.SendCommand(weap.getCommandID("fire"), bs);
 							this.set_u32("lastAutocannonFire", gameTime);
 						}
 						this.set_u8("autocannonFireIndex", index + 1);
