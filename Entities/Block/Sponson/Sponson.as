@@ -182,8 +182,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 		
 		CBlob@ caller = getBlobByNetworkID(params.read_netid());
 		aimVector.Normalize();
-		
-		
 
 		Vec2f spread(_shotspreadrandom.NextFloat() * PROJECTILE_SPREAD, 0);
 		spread.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
@@ -230,7 +228,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				layer.animation.SetFrameIndex(0);
 		}
     }
-	else if(cmd == this.getCommandID("rotate"))
+	else if(cmd == this.getCommandID("rotate")) //TODO: REWRITE! using commands for this is very bad
 	{
 		if(isClient())
 		{

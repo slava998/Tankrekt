@@ -459,7 +459,7 @@ void onTick(CBlob@ this)
 						//rotate
 						CBitStream bs;
 						bs.write_Vec2f(AimVec);
-						sponson.SendCommand(sponson.getCommandID("rotate"), bs);
+						sponson.SendCommand(sponson.getCommandID("rotate"), bs); //TODO: REWRITE! using commands for this is very bad
 					}
 				}
 				//fire sponsons

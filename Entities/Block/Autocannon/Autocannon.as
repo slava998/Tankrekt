@@ -159,7 +159,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				layer.animation.SetFrameIndex(0);
 		}
     }
-	else if(cmd == this.getCommandID("rotate"))
+	else if(cmd == this.getCommandID("rotate")) //TODO: REWRITE! using commands for this is very bad
 	{
 		if(isClient())
 		{
