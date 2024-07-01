@@ -6,11 +6,17 @@
 const u16 COUPLINGS_COOLDOWN = 8 * 30;
 const u16 CREW_COUPLINGS_LEASE = 10 * 30;//time till the captain can control crew's couplings
 const u16 UNUSED_RESET = 2 * 60 * 30;
+
 const u8 CANNON_FIRE_CYCLE = 13;
+
 const u8 SPONSON_FIRE_CYCLE = 5;
 const int SPONSON_FIRE_RATE = 60; //this also has to be copied to Sponson.as!
+
 const int AUTOCANNON_FIRE_RATE = 10; //this also has to be copied to Sponson.as!
 const u8 AUTOCANNON_FIRE_CYCLE = 5;
+
+int degree = 45 ;
+
 
 void onInit(CBlob@ this)
 {
@@ -18,13 +24,14 @@ void onInit(CBlob@ this)
 
 	if (isServer())
 	{
-		u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons, autocannons;					
+		u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, rotate_wheels, machineguns, cannons, sponsons, autocannons;					
 		this.set("left_propellers", left_propellers);
 		this.set("strafe_left_propellers", strafe_left_propellers);
 		this.set("strafe_right_propellers", strafe_right_propellers);
 		this.set("right_propellers", right_propellers);
 		this.set("up_propellers", up_propellers);
 		this.set("down_propellers", down_propellers);
+		this.set("rotate_wheels", rotate_wheels);
 		this.set("machineguns", machineguns);
 		this.set("cannons", cannons);
 		this.set("sponsons", sponsons);
@@ -67,7 +74,8 @@ void onTick(CBlob@ this)
 	const u32 gameTime = getGameTime();
 	const u8 teamNum = this.getTeamNum();
 	const string seatOwner = this.get_string("playerOwner");
-	
+
+
 	if (isServer())
 	{
 		//clear ownership on player leave/change team or seat not used
@@ -272,13 +280,14 @@ void onTick(CBlob@ this)
 		//ship controlling
 
 			// gather propellers, couplings, machineguns, cannons and sponsons
-			u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons, autocannons;					
+			u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, rotate_wheels, machineguns, cannons, sponsons, autocannons;					
 			this.get("left_propellers", left_propellers);
 			this.get("strafe_left_propellers", strafe_left_propellers);
 			this.get("strafe_right_propellers", strafe_right_propellers);
 			this.get("right_propellers", right_propellers);
 			this.get("up_propellers", up_propellers);
 			this.get("down_propellers", down_propellers);
+			this.get("rotate_wheels", rotate_wheels);
 			this.get("machineguns", machineguns);
 			this.get("cannons", cannons);
 			this.get("sponsons", sponsons);
@@ -293,6 +302,7 @@ void onTick(CBlob@ this)
 			const u16 rightPropLength = right_propellers.length;
 			const u16 leftStrafePropLength = strafe_left_propellers.length;
 			const u16 rightStrafePropLength = strafe_right_propellers.length;
+			const u16 RotateWheelsLength = rotate_wheels.length;
 			
 			//reset			
 			if (this.get_bool("kUD") && !up && !down)
@@ -308,6 +318,12 @@ void onTick(CBlob@ this)
 				for (u16 i = 0; i < downPropLength; ++i)
 				{
 					CBlob@ prop = getBlobByNetworkID(down_propellers[i]);
+					if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+						prop.set_f32("power", 0);
+				}
+				for (u16 i = 0; i < RotateWheelsLength; ++i)
+				{
+					CBlob@ prop = getBlobByNetworkID(rotate_wheels[i]);
 					if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
 						prop.set_f32("power", 0);
 				}
@@ -386,6 +402,15 @@ void onTick(CBlob@ this)
 						prop.set_f32("power", down ? power * prop.get_f32("powerFactor") : reverse_power * prop.get_f32("powerFactor"));
 					}
 				}
+				for (u16 i = 0; i < RotateWheelsLength; ++i)
+				{
+					CBlob@ prop = getBlobByNetworkID(rotate_wheels[i]);
+					if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+					{
+						prop.set_u32("onTime", gameTime);
+						prop.set_f32("power", up ? power * prop.get_f32("powerFactor") : reverse_power * prop.get_f32("powerFactor"));
+					}
+				}
 			}
 			
 			if (left || right)
@@ -397,19 +422,40 @@ void onTick(CBlob@ this)
 					for (u16 i = 0; i < leftPropLength; ++i)
 					{
 						CBlob@ prop = getBlobByNetworkID(left_propellers[i]);
-						if (prop !is null && seatColor == prop.getShape().getVars().customData &&  (teamInsensitive || teamNum == prop.getTeamNum()))
+						if (prop !is null && seatColor == prop.getShape().getVars().customData && !prop.hasTag("wheel") && (teamInsensitive || teamNum == prop.getTeamNum()))
 						{
 							prop.set_u32("onTime", gameTime);
 							prop.set_f32("power", left ? power * prop.get_f32("powerFactor") : reverse_power * prop.get_f32("powerFactor"));
+								
 						}
 					}
 					for (u16 i = 0; i < rightPropLength; ++i)
 					{
 						CBlob@ prop = getBlobByNetworkID(right_propellers[i]);
-						if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+						if (prop !is null && seatColor == prop.getShape().getVars().customData && !prop.hasTag("wheel") && (teamInsensitive || teamNum == prop.getTeamNum()))
 						{
 							prop.set_u32("onTime", gameTime);
 							prop.set_f32("power", right ? power * prop.get_f32("powerFactor") : reverse_power * prop.get_f32("powerFactor"));
+						}
+					}
+					
+					for (u16 i = 0; i < RotateWheelsLength; ++i)
+					{
+						CBlob@ prop = getBlobByNetworkID(rotate_wheels[i]);
+						if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+						{
+
+							if (prop.hasTag("reverse_rotate"))
+								degree = -degree;
+
+							if (left)
+							{
+								prop.setAngleDegrees(prop.getAngleDegrees() - degree);
+							}			
+							else
+							{
+								prop.setAngleDegrees(prop.getAngleDegrees() - -degree);
+							}
 						}
 					}
 				}
@@ -664,6 +710,7 @@ const bool isClearShot(CBlob@ blob, Vec2f&in aimVec, const bool&in targetMerged 
 	return true;
 }
 
+
 //stop props on sit down if possible
 void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint@ attachedPoint)
 {
@@ -694,7 +741,7 @@ void updateArrays(CBlob@ this, Ship@ ship)
 {
 	this.set_bool("updateBlock", false);
 
-	u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, cannons, sponsons, autocannons;	
+	u16[] left_propellers, strafe_left_propellers, strafe_right_propellers, right_propellers, up_propellers, down_propellers, machineguns, rotate_wheels, cannons, sponsons, autocannons;	
 	const u16 blocksLength = ship.blocks.length;
 	for (u16 i = 0; i < blocksLength; ++i)
 	{
@@ -715,6 +762,9 @@ void updateArrays(CBlob@ this, Ship@ ship)
 			sponsons.push_back(netID);
 		else if (block.hasTag("autocannon"))
 			autocannons.push_back(netID);
+		
+		else if (block.hasTag("rotates"))
+			rotate_wheels.push_back(netID);
 		
 		//propellers
 		if (block.hasTag("engine"))
@@ -754,6 +804,7 @@ void updateArrays(CBlob@ this, Ship@ ship)
 	this.set("right_propellers", right_propellers);
 	this.set("up_propellers", up_propellers);
 	this.set("down_propellers", down_propellers);
+	this.set("rotate_wheels", rotate_wheels);
 	this.set("machineguns", machineguns);
 	this.set("cannons", cannons);
 	this.set("sponsons", sponsons);

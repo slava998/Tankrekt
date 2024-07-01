@@ -10,7 +10,6 @@ void onInit(CBlob@ this)
 	this.addCommandID("on/off");
 	this.addCommandID("off");
 	this.addCommandID("stall");
-	this.Tag("engine");
 }
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)

@@ -3,6 +3,7 @@ void onInit(CBlob@ this)
 	this.Tag("ramengine");
 	this.Tag("ramming");
 	this.Tag("solid");
+	this.Tag("engine");
 	
 	this.set_f32("weight", 1.25f);
 	

@@ -3,8 +3,7 @@ void onInit(CBlob@ this)
 	this.Tag("propeller");
 	this.Tag("solid");
 	this.Tag("landMotor");
-	this.Tag("wheel");
-	this.Tag("engine");
+	this.Tag("rotates");
 	this.set_f32("mass_coef", 0.05f); //has an extremely strong effect on heavy tanks, high values will make them literally immovable
 	
 	this.set_f32("weight", 1.0f);
@@ -14,8 +13,13 @@ void onInit(CBlob@ this)
 	this.set_u32("onTime", 0);
 	this.set_u8("stallTime", 0);
 
+	this.set_u8("seat icon", 1);
+	this.set_string("seat label", "");
+	this.set_u8("seat icon", 0);
+	this.addCommandID("get in seat");
+
 	CSprite@ sprite = this.getSprite();
-	CSpriteLayer@ propeller = sprite.addSpriteLayer( "propeller","Wheel.png", 16,16 );
+	CSpriteLayer@ propeller = sprite.addSpriteLayer( "propeller","RotatingWheel.png", 16,16 );
 	if(propeller !is null)
 	{
 		propeller.ScaleBy(Vec2f(0.5f, 0.5f));
@@ -33,11 +37,37 @@ void onInit(CBlob@ this)
 		propeller.SetAnimation("go");
 	}
 
-	sprite.SetEmitSound("Wheel_Loop");
+	sprite.SetEmitSound("RotatingWheel_Loop");
 	sprite.SetEmitSoundVolume(0.5f);
 	sprite.SetEmitSoundPaused(true);
+}
 
-	
+void GetButtonsFor(CBlob@ this, CBlob@ caller)
+{
+	if (this.getDistanceTo(caller) > 200
+		|| this.getShape().getVars().customData <= 0
+		|| this.getTeamNum() != caller.getTeamNum())
+		return;
+
+	CBitStream params;
+	params.write_u32(getGameTime());
+	CButton@ button = caller.CreateGenericButton(1, Vec2f_zero, this, ReverseRotate, "Reverse rotate");
+	if (button !is null)
+	{
+		button.radius = 16.0f;
+		button.enableRadius = 120.0f;
+	}
 }
 
 
+void ReverseRotate(CBlob@ this, CBlob@ caller)
+{
+	if (!this.hasTag("reverse_rotate"))
+	{
+		this.Tag("reverse_rotate");
+	}
+	else
+	{
+		this.Untag("reverse_rotate");
+	}
+}

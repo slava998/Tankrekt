@@ -2,6 +2,7 @@ void onInit(CBlob@ this)
 {
 	this.Tag("propeller");
 	this.Tag("solid");
+	this.Tag("engine");
 	
 	this.set_f32("weight", 1.0f);
 	

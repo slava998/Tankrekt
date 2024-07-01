@@ -598,6 +598,9 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Wheel
 		AddBlock(this, menu, "wheel", "$WHEEL$", Trans::Wheel, Trans::WheelDesc, core, 1.0f);
 	}
+	{ //Wheel
+		AddBlock(this, menu, "rotatingwheel", "$ROTATINGWHEEL$", Trans::Wheel, Trans::WheelDesc, core, 1.0f);
+	}
 	{ //Engine
 		description = Trans::EngineBlockDesc;
 		AddBlock(this, menu, "engineblock", "$ENGINEBLOCK$", Trans::EngineBlock, description, core, 3.0f);
