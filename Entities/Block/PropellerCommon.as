@@ -70,90 +70,97 @@ void onTick(CBlob@ this)
 	}
 	
 	if (on)
-	{		
-		const bool touching_land = isTouchingLand(this.getPosition());
-		if (!touching_land || this.hasTag("landMotor")) //turn off if we are on ground if it is propeller or if we are in water and it is tank tracks
+	{	
+		//auto turn off after a while
+		if (isServer() && gameTime - this.get_u32("onTime") > 750)
 		{
-			//auto turn off after a while
-			if (isServer() && gameTime - this.get_u32("onTime") > 750)
+			this.SendCommand(this.getCommandID("off"));
+			return;
+		}
+			
+		Ship@ ship = getShipSet().getShip(col);
+		if (ship !is null)
+		{
+			// move
+			Vec2f moveVel;
+			Vec2f moveNorm;
+			float angleVel;
+				
+			PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
+			
+			const f32 mass = ship.mass + ship.carryMass + 0.01f;
+			moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+			angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+			
+			if(isTouchingShoal(this.getPosition())) //shoal slows both land and water motors, but not as hard as ground and water
 			{
-				this.SendCommand(this.getCommandID("off"));
-				return;
+				moveVel *= 0.1f;
+				angleVel *= 0.1f;	
+			}
+			else
+			{
+				const bool touching_land = isTouchingLand(this.getPosition());
+				if((this.hasTag("landMotor") && !touching_land) ||
+				   (!this.hasTag("landMotor") && touching_land)) //Slow if on the wrong surface. Water slows tracks and wheels, ground slwos propellers
+				{
+					moveVel *= 0.015f;
+					angleVel *= 0.015f;	
+				}
+			}
+
+			ship.vel += moveVel;
+			ship.angle_vel += angleVel;
+			
+			if (isServer() && (gameTime + this.getNetworkID()) % 15 == 0)
+			{
+				//low health stall failure
+				const f32 healthPct = this.getHealth()/this.getInitialHealth();
+				if (healthPct < 0.25f && !stalled && XORRandom(25) == 0)
+				{
+					const u8 stallTime = 30 + XORRandom(50);
+					this.set_u8("stallTime", stallTime);
+					CBitStream params;
+					params.write_u8(stallTime);
+					this.SendCommand(this.getCommandID("stall"), params);
+				}
+				
+				//eat stuff
+				if(!this.hasTag("landMotor"))
+				{
+					Vec2f faceNorm(0,-1);
+					faceNorm.RotateBy(this.getAngleDegrees());
+					CBlob@ victim = getMap().getBlobAtPosition(pos - faceNorm * 8);
+					if (victim !is null && victim.getShape().getVars().customData > 0)
+					{
+						const f32 hitPower = Maths::Max(0.5f, Maths::Abs(this.get_f32("power")));
+						if (!victim.hasTag("core"))
+							this.server_Hit(victim, pos, Vec2f_zero, hitPower, 9, true);
+						else
+							victim.server_Hit(this, pos, Vec2f_zero, hitPower, 9, true);
+					}
+				}
 			}
 			
-			Ship@ ship = getShipSet().getShip(col);
-			if (ship !is null)
+			// effects
+			if (isClient())
 			{
-				// move
-				Vec2f moveVel;
-				Vec2f moveNorm;
-				float angleVel;
-				
-				PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
-				
-				const f32 mass = ship.mass + ship.carryMass + 0.01f;
-				moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
-				angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
-				if(this.hasTag("landMotor") && !touching_land)
+				const u8 tickStep = v_fastrender ? 20 : 4;
+				if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1)
 				{
-					moveVel *= 0.01f;
-					angleVel *= 0.01f;
+					const Vec2f rpos = Vec2f(_r.NextFloat() * -4 + 4, _r.NextFloat() * -4 + 4);
+					if(isTouchingLand(pos)) Dust(pos + moveNorm * -6 + rpos, moveNorm * (-0.4f + _r.NextFloat() * -0.15f));
+					else MakeWaterParticle(pos + moveNorm * -6 + rpos, -moveVel * (-0.8f + _r.NextFloat() * -0.3f));
 				}
 				
-				ship.vel += moveVel;
-				ship.angle_vel += angleVel;
-				
-				if (isServer() && (gameTime + this.getNetworkID()) % 15 == 0)
+				// limit sounds
+				if (ship.soundsPlayed == 0 && sprite.getEmitSoundPaused())
 				{
-					//low health stall failure
-					const f32 healthPct = this.getHealth()/this.getInitialHealth();
-					if (healthPct < 0.25f && !stalled && XORRandom(25) == 0)
-					{
-						const u8 stallTime = 30 + XORRandom(50);
-						this.set_u8("stallTime", stallTime);
-						CBitStream params;
-						params.write_u8(stallTime);
-						this.SendCommand(this.getCommandID("stall"), params);
-					}
-					
-					//eat stuff
-					if(!this.hasTag("landMotor"))
-					{
-						Vec2f faceNorm(0,-1);
-						faceNorm.RotateBy(this.getAngleDegrees());
-						CBlob@ victim = getMap().getBlobAtPosition(pos - faceNorm * 8);
-						if (victim !is null && victim.getShape().getVars().customData > 0)
-						{
-							const f32 hitPower = Maths::Max(0.5f, Maths::Abs(this.get_f32("power")));
-							if (!victim.hasTag("core"))
-								this.server_Hit(victim, pos, Vec2f_zero, hitPower, 9, true);
-							else
-								victim.server_Hit(this, pos, Vec2f_zero, hitPower, 9, true);
-						}
-					}
+					sprite.SetEmitSoundPaused(false);
 				}
-				
-				// effects
-				if (isClient())
-				{
-					const u8 tickStep = v_fastrender ? 20 : 4;
-					if ((gameTime + this.getNetworkID()) % tickStep == 0 && Maths::Abs(power) >= 1)
-					{
-						const Vec2f rpos = Vec2f(_r.NextFloat() * -4 + 4, _r.NextFloat() * -4 + 4);
-						if(isTouchingLand(pos)) Dust(pos + moveNorm * -6 + rpos, moveNorm * (-0.4f + _r.NextFloat() * -0.15f));
-						else MakeWaterParticle(pos + moveNorm * -6 + rpos, -moveVel * (-0.8f + _r.NextFloat() * -0.3f));
-					}
-					
-					// limit sounds
-					if (ship.soundsPlayed == 0 && sprite.getEmitSoundPaused())
-					{
-						sprite.SetEmitSoundPaused(false);
-					}
 
-					ship.soundsPlayed++;
-					const f32 vol = Maths::Min(0.5f + float(ship.soundsPlayed)*0.5f, 3.0f);
-					sprite.SetEmitSoundVolume(vol);
-				}
+				ship.soundsPlayed++;
+				const f32 vol = Maths::Min(0.5f + float(ship.soundsPlayed)*0.5f, 3.0f);
+				sprite.SetEmitSoundVolume(vol);
 			}
 		}
 	}
