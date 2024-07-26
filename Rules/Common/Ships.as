@@ -2,9 +2,11 @@
 #include "AccurateSoundPlay.as";
 #include "TileCommon.as";
 
-const f32 VEL_DAMPING = 0.96f; //0.96
+const f32 VEL_DAMPING = 0.96f; //0.96 //Old shiprekt water friction. The closer the value to 1, the less friction you will get.
 const f32 ANGLE_VEL_DAMPING = 0.96; //0.96
 const u32 FORCE_UPDATE_TICKS = 21;
+
+const f32 FRICTION_COEF = 1.25f; //Amount of friction when moving on ground. bigger value = ground will slow the tank more.
 
 f32 UPDATE_DELTA_SMOOTHNESS = 10.0f; //~16-64
 bool ship_debug = false;
@@ -467,8 +469,6 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			ship.old_angle = ship.angle;
 			ship.pos += ship.vel;
 			ship.angle = loopAngle(ship.angle + ship.angle_vel);
-			ship.vel *= VEL_DAMPING;
-			ship.angle_vel *= ANGLE_VEL_DAMPING;
 			
 			Vec2f offset = ship.origin_offset;
 			offset.RotateBy(ship.angle);
@@ -476,16 +476,54 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			
 			//check for beached or slowed ships
 			
-			u16 beachedBlocks = 0;
-			u16 tiles = 0;
-			u16 multiplier = 1;
-			u16 shoalBlocks = 0;
-			u16 roadBlocks = 0;
-			u16 mudBlocks = 0;
+			f32 beachedBlocks = 0;
+			f32 roadBlocks = 0;
+			f32 mudBlocks = 0;
 
-			f32 maxVel = 0;
-			
 			for (u16 q = 0; q < blocksLength; ++q)
+			{
+				CBlob@ b = getBlobByNetworkID(ship.blocks[q].blobID);
+				if (b is null) continue;
+				
+				Vec2f bPos = b.getPosition();	
+				Tile bTile = map.getTile(bPos);
+				const u16 tileType = map.getTile(bPos).type;
+				// print("tiletype: " + tileType);
+				
+				if (map.isTileSolid(bTile) && bPos.Length() > 15.0f) //are we on rock
+				{
+					TileCollision(ship, bPos);
+					if (!b.hasTag("mothership") || this.get_bool("whirlpool"))
+						b.server_Hit(b, bPos, Vec2f_zero, 1.0f, 0, true);
+					continue;
+				}
+				
+				if (tileType == 394) // are we touching road (it reduces friction)
+					beachedBlocks += 0.9f; //it looks like a small improvement but it boosts speed very nice
+				else if (tileType == 395) // are we touching mud (it increases friction)
+					beachedBlocks += 2.5f;
+				else if (isTouchingShoal(bPos) || isTouchingLand(bPos) || tileType == 394 || tileType == 395) // are we touching any other land
+					beachedBlocks++;
+			}
+			
+			//Calculate and apply friction
+
+			const f32 beached_amount = beachedBlocks / blocksLength; //this defines how many blocks are on land. If all blacks are on land it is equal to 1, if all blocks are in water it is equal to 0
+				
+			if(beached_amount > 0) //friction is land
+			{
+				const f32 land_friction = Maths::Max(FRICTION_COEF * beached_amount, 1);
+				ship.vel /= land_friction;
+				ship.angle_vel /= land_friction;
+			}
+			if(beached_amount < 1) //old shiprekt friction in water
+			{
+				const f32 water_friction = Maths::Min(VEL_DAMPING / (1-beached_amount), 1);
+				ship.vel *= water_friction;
+				ship.angle_vel *= water_friction;
+			}
+	
+			/*for (u16 q = 0; q < blocksLength; ++q)
 			{
 				CBlob@ b = getBlobByNetworkID(ship.blocks[q].blobID);
 				if (b is null) continue;
@@ -532,7 +570,7 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 				ship.vel *= 1.0f - velocity;
 				ship.angle_vel *= 1.0f - velocity;
 				multiplier = 1;
-			}
+			}*/
 		}
 		
 		if (!isServer() || (getGameTime() + ship.id * 33) % 45 != 0)
