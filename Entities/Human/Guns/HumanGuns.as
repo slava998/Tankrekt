@@ -24,7 +24,7 @@ void ChangeGun(CBlob@ this, const string gun)
 		this.set_u8("shot_spread", 0); 				//Shooting spread angle
 		this.set_u16("reloading_time", 60);			//Reloading duration (in ticks)
 		this.set_u8("b_count", 1);					//Bullets per shot count
-		this.set_f32("human_damage_mod", 1.0f);		//Multipiller of damage to players
+		this.set_f32("human_damage_mod", 1.6f);		//Multipiller of damage to players
 		this.set_string("proj_blob", "");			//Projectile the gun shoots. Set to "" to disable.
 		this.set_u16("total_ammo_max", 0); 			//the maximum number of rounds in stock. set it to 0 to make it infinite.
 		
