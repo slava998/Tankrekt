@@ -56,8 +56,11 @@ void onTick(CBlob@ this)
 	}
 
 	if (isServer())
+	{
 		this.Sync("power", true); //-179363002 HASH
-
+		this.Sync("rot_angle", true);
+	}
+	
 	if (stalled)
 	{
 		this.set_u8("stallTime", stallTime - 1);
@@ -89,10 +92,22 @@ void onTick(CBlob@ this)
 				float angleVel;
 				
 				PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
+				//print("" + this.get_f32("rot_angle"));
 				
 				const f32 mass = ship.mass + ship.carryMass + 0.01f;
-				moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
-				angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+				
+				//moveVel /= mass + (mass*mass * this.get_f32("mass_coef")); //If you enable this code you can make wheels that became less effective on heavy tanks.
+				//angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+				//
+				//an example of usage of mass_coef parameter
+				//||
+				//||
+				//\/
+				//
+				//this.set_f32("mass_coef", 0.05f); //has an extremely strong effect on heavy tanks, high values will make them literally immovable
+				
+				moveVel /= mass;
+				angleVel /= mass;
 				if(this.hasTag("landMotor") && !touching_land)
 				{
 					moveVel *= 0.01f;

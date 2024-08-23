@@ -478,7 +478,7 @@ void UpdateShips(CRules@ this, const bool&in integrate = true)
 			
 			u16 beachedBlocks = 0;
 			u16 tiles = 0;
-			u16 multiplier = 0;
+			u16 multiplier = 1;
 			u16 shoalBlocks = 0;
 			u16 roadBlocks = 0;
 			u16 mudBlocks = 0;

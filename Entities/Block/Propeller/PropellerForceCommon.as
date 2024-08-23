@@ -8,8 +8,7 @@ const f32 ENGINE_BOOST = 0.3f;
 
 shared void PropellerForces(CBlob@ this, Ship@ ship, const f32&in power, Vec2f&out moveVel, Vec2f&out moveNorm, f32&out angleVel)
 {
-
-	moveVel = Vec2f(0.0f, (PROPELLER_SPEED + ENGINE_BOOST * ship.engineblockcount) * power).RotateBy(this.getAngleDegrees());
+	moveVel = Vec2f(0.0f, (PROPELLER_SPEED + ENGINE_BOOST * ship.engineblockcount) * power).RotateBy(this.getAngleDegrees() + this.get_f32("rot_angle"));
 	moveNorm = moveVel;
 	const f32 moveSpeed = moveNorm.Normalize();
 

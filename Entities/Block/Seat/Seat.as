@@ -346,6 +346,14 @@ void onTick(CBlob@ this)
 						if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
 							prop.set_f32("power", 0);
 					}
+					for (u16 i = 0; i < RotateWheelsLength; ++i)
+					{
+						CBlob@ prop = getBlobByNetworkID(rotate_wheels[i]);
+						if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+						{
+							prop.set_f32("rot_angle", 0);
+						}
+					}
 				}
 			}
 			if (this.get_bool("kS") || !strafe)
@@ -385,7 +393,7 @@ void onTick(CBlob@ this)
 				this.set_bool("kUD", true);
 
 				for (u16 i = 0; i < upPropLength; ++i)
-				{
+				{	
 					CBlob@ prop = getBlobByNetworkID(up_propellers[i]);
 					if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
 					{
@@ -445,16 +453,17 @@ void onTick(CBlob@ this)
 						if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
 						{
 
-							if (prop.hasTag("reverse_rotate"))
-								degree = -degree;
-
 							if (left)
 							{
-								prop.setAngleDegrees(prop.getAngleDegrees() - degree);
+								//prop.setAngleDegrees(prop.getAngleDegrees() + (prop.hasTag("reverse_rotate") ? degree : -degree) * (down ? -1 : 1));
+								if(!prop.hasTag("reverse_rotate")) prop.set_f32("rot_angle", -45);
+								else prop.set_f32("rot_angle", 45);
 							}			
 							else
 							{
-								prop.setAngleDegrees(prop.getAngleDegrees() - -degree);
+								//prop.setAngleDegrees(prop.getAngleDegrees() - (prop.hasTag("reverse_rotate") ? degree : -degree) * (down ? -1 : 1));
+								if(!prop.hasTag("reverse_rotate")) prop.set_f32("rot_angle", 45);
+								else prop.set_f32("rot_angle", -45);
 							}
 						}
 					}
@@ -722,7 +731,7 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint@ attachedPoint)
 	}
 }
 
-//keep props alive onDetach
+//keep props alive and reset wheel rotation onDetach
 void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 {
 	if (isServer())
@@ -730,6 +739,27 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 		this.set_bool("kUD", false);
 		this.set_bool("kLR", false);
 		this.set_bool("kS", true);
+	
+	//reset the angles of wheels
+		const int seatColor = this.getShape().getVars().customData;
+		Ship@ ship = getShipSet().getShip(seatColor);
+		if (ship is null) return;
+		
+		u16[] rotate_wheels;
+		this.get("rotate_wheels", rotate_wheels);
+		const u16 RotateWheelsLength = rotate_wheels.length;
+		
+		const bool teamInsensitive = ship.owner != "*"; //combined ships, every side controls their own props
+		const u8 teamNum = this.getTeamNum();
+
+		for (u16 i = 0; i < RotateWheelsLength; ++i)
+		{
+			CBlob@ prop = getBlobByNetworkID(rotate_wheels[i]);
+			if (prop !is null && seatColor == prop.getShape().getVars().customData && (teamInsensitive || teamNum == prop.getTeamNum()))
+			{
+				prop.set_f32("rot_angle", 0);
+			}
+		}
 	}
 }
 

@@ -22,7 +22,7 @@ const int DECONSTRUCT_RANGE = 16;
 const f32 DECONSTRUCTOR_RETURN_MOD = 0.5f; //what part of the initial price of the block will be returned after deconstructing
 const f32 MOTHERSHIP_CREW_HEAL = 0.1f;
 const u16 MOTHERSHIP_HEAL_COST = 10;
-const Vec2f BUILD_MENU_SIZE = Vec2f(8, 5);
+const Vec2f BUILD_MENU_SIZE = Vec2f(8, 6);
 const Vec2f TOOLS_MENU_SIZE = Vec2f(2, 6);
 const f32 RELOAD_SLOW = 0.5f; //how much player is slowed while reloading
 u32 HEAL_TICKS = 15 * 30;
@@ -598,8 +598,8 @@ void BuildShopMenu(CBlob@ this, CBlob@ core, const string&in desc, const Vec2f&i
 	{ //Wheel
 		AddBlock(this, menu, "wheel", "$WHEEL$", Trans::Wheel, Trans::WheelDesc, core, 1.0f);
 	}
-	{ //Wheel
-		AddBlock(this, menu, "rotatingwheel", "$ROTATINGWHEEL$", Trans::Wheel, Trans::WheelDesc, core, 1.0f);
+	{ //Rotating Wheel
+		AddBlock(this, menu, "rotatingwheel", "$ROTATINGWHEEL$", Trans::RotatingWheel, Trans::RotatingWheelDesc, core, 1.0f);
 	}
 	{ //Engine
 		description = Trans::EngineBlockDesc;

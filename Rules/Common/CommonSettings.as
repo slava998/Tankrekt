@@ -107,6 +107,8 @@ void onInit(CRules@ this)
 	AddIconToken("$BINOCULARS$", "Binoculars.png", Vec2f(16,16), 0);
 	AddIconToken("$BINO_CROSS$", "AimCross.png", Vec2f(32,32), 0);
 	AddIconToken("$REDDOT$", "RedDot.png", Vec2f(3,3), 0);
+	AddIconToken("$RIGHT_AND_LEFT$", "InteractionIconsBig.png", Vec2f(32, 32), 8);
+	AddIconToken("$DOWN$", "InteractionIconsBig.png", Vec2f(32, 32), 19);
 	
 	//spectator stuff
 	this.addCommandID("pick teams");
