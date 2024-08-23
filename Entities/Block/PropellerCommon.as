@@ -57,7 +57,10 @@ void onTick(CBlob@ this)
 	}
 
 	if (isServer())
+	{
 		this.Sync("power", true); //-179363002 HASH
+		this.Sync("rot_angle", true);
+	}
 
 	if (stalled)
 	{

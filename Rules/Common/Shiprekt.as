@@ -193,7 +193,7 @@ void onTick(CRules@ this)
 					coresAlive++;
 				}
 
-				if (coresAlive > 0)
+				if (coresAlive == 1)
 				{
 					string captain = "";
 					CBlob@ mShip = getMothership(teamWithPlayers);
