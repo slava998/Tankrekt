@@ -11,7 +11,7 @@ void onInit(CBlob@ this)
 	
 	this.set_f32("power", 0.0f);
 	this.set_f32("rot_angle", 0.0f);
-	this.set_f32("powerFactor", 9.0f);
+	this.set_f32("powerFactor", 4.0f);
 	this.set_u32("onTime", 0);
 	this.set_u8("stallTime", 0);
 
