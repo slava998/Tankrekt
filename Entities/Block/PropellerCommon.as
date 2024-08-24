@@ -91,8 +91,18 @@ void onTick(CBlob@ this)
 			PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
 			
 			const f32 mass = ship.mass + ship.carryMass + 0.01f;
-			moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
-			angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+			//moveVel /= mass + (mass*mass * this.get_f32("mass_coef")); //If you enable this code you can make wheels that became less effective on heavy tanks.
+			//angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+			//
+			//an example of usage of mass_coef parameter
+			//||
+			//||
+			//\/
+			//
+			//this.set_f32("mass_coef", 0.05f); //has an extremely strong effect on heavy tanks, high values will make them literally immovable
+
+			moveVel /= mass;
+			angleVel /= mass;
 			
 			if(isTouchingShoal(this.getPosition())) //shoal slows both land and water motors, but not as hard as ground and water
 			{
@@ -115,33 +125,9 @@ void onTick(CBlob@ this)
 			
 			if (isServer() && (gameTime + this.getNetworkID()) % 15 == 0)
 			{
-				// move
-				Vec2f moveVel;
-				Vec2f moveNorm;
-				float angleVel;
-				
-				PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
-				//print("" + this.get_f32("rot_angle"));
-				
-				const f32 mass = ship.mass + ship.carryMass + 0.01f;
-				
-				//moveVel /= mass + (mass*mass * this.get_f32("mass_coef")); //If you enable this code you can make wheels that became less effective on heavy tanks.
-				//angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
-				//
-				//an example of usage of mass_coef parameter
-				//||
-				//||
-				//\/
-				//
-				//this.set_f32("mass_coef", 0.05f); //has an extremely strong effect on heavy tanks, high values will make them literally immovable
-				
-				moveVel /= mass;
-				angleVel /= mass;
-				if(this.hasTag("landMotor") && !touching_land)
 				//low health stall failure
 				const f32 healthPct = this.getHealth()/this.getInitialHealth();
 				if (healthPct < 0.25f && !stalled && XORRandom(25) == 0)
-
 				{
 					const u8 stallTime = 30 + XORRandom(50);
 					this.set_u8("stallTime", stallTime);
