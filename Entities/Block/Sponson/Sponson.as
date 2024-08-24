@@ -30,7 +30,6 @@ void onInit(CBlob@ this)
 	
 	this.addCommandID("fire");
 	this.addCommandID("rotate");
-	this.addCommandID("RecieveFireCMD");
 
 	if (isServer())
 	{
@@ -163,35 +162,42 @@ void Rotate(CBlob@ this, Vec2f&in aimVector)
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 {
-    if (cmd == this.getCommandID("fire"))
+	if (cmd == this.getCommandID("fire"))
     {
-		CBlob@ caller = getBlobByNetworkID(params.read_netid());
+		if(!canShoot(this)) return;
+		this.set_u32("fire time", getGameTime());
+		
 		Vec2f pos = this.getPosition();
-
 		//ammo
 		u16 ammo = this.get_u16("ammo");
-
 		if (ammo == 0)
 		{
 			directionalSoundPlay("LoadingTick1", pos, 1.0f);
 			return;
 		}
+		
+		Vec2f aimVector = params.read_Vec2f();
+		const f32 aimdist = Maths::Min(aimVector.Length(), PROJECTILE_RANGE);
+		const f32 lifetime = Maths::Max(0.05f + aimdist/PROJECTILE_SPEED/32.0f, 0.25f);
+		
+		CBlob@ caller = getBlobByNetworkID(params.read_netid());
+		aimVector.Normalize();
 
+		Vec2f spread(_shotspreadrandom.NextFloat() * PROJECTILE_SPREAD, 0);
+		spread.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
+		
 		ammo--;
 		this.set_u16("ammo", ammo);
-
-		Vec2f velocity = params.read_Vec2f();
-		Vec2f aimVector = velocity;		aimVector.Normalize();
+	
+		Vec2f velocity = (aimVector * PROJECTILE_SPEED) + spread;
 
 		f32 angle = aimVector.Angle();
 		Vec2f offset = Vec2f(9.6f, 0);
 		offset.RotateBy(-angle);
 
-		const f32 time = params.read_f32();
-
 		if (isServer())
 		{
-            CBlob@ bullet = server_CreateBlob("sponsonbullet", this.getTeamNum(), pos + offset);
+            CBlob@ bullet = server_CreateBlob("autocannonshell", this.getTeamNum(), pos + offset);
             if (bullet !is null)
             {
             	if (caller !is null)
@@ -201,7 +207,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				}
 
                 bullet.setVelocity(velocity);
-                bullet.server_SetTimeToDie(time);
+                bullet.server_SetTimeToDie(lifetime);
 				bullet.setAngleDegrees(-angle);
             }
     	}
@@ -222,7 +228,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				layer.animation.SetFrameIndex(0);
 		}
     }
-	else if(cmd == this.getCommandID("rotate"))
+	else if(cmd == this.getCommandID("rotate")) //TODO: REWRITE! using commands for this is very bad
 	{
 		if(isClient())
 		{
@@ -233,30 +239,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 				layer.ResetTransform();
 				layer.SetOffset(Vec2f(-4, 0));
 				layer.RotateBy(-aimVector.getAngleDegrees() - this.getAngleDegrees(), Vec2f(4, 0));
-			}
-		}
-	}
-	else if(cmd == this.getCommandID("RecieveFireCMD"))
-	{
-		Vec2f aimVector = params.read_Vec2f();
-		const f32 aimdist = Maths::Min(aimVector.Normalize(), PROJECTILE_RANGE);
-
-		Vec2f offset(_shotspreadrandom.NextFloat() * PROJECTILE_SPREAD, 0);
-		offset.RotateBy(_shotspreadrandom.NextFloat() * 360.0f, Vec2f());
-
-		const Vec2f _vel = (aimVector * PROJECTILE_SPEED) + offset;
-		const f32 _lifetime = Maths::Max(0.05f + aimdist/PROJECTILE_SPEED/32.0f, 0.25f);
-
-		if (isServer())
-		{
-			if(canShoot(this))
-			{
-				CBitStream bs;
-				bs.write_netid(params.read_netid());
-				bs.write_Vec2f(_vel);
-				bs.write_f32(_lifetime);
-				this.SendCommand(this.getCommandID("fire"), bs);
-				this.set_u32("fire time", getGameTime());
 			}
 		}
 	}

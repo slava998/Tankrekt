@@ -93,7 +93,7 @@ class BulletObj
 			CBlob@ b = @hit.blob;
 			if (b !is null) // blob
 			{
-				//print(blob.getName() + '\n'+blob.getName().getHash()); useful for debugging new tiles to hit
+				//print(b.getName() + '\n'+b.getName().getHash()); //useful for debugging new tiles to hit
 				if (b.hasTag("plank") && !CollidesWithPlank(b, dir)) continue;
 
 				if (canHit(gunBlob, b))

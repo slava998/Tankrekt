@@ -100,7 +100,6 @@ void Explode(CBlob@ this)
 				if(hit_blob.hasTag("solid") || hit_blob.hasTag("door") || hit_blob.hasTag("seat") || hit_blob.hasTag("weapon") || hit_blob.hasTag("projectile") || hit_blob.hasTag("core") || hit_blob.hasTag("bomb") || (hit_blob.hasTag("player") && !hit_blob.isAttached()))
 				//hit the object
 				this.server_Hit(hit_blob, hit_blob_pos, Vec2f_zero, hit_blob.hasTag("core") ? SPLASH_DAMAGE_CORE : SPLASH_DAMAGE, Hitters::bomb, true);
-				print("hit");
 			}
 		}
 	}

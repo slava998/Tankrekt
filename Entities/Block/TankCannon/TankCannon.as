@@ -27,6 +27,7 @@ void onInit(CBlob@ this)
 	this.set_f32("weight", 7.0f);
 	
 	this.addCommandID("fire");
+	this.addCommandID("fire_forced");
 
 	if (isServer())
 	{
@@ -118,6 +119,28 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 			return;
 
 		Fire(this, shooter);
+
+		this.getSprite().animation.SetFrameIndex(1);
+	}
+	else if (cmd == this.getCommandID("fire_forced"))
+	{
+		const Vec2f pos = this.getPosition();
+
+		this.set_u32("fire time", getGameTime());
+
+		//ammo
+		u16 ammo = this.get_u16("ammo");
+
+		if (ammo <= 0)
+		{
+			directionalSoundPlay("LoadingTick1", pos, 1.0f);
+			return;
+		}
+
+		ammo--;
+		this.set_u16("ammo", ammo);
+
+		Fire(this, null);
 
 		this.getSprite().animation.SetFrameIndex(1);
 	}

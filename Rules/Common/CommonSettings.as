@@ -227,18 +227,18 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 }
 
 //bubble while in chat
-void onEnterChat(CRules@ this)
-{
-	if (getChatChannel() != 0) return; //no dots for team chat
+//void onEnterChat(CRules@ this)
+//{
+//	if (getChatChannel() != 0) return; //no dots for team chat
+//
+//	CBlob@ localblob = getLocalPlayerBlob();
+//	if (localblob !is null)
+//		set_emote(localblob, "smalldots", 100000);
+//}
 
-	CBlob@ localblob = getLocalPlayerBlob();
-	if (localblob !is null)
-		set_emote(localblob, "smalldots", 100000);
-}
-
-void onExitChat(CRules@ this)
-{
-	CBlob@ localblob = getLocalPlayerBlob();
-	if (localblob !is null)
-		set_emoteByCommand(localblob, "");
-}
+//void onExitChat(CRules@ this)
+//{
+//	CBlob@ localblob = getLocalPlayerBlob();
+//	if (localblob !is null)
+//		set_emoteByCommand(localblob, "");
+//}

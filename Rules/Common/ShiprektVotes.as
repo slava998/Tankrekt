@@ -11,7 +11,7 @@ s32 lastSRVote = 0;
 
 string g_lastUsernameVoted = "";
 
-const u32 BaseEnableTimeSuddenDeath = 10*30*60; //minimum base time. decreases on smaller maps and increases with cores count
+const u32 BaseEnableTimeSuddenDeath = 30*5; //minimum base time.
 
 const u32 kickCooldown = 10*30*60;
 const u32 suddenDeathVoteCooldown = 3*30*60;
@@ -189,7 +189,83 @@ VoteObject@ Create_Votekick(CPlayer@ player, CPlayer@ byplayer, string reason)
 	return vote;
 }
 
-//VOTE SUDDEN DEATH ----------------------------------------------------------------
+//VOTE NEXT MAP ----------------------------------------------------------------
+//nextmap functors
+
+/*class VoteNextmapFunctor : VoteFunctor
+{
+	VoteNextmapFunctor() {} //dont use this
+	VoteNextmapFunctor(CPlayer@ player)
+	{
+		string charname = player.getCharacterName();
+		string username = player.getUsername();
+		//name differs?
+		if (
+			charname != username &&
+			charname != player.getClantag() + username &&
+			charname != player.getClantag() + " " + username
+		) {
+			playername = charname + " (" + player.getUsername() + ")";
+		}
+		else
+		{
+			playername = charname;
+		}
+	}
+
+	string playername;
+	void Pass(bool outcome)
+	{
+		if (outcome)
+		{
+			if (isServer())
+			{
+				getRules().SetCurrentState(GAME_OVER);
+			}
+		}
+		else
+		{
+			client_AddToChat(
+				getTranslatedString("{USER} needs to take a spoonful of cement! Play on!")
+					.replace("{USER}", playername),
+				vote_message_colour()
+			);
+		}
+	}
+};
+
+class VoteNextmapCheckFunctor : VoteCheckFunctor
+{
+	VoteNextmapCheckFunctor() {}
+
+	bool PlayerCanVote(CPlayer@ player)
+	{
+		if (!VoteCheckFunctor::PlayerCanVote(player)) return false;
+
+		return getSecurity().checkAccess_Feature(player, "map_vote");
+	}
+};
+
+//setting up a vote next map object
+VoteObject@ Create_VoteNextmap(CPlayer@ byplayer, u8 reasonid)
+{
+	VoteObject vote;
+
+	@vote.onvotepassed = VoteNextmapFunctor(byplayer);
+	@vote.canvote = VoteNextmapCheckFunctor();
+
+	vote.title = "Skip to next map?";
+	vote.reason = nextmap_reason_string[reasonid];
+	vote.byuser = byplayer.getUsername();
+	vote.forcePassFeature = "nextmap";
+	vote.cancel_on_restart = true;
+
+	CalculateVoteThresholds(vote);
+
+	return vote;
+}*/
+
+//VOTE NEXT MAP ----------------------------------------------------------------
 //nextmap functors
 
 class VoteNextmapFunctor : VoteFunctor
@@ -207,25 +283,17 @@ class VoteNextmapFunctor : VoteFunctor
 			
 		if (outcome)
 		{
-			client_AddToChat("\n*** "+Trans::DeathStarted + "\n" + Trans::AttackReward + "\n" + Trans::WeightNote+" ***\n", vote_message_colour());
+			client_AddToChat("\n***" + Trans::LoadingNextMap + "***");
 			
 			if (isServer())
 			{
-				server_CreateBlob("whirlpool", 0, map.getMapDimensions() / 2);
-				
-				//kill all stations
-				CBlob@[] stations;
-				getBlobsByTag("station", @stations);
-				const u8 stationsLength = stations.length;
-				for (u8 i = 0; i < stationsLength; i++)
-				{
-					stations[i].server_Die();
-				}
+				//getRules().SetCurrentState(GAME_OVER);
+				getRules().set_u8("endCount", 11); //this ends the game
 			}
 		}
 		else
 		{
-			client_AddToChat("*** "+Trans::SuddenDeath+" "+Trans::Failed+"! ***", vote_message_colour());
+			client_AddToChat("\n***" + Trans::VoteFailed + "***");
 		}
 	}
 };
@@ -248,7 +316,7 @@ VoteObject@ Create_VoteNextmap(CPlayer@ byplayer, string reason)
 	@vote.onvotepassed = VoteNextmapFunctor(byplayer);
 	@vote.canvote = VoteNextmapCheckFunctor();
 
-	vote.title = Trans::Enable+" "+Trans::SuddenDeath+"?              ";
+	vote.title = Trans::NextMap+"?              ";
 	vote.reason = reason;
 	vote.byuser = byplayer.getUsername();
 	vote.forcePassFeature = "nextmap";
@@ -422,7 +490,7 @@ void onMainMenuCreated(CRules@ this, CContextMenu@ menu)
 	//vote options menu
 
 	CContextMenu@ kickmenu = Menu::addContextMenu(votemenu, getTranslatedString("Kick"));
-	//CContextMenu@ mapmenu = Menu::addContextMenu(votemenu, Trans::SuddenDeath);
+	CContextMenu@ mapmenu = Menu::addContextMenu(votemenu, Trans::NextMap);
 	CContextMenu@ freebuildmenu = Menu::addContextMenu(votemenu, Trans::Freebuild);
 	CContextMenu@ surrendermenu = Menu::addContextMenu(votemenu, "Self-Destruct Mothership");
 	Menu::addSeparator(votemenu); //before the back button
@@ -524,34 +592,29 @@ void onMainMenuCreated(CRules@ this, CContextMenu@ menu)
 	Menu::addSeparator(kickmenu);
 
 	//Sudden Death menu
-	/*if (getSecurity().checkAccess_Feature(me, "map_vote"))
+	if (getSecurity().checkAccess_Feature(me, "map_vote"))
 	{
 		CMap@ map = getMap();
 		CBlob@[] cores;
 		getBlobsByTag("mothership", @cores);
-		const f32 coresTime = 2.5f * (cores.length - 2) * 30 * 60;
-		const f32 mapFactor = Maths::Min(1.0f, Maths::Sqrt(map.tilemapwidth * map.tilemapheight) / 300.0f);
-		const u32 minTime = Maths::Max(0, Maths::Round(BaseEnableTimeSuddenDeath * mapFactor + coresTime) - getGameTime());
+		const u32 minTime = Maths::Max(0, Maths::Round(BaseEnableTimeSuddenDeath) - getGameTime());
 		const u32 coolDown = Maths::Max(0, suddenDeathVoteCooldown - (getGameTime() - lastSDVote));
 		
 		const u32 timeToEnable = minTime + coolDown;
-		const bool whirlpool = this.get_bool("whirlpool");
 		
-		string desc = Trans::TooLong+" "+Trans::Vote+" "+Trans::SuddenDeath+"!\n";
-		if (whirlpool)
-			desc = Trans::ActiveDeath;
-		else if (timeToEnable > 0)
+		string desc = Trans::TooLong+" "+Trans::Vote+" "+Trans::NextMap+"!\n";
+		if (timeToEnable > 0)
 			desc += timeToEnable > 30*60 ? (Trans::SwitchTime+" " + (1 + timeToEnable/30/60) + " "+Trans::Minutes+".") : (Trans::SwitchTime+" "+ timeToEnable/30 + getTranslatedString(" seconds")+".");
 			
-		Menu::addInfoBox(mapmenu, Trans::Vote+" "+Trans::SuddenDeath, desc);
+		Menu::addInfoBox(mapmenu, Trans::Vote+" "+Trans::NextMap, desc);
 
-		if (timeToEnable == 0 && !whirlpool)
+		if (timeToEnable == 0)
 		{
 			Menu::addSeparator(mapmenu);
 			//reason
 			CBitStream params;
 			params.write_u8(1);
-			Menu::addContextItemWithParams(mapmenu, Trans::SpeedThings, "ShiprektVotes.as", "Callback_NextMap", params);
+			Menu::addContextItemWithParams(mapmenu, Trans::NextMap, "ShiprektVotes.as", "Callback_NextMap", params);
 			
 			Menu::addSeparator(mapmenu);
 		}
@@ -560,7 +623,7 @@ void onMainMenuCreated(CRules@ this, CContextMenu@ menu)
 	{
 		Menu::addInfoBox(mapmenu, getTranslatedString("Can't vote"), "You are not allowed to vote\nto activate sudden death on this server\n");
 	}
-	Menu::addSeparator(mapmenu);*/
+	Menu::addSeparator(mapmenu);
 
 	//Freebuild menu
 	//vote free building mode
@@ -663,7 +726,7 @@ void Callback_NextMap(CBitStream@ params)
 	u8 id;
 	if (!params.saferead_u8(id)) return;
 
-	const string reason = Trans::SpeedThings;
+	const string reason = Trans::NextMap;
 
 	CBitStream params2;
 	params2.write_u16(me.getNetworkID());

@@ -78,11 +78,23 @@ void Repulse(CBlob@ this)
 			//if (ship.blocks.length == 1) b.setAngularVelocity(300.0f);
 		}
 		
-		//turn on propellers
-		if (isServer() && b.hasTag("engine") && ship.owner.isEmpty())
+		
+		if(isServer())
 		{
-			b.set_u32("onTime", getGameTime());
-			b.set_f32("power", -1.0f);
+			//turn on propellers
+			if(b.hasTag("engine") && ship.owner.isEmpty())
+			{
+				b.set_u32("onTime", getGameTime());
+				b.set_f32("power", -1.0f);
+			}
+			//fire tankcannons (so you literally can shoot cannons like bullets)
+			if(b.getName() == "tankcannon") print("" + b.get_bool("fire ready"));
+			if(b.getName() == "tankcannon" && b.get_bool("fire ready"))
+			{
+				b.set_bool("fire ready", false);
+				print("fire");
+				b.SendCommand(b.getCommandID("fire_forced"));
+			}
 		}
 	}
 	
@@ -143,6 +155,7 @@ void ChainReaction(CBlob@ this, const u32&in time)
 		{
 			ChainReaction(b, time); //repeat until all connected repulsors are activated
 		}
+		
 	}
 }
 

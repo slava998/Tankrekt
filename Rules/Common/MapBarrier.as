@@ -33,6 +33,8 @@ void onTick(CRules@ this)
 			const int bCol = b.getShape().getVars().customData;
 			if (bCol <= 0) continue;
 			
+			b.server_Hit(b, b.getPosition(), Vec2f_zero, 0.1f, 0, true); //damage blobs to prevent building bridges around the map and this way lagging the server
+			
 			Ship@ ship = ShipSet.getShip(bCol);
 			if (ship is null) continue;
 			
