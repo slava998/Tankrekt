@@ -10,7 +10,6 @@ void onInit(CBlob@ this)
 	this.addCommandID("on/off");
 	this.addCommandID("off");
 	this.addCommandID("stall");
-	this.Tag("engine");
 }
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
@@ -92,8 +91,18 @@ void onTick(CBlob@ this)
 			PropellerForces(this, ship, power, moveVel, moveNorm, angleVel);
 			
 			const f32 mass = ship.mass + ship.carryMass + 0.01f;
-			moveVel /= mass + (mass*mass * this.get_f32("mass_coef"));
-			angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+			//moveVel /= mass + (mass*mass * this.get_f32("mass_coef")); //If you enable this code you can make wheels that became less effective on heavy tanks.
+			//angleVel /= mass + (mass*mass * this.get_f32("mass_coef"));
+			//
+			//an example of usage of mass_coef parameter
+			//||
+			//||
+			//\/
+			//
+			//this.set_f32("mass_coef", 0.05f); //has an extremely strong effect on heavy tanks, high values will make them literally immovable
+
+			moveVel /= mass;
+			angleVel /= mass;
 			
 			if(isTouchingShoal(this.getPosition())) //shoal slows both land and water motors, but not as hard as ground and water
 			{
