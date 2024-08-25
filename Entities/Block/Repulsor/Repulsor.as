@@ -87,13 +87,17 @@ void Repulse(CBlob@ this)
 				b.set_u32("onTime", getGameTime());
 				b.set_f32("power", -1.0f);
 			}
-			//fire tankcannons (so you literally can shoot cannons like bullets)
-			if(b.getName() == "tankcannon") print("" + b.get_bool("fire ready"));
+			//fire tankcannons (so you literally can shoot cannons like bullets) and artillery
+			//if(b.getName() == "tankcannon") print("" + b.get_bool("fire ready"));
 			if(b.getName() == "tankcannon" && b.get_bool("fire ready"))
 			{
 				b.set_bool("fire ready", false);
-				print("fire");
+				//print("fire");
 				b.SendCommand(b.getCommandID("fire_forced"));
+			}
+			else if (b.getName() == "artillery")
+			{
+				b.SendCommand(b.getCommandID("fire"));
 			}
 		}
 	}
