@@ -6,8 +6,8 @@
 const string PLAYER_BLOB = "human";
 const string SPAWN_TAG = "mothership";
 
-const u32 standardRespawnTime = 0 * getTicksASecond();
-const u32 specToTeamRespawnTime = 0 * getTicksASecond();
+const u32 standardRespawnTime = 11 * getTicksASecond();
+const u32 specToTeamRespawnTime = 11 * getTicksASecond();
 
 shared class Respawn
 {
