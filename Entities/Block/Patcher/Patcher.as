@@ -6,7 +6,7 @@
 #include "ParticleSpark.as";
 #include "BlockCosts.as";
  
-const u16 CONSTRUCT_RATE = 500.0f; //higher values = lower recover
+const u16 CONSTRUCT_RATE = 650.0f; //higher values = lower recover
 const int CONSTRUCT_VALUE = 5;
 const int NUM_HEALS = 5;
 
@@ -15,6 +15,8 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickFrequency = CONSTRUCT_RATE;
 	
 	this.set_f32("weight", 3.0f);
+	this.Tag("solid");
+	this.Tag("vulnerable");
 
 }
  

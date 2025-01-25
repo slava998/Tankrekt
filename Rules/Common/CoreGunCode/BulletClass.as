@@ -251,7 +251,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 			damage *= 3.2f;
 		if (hitBlob.hasTag("bomb"))
 			damage *= 5.4f;
-		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
+		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("vulnerable"))
 			damage *= 3;
 		if (hitBlob.hasTag("ramengine"))
 			damage *= 6;
@@ -268,7 +268,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 			return damage; //sponsons get same damage as hulls
 		if (hitBlob.hasTag("ramengine"))
 			damage *= 8;
-		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
+		if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("vulnerable"))
 			damage *= 2.7f;
 		if (hitBlob.hasTag("plank"))
 			damage *= 2;
@@ -291,7 +291,7 @@ const f32 getDamage(CBlob@ hitBlob, CBlob@ gunBlob)
 		return damage; //sponsons get same damage as hulls
 	if (hitBlob.hasTag("ramengine"))
 		damage *= 25;
-	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
+	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("engineblock") || hitBlob.hasTag("vulnerable"))
 		damage *= 20;
 	if (hitBlob.hasTag("plank"))
 		damage *= 5;

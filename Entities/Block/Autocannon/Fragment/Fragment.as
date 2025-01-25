@@ -103,7 +103,7 @@ const f32 getDamage(CBlob@ hitBlob)
 
 	if (hitBlob.hasTag("rocket"))
 		return 0.55f; 
-	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank") || hitBlob.hasTag("engineblock") || 	hitBlob.hasTag("factory"))
+	if (hitBlob.hasTag("propeller") || hitBlob.hasTag("plank") || hitBlob.hasTag("engineblock") || 	hitBlob.hasTag("vulnerable"))
 		return 0.3f;
 	if (hitBlob.hasTag("ramengine"))
 		return 0.2f;

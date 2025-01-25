@@ -13,7 +13,7 @@ void onInit(CBlob@ this)
 	this.set_f32("weight", 3.5f);
 	
 	this.Tag("solid");
-	this.Tag("factory");
+	this.Tag("vulnerable");
 	this.addCommandID("take");
 	this.addCommandID("store");
 	this.getCurrentScript().tickFrequency = 60; //tick once in 2 seconds

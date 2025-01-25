@@ -127,7 +127,7 @@ const f32 getDamage(CBlob@ hitBlob)
 {
 	if(hitBlob.hasTag("strong")) return 1.0f;
 
-	if (hitBlob.hasTag("engineblock") || hitBlob.hasTag("factory"))
+	if (hitBlob.hasTag("engineblock") || hitBlob.hasTag("vulnerable"))
 		return 40.0f; //chain explosion
 	if (hitBlob.hasTag("rocket"))
 		return 1.25f; 
